@@ -11,7 +11,17 @@
  * pair-level data. `fullDataset` defaults to `dataset` for the single-dataset
  * unit fixtures.
  */
-import type { AnalyzeDraftConfig, Dataset, Role, Team } from '$lib/types';
+import type {
+    AnalyzeDraftConfig,
+    Dataset,
+    PlayerContext,
+    PlayerSlotContext,
+    ProAnalysisParams,
+    Role,
+    SideContext,
+    TeamSideRecord,
+    Team
+} from '$lib/types';
 import { PRIOR_GAMES_BY_RISK } from '$lib/types';
 import { ratingToWinrate, winrateToRating } from './ratings';
 import { averageStats, winrateOf, withPrior } from './bayesian';
@@ -82,13 +92,17 @@ export function analyzeChampion(
     fullDataset: Dataset,
     role: Role,
     championKey: string,
-    priorGames: number
+    priorGames: number,
+    slot?: PlayerSlotContext,
+    proParams?: ProAnalysisParams
 ): AnalyzeChampionResult {
     const roleData = dataset.championData[championKey]?.statsByRole[role];
     const sample = roleData ? { wins: roleData.wins, games: roleData.games } : { wins: 0, games: 0 };
 
     const fullRoleData = fullDataset.championData[championKey]?.statsByRole[role];
-    const priorWinrate = winrateOf(fullRoleData ?? { wins: 0, games: 0 });
+    const baselineWinrate = winrateOf(fullRoleData ?? { wins: 0, games: 0 });
+    // M2: blend the baseline toward the assigned player's comfort, if provided.
+    const priorWinrate = slot ? blendedPriorWinrate(baselineWinrate, slot, proParams) : baselineWinrate;
 
     const stats = withPrior(sample, priorGames, priorWinrate);
     const rating = winrateToRating(stats.wins / stats.games);
@@ -100,13 +114,23 @@ export function analyzeChampions(
     dataset: Dataset,
     fullDataset: Dataset,
     team: Team,
-    priorGames: number
+    priorGames: number,
+    playerContext?: PlayerContext,
+    proParams?: ProAnalysisParams
 ): AnalyzeChampionsResult {
     const championResults: AnalyzeChampionResult[] = [];
     let totalRating = 0;
 
     for (const [role, championKey] of team) {
-        const result = analyzeChampion(dataset, fullDataset, role, championKey, priorGames);
+        const result = analyzeChampion(
+            dataset,
+            fullDataset,
+            role,
+            championKey,
+            priorGames,
+            playerContext?.[role],
+            proParams
+        );
         championResults.push(result);
         totalRating += result.rating;
     }
@@ -233,7 +257,7 @@ export function analyzeDraft(
 
     const allyChampionRating = config.ignoreChampionWinrates
         ? EMPTY_CHAMPIONS
-        : analyzeChampions(dataset, fullDataset, team, priorGames);
+        : analyzeChampions(dataset, fullDataset, team, priorGames, config.playerContext, config.proParams);
     const enemyChampionRating = config.ignoreChampionWinrates
         ? EMPTY_CHAMPIONS
         : analyzeChampions(dataset, fullDataset, enemy, priorGames);
@@ -242,12 +266,16 @@ export function analyzeDraft(
     const enemyDuoRating = analyzeDuos(fullDataset, enemy, priorGames);
     const matchupRating = analyzeMatchups(fullDataset, team, enemy, priorGames);
 
+    // M2: side-preference offset (0 when no side context is supplied).
+    const sideOffset = computeSideOffset(config.sideContext, config.proParams);
+
     const totalRating =
         allyChampionRating.totalRating +
         allyDuoRating.totalRating +
         matchupRating.totalRating -
         enemyChampionRating.totalRating -
-        enemyDuoRating.totalRating;
+        enemyDuoRating.totalRating +
+        sideOffset;
 
     return {
         allyChampionRating,
@@ -258,4 +286,45 @@ export function analyzeDraft(
         totalRating,
         winrate: ratingToWinrate(totalRating)
     };
+}
+
+/**
+ * M2 — blend a champion's baseline winrate toward the assigned player's comfort.
+ * comfort/none use full weight, cheese is attenuated, unavailable/no-signal
+ * returns the baseline unchanged. Closed-form numbers per M2 Ping 2.
+ */
+export function blendedPriorWinrate(
+    baseline: number,
+    slot: PlayerSlotContext | undefined,
+    params: ProAnalysisParams = {}
+): number {
+    if (!slot || !slot.playerStats || slot.comfortMode === 'unavailable') return baseline;
+    const { games, winrate } = slot.playerStats;
+    if (games === 0) return baseline;
+
+    const attenuation = slot.comfortMode === 'cheese' ? (params.cheeseAttenuationFactor ?? 0.5) : 1;
+    const effectiveGames = games * attenuation;
+    const priorGames = params.defaultPriorGames ?? 1000;
+
+    return (effectiveGames * winrate + priorGames * baseline) / (effectiveGames + priorGames);
+}
+
+/** M2 — a team's side-preference rating offset (Elo of its 0.5-smoothed side WR). */
+export function teamSideOffset(
+    record: TeamSideRecord,
+    side: 'blue' | 'red',
+    params: ProAnalysisParams = {}
+): number {
+    const sidePriorGames = params.sidePriorGames ?? 50;
+    const smoothed = withPrior({ wins: record[side].wins, games: record[side].games }, sidePriorGames, 0.5);
+    return winrateToRating(smoothed.wins / smoothed.games);
+}
+
+/** M2 — net side offset (ally − enemy); 0 when no side context is provided. */
+export function computeSideOffset(sideContext: SideContext | undefined, params?: ProAnalysisParams): number {
+    if (!sideContext) return 0;
+    return (
+        teamSideOffset(sideContext.ally.record, sideContext.ally.side, params) -
+        teamSideOffset(sideContext.enemy.record, sideContext.enemy.side, params)
+    );
 }

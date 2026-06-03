@@ -84,12 +84,52 @@ export const PRIOR_GAMES_BY_RISK: Record<RiskLevel, number> = {
 /** A team is a map of role → champion key. */
 export type Team = Map<Role, string>;
 
+/** Player comfort signal for the M2 Bayesian prior blend. */
+export type ComfortMode = 'comfort' | 'cheese' | 'unavailable' | 'none';
+
+export interface PlayerStats {
+    games: number;
+    winrate: number;
+}
+
+export interface PlayerSlotContext {
+    playerStats: PlayerStats | null;
+    comfortMode: ComfortMode;
+}
+
+/** Ally player comfort by role (M2). */
+export type PlayerContext = Partial<Record<Role, PlayerSlotContext>>;
+
+export interface TeamSideRecord {
+    blue: Stats;
+    red: Stats;
+}
+
+/** Both teams' side win-records + chosen sides (M2 side-preference offset). */
+export interface SideContext {
+    ally: { record: TeamSideRecord; side: 'blue' | 'red' };
+    enemy: { record: TeamSideRecord; side: 'blue' | 'red' };
+}
+
+/** Tunable M2 priors (defaults: 1000 / 0.5 / 50). */
+export interface ProAnalysisParams {
+    defaultPriorGames?: number;
+    cheeseAttenuationFactor?: number;
+    sidePriorGames?: number;
+}
+
 export interface AnalyzeDraftConfig {
     /** When true, skip the solo-champion pass (matchup/duo only). */
     ignoreChampionWinrates: boolean;
     riskLevel: RiskLevel;
     /** UI-side threshold: results below this game count are de-emphasised. */
     minGames: number;
+    /** M2 — ally player comfort per role. */
+    playerContext?: PlayerContext;
+    /** M2 — both teams' side records for the side-preference offset. */
+    sideContext?: SideContext;
+    /** M2 — override the comfort/side prior strengths. */
+    proParams?: ProAnalysisParams;
 }
 
 /** Build an empty per-role data record (all five roles present). */
