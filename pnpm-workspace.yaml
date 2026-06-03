@@ -1,0 +1,7 @@
+# Native dependencies whose build / install scripts we trust to run
+# (binary downloads + native bindings). pnpm 10/11 reads this from here; the
+# legacy "pnpm.onlyBuiltDependencies" key is kept in package.json for pnpm 9.
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true
