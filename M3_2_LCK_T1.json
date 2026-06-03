@@ -1,0 +1,262 @@
+{
+  "elapsedSec": "7.2",
+  "leagueId": "lck",
+  "team": {
+    "id": "2809",
+    "name": "T1",
+    "tournamentSlug": "LCK Cup 2026",
+    "playerCount": 5,
+    "draftCount": 23,
+    "datesCovered": 23,
+    "warnings": [],
+    "mappingWarnings": 0,
+    "poolMatchedPicks": 77,
+    "totalPicks": 115,
+    "poolMatchRatio": "0.670",
+    "sideStats": {
+      "blue": {
+        "games": 11,
+        "wins": 6,
+        "winrate": 0.5454545454545454
+      },
+      "red": {
+        "games": 12,
+        "wins": 8,
+        "winrate": 0.6666666666666666
+      }
+    },
+    "playersSummary": [
+      {
+        "name": "Doran",
+        "id": "1242",
+        "role": 0,
+        "poolSize": 16,
+        "topChamp": "Kennen",
+        "recordW": 14,
+        "recordL": 9
+      },
+      {
+        "name": "Oner",
+        "id": "3741",
+        "role": 1,
+        "poolSize": 13,
+        "topChamp": "Xin Zhao",
+        "recordW": 14,
+        "recordL": 9
+      },
+      {
+        "name": "Faker",
+        "id": "48",
+        "role": 2,
+        "poolSize": 10,
+        "topChamp": "Ryze",
+        "recordW": 14,
+        "recordL": 9
+      },
+      {
+        "name": "Peyz",
+        "id": "4247",
+        "role": 3,
+        "poolSize": 12,
+        "topChamp": "Aphelios",
+        "recordW": 14,
+        "recordL": 9
+      },
+      {
+        "name": "Keria",
+        "id": "1258",
+        "role": 4,
+        "poolSize": 14,
+        "topChamp": "Lulu",
+        "recordW": 14,
+        "recordL": 9
+      }
+    ],
+    "recentDraftsSummary": [
+      {
+        "gameId": "74758",
+        "playedAt": "2026-02-22T00:00:00.000Z",
+        "vs": "Dplus KIA",
+        "side": "blue",
+        "result": "L",
+        "pickCount": 5
+      },
+      {
+        "gameId": "74757",
+        "playedAt": "2026-02-22T00:00:00.000Z",
+        "vs": "Dplus KIA",
+        "side": "blue",
+        "result": "L",
+        "pickCount": 5
+      },
+      {
+        "gameId": "74756",
+        "playedAt": "2026-02-22T00:00:00.000Z",
+        "vs": "Dplus KIA",
+        "side": "red",
+        "result": "L",
+        "pickCount": 5
+      },
+      {
+        "gameId": "74755",
+        "playedAt": "2026-02-22T00:00:00.000Z",
+        "vs": "Dplus KIA",
+        "side": "blue",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "74754",
+        "playedAt": "2026-02-22T00:00:00.000Z",
+        "vs": "Dplus KIA",
+        "side": "blue",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "74460",
+        "playedAt": "2026-02-15T00:00:00.000Z",
+        "vs": "BNK FearX",
+        "side": "red",
+        "result": "L",
+        "pickCount": 5
+      },
+      {
+        "gameId": "74459",
+        "playedAt": "2026-02-15T00:00:00.000Z",
+        "vs": "BNK FearX",
+        "side": "red",
+        "result": "L",
+        "pickCount": 5
+      },
+      {
+        "gameId": "74458",
+        "playedAt": "2026-02-15T00:00:00.000Z",
+        "vs": "BNK FearX",
+        "side": "blue",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "74457",
+        "playedAt": "2026-02-15T00:00:00.000Z",
+        "vs": "BNK FearX",
+        "side": "blue",
+        "result": "L",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73692",
+        "playedAt": "2026-01-31T00:00:00.000Z",
+        "vs": "Dplus KIA",
+        "side": "blue",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73691",
+        "playedAt": "2026-01-31T00:00:00.000Z",
+        "vs": "Dplus KIA",
+        "side": "blue",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73690",
+        "playedAt": "2026-01-31T00:00:00.000Z",
+        "vs": "Dplus KIA",
+        "side": "red",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73413",
+        "playedAt": "2026-01-25T00:00:00.000Z",
+        "vs": "BNK FearX",
+        "side": "blue",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73412",
+        "playedAt": "2026-01-25T00:00:00.000Z",
+        "vs": "BNK FearX",
+        "side": "blue",
+        "result": "L",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73411",
+        "playedAt": "2026-01-25T00:00:00.000Z",
+        "vs": "BNK FearX",
+        "side": "blue",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73400",
+        "playedAt": "2026-01-23T00:00:00.000Z",
+        "vs": "KT Rolster",
+        "side": "blue",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73399",
+        "playedAt": "2026-01-23T00:00:00.000Z",
+        "vs": "KT Rolster",
+        "side": "red",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73141",
+        "playedAt": "2026-01-18T00:00:00.000Z",
+        "vs": "DRX",
+        "side": "red",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73140",
+        "playedAt": "2026-01-18T00:00:00.000Z",
+        "vs": "DRX",
+        "side": "blue",
+        "result": "L",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73139",
+        "playedAt": "2026-01-18T00:00:00.000Z",
+        "vs": "DRX",
+        "side": "red",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73129",
+        "playedAt": "2026-01-16T00:00:00.000Z",
+        "vs": "HLE",
+        "side": "red",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73128",
+        "playedAt": "2026-01-16T00:00:00.000Z",
+        "vs": "HLE",
+        "side": "red",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "73127",
+        "playedAt": "2026-01-16T00:00:00.000Z",
+        "vs": "HLE",
+        "side": "red",
+        "result": "L",
+        "pickCount": 5
+      }
+    ]
+  }
+}

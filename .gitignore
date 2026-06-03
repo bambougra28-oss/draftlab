@@ -1,0 +1,28 @@
+node_modules
+/build
+/.svelte-kit
+/.vercel
+/.cloudflare
+/.wrangler
+/package
+.env
+.env.*
+!.env.example
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+.DS_Store
+Thumbs.db
+*.log
+.claude/
+draftlab-frameworks-research.md
+# Oracle's Elixir source CSVs — re-fetched on demand by scrapeOraclesElixir.ts
+data/raw/
+# Disposable run / validation outputs from scripts (audit-*.txt, *-report.txt, etc.)
+/audit-*.txt
+/calibration-*.txt
+/final-validation.txt
+/multi-matchup-*.txt
+/sim-*.txt
+/*-report.txt
+# Loose screenshots dropped at repo root (UUID-named).
+/[0-9a-f]*-[0-9a-f]*-[0-9a-f]*-[0-9a-f]*-[0-9a-f]*.png

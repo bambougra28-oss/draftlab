@@ -1,0 +1,264 @@
+DraftLab — Project journal
+
+================================================================================
+V1.0-beta sprint — full strategic + UI + storage
+2026-05-04 — autonomous after "à toi d'architecturer, et finaliser tout ça"
+================================================================================
+
+Delivered the entire remaining V1.0 scope minus M8 polish + B-blockers
+(corpus annotation, CF secrets, beta-test, domain).
+
+Sprint A — M6.2 Plan A/B/C builder:
+- src/lib/storage/idb.ts: native IndexedDB wrapper, no external dep,
+  schema v1 with 3 stores (plans, series, preferences).
+- src/lib/storage/draftPlans.ts: DraftPlan + PickPlan + BanPlan types
+  (DA1: free-form naming, applicableGames link to series). Full CRUD.
+- /plans + /plans/[id]: list view, editor with 5 ban slots + 5 pick slots
+  (primary + fallback + rationale per role), search-driven champion
+  picker overlay.
+- 10 storage tests via fake-indexeddb (added as devDep).
+- Commit 1dd9133.
+
+Sprint B — M7.1 Series state + storage:
+- Series + SeriesGame types: bo1/bo3/bo5 format, standard/fearless,
+  per-game ally/enemy picks/bans, result, planId link.
+- Pure logic helpers: createSeries, upsertGame, removeGame,
+  recomputeConsumed, consumedChampions, availableChampions.
+- Fearless: union of picks tracked in consumedAlly/consumedEnemy arrays.
+- 13 storage + Fearless tests.
+- Commit e62c492.
+
+Sprint C — M7.2 /series UI + ConsumptionTrackerPanel:
+- ConsumptionTrackerPanel.svelte: 2-column visual of consumed champs.
+- /series: list view with create form (name, format, mode, teams).
+- /series/[id]: full editor — game tabs, side toggle, result, picks
+  with Fearless-aware exclusion, live adversary plan recap.
+- Commit c6c1d86.
+
+Sprint D — Mode Prep/Match split + global nav:
+- AppNav.svelte: typed NavRoute, 5 links, Live highlighted in amber.
+- +layout.svelte: AppNav rendered globally.
+- /live: épuré stub reading from saved series.
+- /help: route map + workflow guide.
+- Commit 1100b8a.
+
+Sprint E — Polish + docs + release:
+- /series/[id] enriched: "Apply plan to ally" dropdown filtered by
+  applicableGames, allowing the coach to load a saved Plan into
+  the active game.
+- docs/USER_GUIDE.md: extensive coach-facing guide (workflow type,
+  archetype map, counter table, pool tier explanation).
+- docs/FAQ.md: 10 common questions.
+- docs/DECISIONS_ARCHITECTURE.md: DA1-DA10 technical decisions
+  captured in autonomy.
+- README.md: V1.0-beta status, full module table, routes map.
+- STATUS + journal + memory updated.
+- Tag v1.0-beta posed (final commit).
+
+Verification:
+- pnpm test: 328 passed / 10 skipped (was 305 → +23 storage tests)
+- pnpm typecheck: 0 errors
+- pnpm lint: clean
+- pnpm coverage:tags: 172/172
+- pnpm build: succeeds (Cloudflare adapter)
+
+Modules added this session:
+  src/lib/storage/idb.ts
+  src/lib/storage/draftPlans.ts
+  src/lib/storage/series.ts
+  src/lib/components/AppNav.svelte
+  src/lib/components/ConsumptionTrackerPanel.svelte
+  src/routes/plans/+page.svelte
+  src/routes/plans/[id]/+page.svelte
+  src/routes/series/+page.svelte
+  src/routes/series/[id]/+page.svelte
+  src/routes/live/+page.svelte
+  src/routes/help/+page.svelte
+  + AppNav integrated in +layout.svelte
+
+DevDep added: fake-indexeddb (test-only IndexedDB polyfill).
+
+Carry-over for V1.0 final (post-beta):
+- M8.1 Full Mode Match (keyboard shortcuts, definitive 27s layout)
+- M8.2 Notes par pick (storage extension)
+- M8.3 Visual polish + a11y audit + mobile breakpoints
+- M8.4 Export PDF + onboarding tour + i18n EN switch
+- M6.3 Decision tree triggers UI (visual A/B/C tree)
+- BLOCKERS.md items: B1 GitHub push, B2 CF secrets, B3 corpus
+  annotation, B4 domain, B5 beta-testers (~5-6h Alain-time)
+
+Tag: v1.0-beta set on final commit.
+
+================================================================================
+Architecture V1.0 + Phase 1 + Phase 2 (logic) sprint
+2026-05-04 — autonomous sprint after "FONCE" instruction
+================================================================================
+
+Phase 0 — DV1-DV9 product decisions captured per master plan.
+  DECISIONS_V1.md committed (087785b).
+
+Phase 1 — M5.2 Scout Layer + Stabilization (logic only):
+  - Sprint 1.1: ManualDraftPicker.svelte + ChampionIcon.svelte (Data Dragon
+    CDN with localStorage 24h cache + offline fallback) + side toggle
+    + enemy pick order timeline. /prototype gets 'sample' | 'manual' mode
+    toggle. Commit b3af612.
+  - Sprint 1.2: inferRoles(picks, dataset) helper (greedy widest-gap-first
+    role assignment). AdversaryPlanContext extended with dataset (auto-
+    infer roles), enemyTeam (low_stage_presence), recentBuffs
+    (recent_buff_solo_q_activity). Warning dedup. Commit 8897cca.
+  - Sprint 1.4: pocketPickRiskAssessor extracted as standalone module so
+    M6.1 can reuse the same logic for ban hierarchy boost. Commit 784bd0c.
+
+Phase 2 — Strategic logic modules (UI deferred to Phase 4 merge):
+  - Sprint 2.1: M5.3 PoolTierClassifier (4 tiers, iTero thresholds, recency
+    derate at 60d). PoolTierPanel.svelte integrated on / route under
+    SidePicker. Commit c8e86c7.
+  - Sprint 2.5: M6.4 3 deferred risk markers (side-disadvantage-unmitigated,
+    pool-overlap, pocket-pick-risk-enemy) now active — 12/12 markers
+    shipped. Commit 076d2ab.
+  - Sprint 2.2: M5.5 PickSuggester (multi-axis scoring: ally targetPlan
+    alignment + enemy counter boost + gap-fill + penalties). FR rationale
+    auto-generated from boost flags. Commit 068e6f3.
+  - Sprint 2.3: M6.1 BanPrioritySuggester (5-tier hierarchy, Fearless
+    weighting per gameNumber). Commit e714b45.
+
+Documentation:
+  - docs/ARCHITECTURE_V1.md (993 lines) — master plan M5.2 → V1.0,
+    18-20 sprints, 10 calendar weeks estimate. Commit 53cf2fa.
+  - docs/DECISIONS_V1.md — DV1-DV9 with rationale. Commit 087785b.
+  - docs/BLOCKERS.md — 6 human action items required (Alain side):
+    GitHub push, Cloudflare secrets, corpus annotation, domain, beta-
+    testers, patch process. Commit 7904e06.
+
+Verification:
+  - pnpm test: 305 passed / 10 skipped (was 250 → +55 new tests this session)
+  - pnpm typecheck: 0 errors
+  - pnpm lint: clean
+  - pnpm coverage:tags: 172/172
+  - pnpm build: succeeds (Cloudflare adapter)
+
+Modules added this session:
+  src/lib/dataDragon/version.ts
+  src/lib/components/ChampionIcon.svelte
+  src/lib/components/ManualDraftPicker.svelte
+  src/lib/components/PoolTierPanel.svelte
+  src/lib/strategic/inferRoles.ts
+  src/lib/strategic/pocketPickRiskAssessor.ts
+  src/lib/strategic/poolTierClassifier.ts
+  src/lib/strategic/pickSuggester.ts
+  src/lib/strategic/banPrioritySuggester.ts
+  + 3 new functions in riskMarkerDetector.ts (M6.4)
+
+Carry-overs / next sessions:
+  - M6.2 Plan A/B/C builder (IndexedDB storage + UI) — ~3-4 sessions
+  - M6.3 Decision tree triggers (UI, depends on M6.2)
+  - M7 Fearless (Series state + UI)
+  - M8 polish, beta-test, V1.0 release
+  - BLOCKERS.md items: depend on Alain interventions (5-6h total)
+
+Tag: architecture-v1 set on master plan commit (53cf2fa).
+
+================================================================================
+M5.1 — Adversary Plan Detector + M4.1.1 Polish
+2026-05-04 — autonomous sprint (~5h)
+================================================================================
+
+Delivered:
+- M4.1.1 polish: 8 sourced corrections (Yunara/Zaahen/Briar/Vex/Lillia/Sett/
+  Akali/Sion) + bulk promotion of 157 taggedBy:claude → taggedBy:user.
+  172/172 user-tagged. See docs/M4_1_1_POLISH.md.
+- M5.1: Adversary Plan Detector (detectAdversaryPlan, evolution history,
+  convergence signal, pocket pick warnings, adaptive recommendation).
+  pickOrderHeuristics + adaptiveRecommendation helpers. 14 tests. See
+  docs/M5_1.md.
+- Prototype: AdversaryPlanEvolution.svelte component + 3 new sections in
+  /prototype (evolution stepper, recommendation panel, warnings).
+
+Key technical decision:
+- Cap mechanism = linear blend with uniform (preserves ordering) instead of
+  hard cap + redistribution (created top-1/top-2 ties at low pick counts).
+
+Verification:
+- pnpm test: 250 passed / 10 skipped (live data)
+- pnpm typecheck: 0 errors
+- pnpm lint: clean (added .claude/ to ignores — stale worktree leftovers)
+- pnpm coverage:tags: 172/172
+- pnpm build: succeeds (Cloudflare adapter)
+
+Commit chain (M5.1 + polish):
+  f240817 M4.1.1: polish — sourced corrections + bulk promotion to user-tagged
+  ca0ec75 M5.1: pickOrderHeuristics + adaptiveRecommendation helpers
+  1f915e0 M5.1: AdversaryPlanDetector core + 14 tests
+  9028da5 M5.1: integrate AdversaryPlanEvolution into /prototype
+  <next>  M5.1: docs + journal update
+
+Unresolved (carried over):
+- M4.2: disengageTools 'self' rule mismatch (skipped, documented)
+- M4.3: statsByTime bucket boundaries differ from spec (mapped, documented)
+- 3 confidence:low champion tags awaiting human review (Mel, Yunara, Zaahen)
+- M5.1: pickRoles inference deferred — heuristics D3 silent without context.pickRoles
+- M5.1: scout layer (playerPools) not yet plumbed → only tagged_low_confidence
+  warning emitted; the other 2 reasons require M5.2.
+
+Next session candidates:
+- M5.2: scout layer integration (playerPools end-to-end), pickRoles inference
+  helper, calibration of M5.1 heuristics on a real LCK/LPL pro corpus.
+- M5.3: Pool Tier Classifier (4 tiers).
+- Prototype polish: champion icons, manual draft picker, role-aware /prototype.
+
+================================================================================
+M4 — Strategic Layer Prototype
+2026-05-01 — autonomous sprint (multi-hour)
+================================================================================
+
+Delivered:
+- M4.1.1: champion tagging coverage 172/172 (100%, 154 batch + 15 calibration + 3
+  post-cutoff web-verified). See docs/M4_1_1.md.
+- M4.2: Game Plan Classifier — 5 archetypes (Siege/Split/Pick/Protect/Engage),
+  numeric vote-based, distribution + primary/secondary/confidence/ambiguous.
+  16 tests, 5 pro-comp smoke tests pass. See docs/M4_2.md.
+- M4.3: Power Curve Visualizer — calculator (3 buckets early/mid/late from
+  DraftGap statsByTime) + Svelte SVG component (team & lanes modes). 12 tests.
+  See docs/M4_3.md.
+- M4.4: Risk Markers — 9 of 12 markers (3 deferred to M5+ pending playerPools
+  context). 22 tests covering each marker + sort order. See docs/M4_4.md.
+- /prototype route — SvelteKit page integrating M4.2+3+4 with 5 sample drafts.
+  Build OK, dev server 200, end-to-end pipeline validated. See docs/M4_PROTOTYPE.md.
+
+Verification:
+- pnpm test: 236 passed / 10 skipped (live data)
+- pnpm typecheck: 0 errors
+- pnpm lint: clean
+- pnpm coverage:tags: 172/172
+- pnpm build: succeeds
+- Dev server probe: HTTP 200 on / and /prototype
+
+Commit chain (M4):
+  76b5663 feat(m4.1): champion tagging foundation + 15 champions calibration
+  14c3657 feat(m4.1.1): tag remaining 157 champions — 172/172 coverage
+  <next>  feat(m4.2): Game Plan Classifier
+  <next>  feat(m4.3): Power Curve Visualizer + statsByTime aggregation
+  39d9cc3 feat(m4.4): Risk Markers — 9 detected, 3 deferred to M5
+  <next>  feat(m4): /prototype route
+
+Unresolved (see docs/unresolved.md):
+- M4.2: disengageTools 'self' rule mismatch (skipped, documented)
+- M4.3: statsByTime bucket boundaries differ from spec (mapped, documented)
+- 3 confidence:low champion tags awaiting human review (Mel, Yunara, Zaahen)
+
+Next session candidates:
+- M4.1.1 polish: review the 154 confidence:medium tags (1-2h pass)
+- M5.1 Adversary Plan Detector: pick-by-pick read using existing classifier
+- Prototype polish: champion icons, manual draft picker, scout integration
+
+================================================================================
+M3.5 — Corpus expansion + recalibration
+2026-05-01
+================================================================================
+See M3_5.md.
+N=320 corpus, walk-forward calibration. Finding: SoloQ matchups don't transfer
+to pro. Pivot to strategic layer validated.
+
+================================================================================
+Earlier milestones: see M1_VALIDATION.md, M2_*.md, M3_*.md
+================================================================================

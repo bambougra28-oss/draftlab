@@ -1,0 +1,315 @@
+{
+  "generatedAt": "2026-05-01T14:23:57.563Z",
+  "elapsedSec": 248.494,
+  "leagues": {
+    "lfl": {
+      "id": "lfl",
+      "tournamentSlug": "LFL 2026 Spring Split",
+      "teamCount": 10,
+      "teams": [
+        {
+          "id": "2923",
+          "name": "Esprit Shonen",
+          "draftCount": 8,
+          "datesCovered": 8,
+          "poolMatched": 26,
+          "totalPicks": 40,
+          "warningCount": 0
+        },
+        {
+          "id": "2917",
+          "name": "Galions",
+          "draftCount": 8,
+          "datesCovered": 8,
+          "poolMatched": 26,
+          "totalPicks": 40,
+          "warningCount": 0
+        },
+        {
+          "id": "2922",
+          "name": "Ici Japon Corp. Esport",
+          "draftCount": 8,
+          "datesCovered": 8,
+          "poolMatched": 28,
+          "totalPicks": 40,
+          "warningCount": 0
+        },
+        {
+          "id": "2920",
+          "name": "Joblife",
+          "draftCount": 8,
+          "datesCovered": 8,
+          "poolMatched": 27,
+          "totalPicks": 40,
+          "warningCount": 0
+        },
+        {
+          "id": "2907",
+          "name": "Karmine Corp Blue",
+          "draftCount": 8,
+          "datesCovered": 8,
+          "poolMatched": 28,
+          "totalPicks": 40,
+          "warningCount": 0
+        },
+        {
+          "id": "2925",
+          "name": "Skillcamp",
+          "draftCount": 8,
+          "datesCovered": 8,
+          "poolMatched": 27,
+          "totalPicks": 40,
+          "warningCount": 0
+        },
+        {
+          "id": "2918",
+          "name": "Solary",
+          "draftCount": 8,
+          "datesCovered": 8,
+          "poolMatched": 30,
+          "totalPicks": 40,
+          "warningCount": 0
+        },
+        {
+          "id": "2926",
+          "name": "TLN Pirates",
+          "draftCount": 8,
+          "datesCovered": 8,
+          "poolMatched": 29,
+          "totalPicks": 40,
+          "warningCount": 0
+        },
+        {
+          "id": "2921",
+          "name": "Vitality.Bee",
+          "draftCount": 8,
+          "datesCovered": 8,
+          "poolMatched": 27,
+          "totalPicks": 40,
+          "warningCount": 0
+        },
+        {
+          "id": "2924",
+          "name": "ZYB Esport",
+          "draftCount": 8,
+          "datesCovered": 8,
+          "poolMatched": 26,
+          "totalPicks": 40,
+          "warningCount": 0
+        }
+      ],
+      "uniqueGameIds": 40,
+      "totalDrafts": 80,
+      "totalDates": 80,
+      "totalPicks": 400,
+      "totalPoolMatched": 274,
+      "elapsedSec": 81.758
+    },
+    "lck": {
+      "id": "lck",
+      "tournamentSlug": "LCK Cup 2026",
+      "teamCount": 10,
+      "teams": [
+        {
+          "id": "2800",
+          "name": "BNK FearX",
+          "draftCount": 33,
+          "datesCovered": 33,
+          "poolMatched": 116,
+          "totalPicks": 165,
+          "warningCount": 0
+        },
+        {
+          "id": "2801",
+          "name": "DN SOOPers",
+          "draftCount": 33,
+          "datesCovered": 33,
+          "poolMatched": 105,
+          "totalPicks": 165,
+          "warningCount": 0
+        },
+        {
+          "id": "2802",
+          "name": "Dplus KIA",
+          "draftCount": 35,
+          "datesCovered": 35,
+          "poolMatched": 116,
+          "totalPicks": 175,
+          "warningCount": 0
+        },
+        {
+          "id": "2804",
+          "name": "Gen.G",
+          "draftCount": 22,
+          "datesCovered": 22,
+          "poolMatched": 74,
+          "totalPicks": 110,
+          "warningCount": 0
+        },
+        {
+          "id": "2808",
+          "name": "HANJIN BRION",
+          "draftCount": 19,
+          "datesCovered": 19,
+          "poolMatched": 62,
+          "totalPicks": 95,
+          "warningCount": 0
+        },
+        {
+          "id": "2805",
+          "name": "Hanwha Life Esports",
+          "draftCount": 14,
+          "datesCovered": 14,
+          "poolMatched": 46,
+          "totalPicks": 70,
+          "warningCount": 0
+        },
+        {
+          "id": "2803",
+          "name": "Kiwoom DRX",
+          "draftCount": 33,
+          "datesCovered": 33,
+          "poolMatched": 112,
+          "totalPicks": 165,
+          "warningCount": 0
+        },
+        {
+          "id": "2806",
+          "name": "KT Rolster",
+          "draftCount": 17,
+          "datesCovered": 17,
+          "poolMatched": 53,
+          "totalPicks": 85,
+          "warningCount": 0
+        },
+        {
+          "id": "2807",
+          "name": "Nongshim RedForce",
+          "draftCount": 21,
+          "datesCovered": 21,
+          "poolMatched": 67,
+          "totalPicks": 105,
+          "warningCount": 0
+        },
+        {
+          "id": "2809",
+          "name": "T1",
+          "draftCount": 23,
+          "datesCovered": 23,
+          "poolMatched": 77,
+          "totalPicks": 115,
+          "warningCount": 0
+        }
+      ],
+      "uniqueGameIds": 125,
+      "totalDrafts": 250,
+      "totalDates": 250,
+      "totalPicks": 1250,
+      "totalPoolMatched": 828,
+      "elapsedSec": 83.899
+    },
+    "lec": {
+      "id": "lec",
+      "tournamentSlug": "LEC 2026 Spring Season",
+      "teamCount": 10,
+      "teams": [
+        {
+          "id": "2896",
+          "name": "Fnatic",
+          "draftCount": 18,
+          "datesCovered": 18,
+          "poolMatched": 55,
+          "totalPicks": 90,
+          "warningCount": 0
+        },
+        {
+          "id": "2897",
+          "name": "G2 Esports",
+          "draftCount": 12,
+          "datesCovered": 12,
+          "poolMatched": 42,
+          "totalPicks": 60,
+          "warningCount": 0
+        },
+        {
+          "id": "2898",
+          "name": "GIANTX",
+          "draftCount": 15,
+          "datesCovered": 15,
+          "poolMatched": 49,
+          "totalPicks": 75,
+          "warningCount": 0
+        },
+        {
+          "id": "2899",
+          "name": "Karmine Corp",
+          "draftCount": 15,
+          "datesCovered": 15,
+          "poolMatched": 49,
+          "totalPicks": 75,
+          "warningCount": 0
+        },
+        {
+          "id": "2900",
+          "name": "Movistar KOI",
+          "draftCount": 12,
+          "datesCovered": 12,
+          "poolMatched": 41,
+          "totalPicks": 60,
+          "warningCount": 0
+        },
+        {
+          "id": "2901",
+          "name": "Natus Vincere",
+          "draftCount": 21,
+          "datesCovered": 21,
+          "poolMatched": 70,
+          "totalPicks": 105,
+          "warningCount": 0
+        },
+        {
+          "id": "2902",
+          "name": "Shifters",
+          "draftCount": 17,
+          "datesCovered": 17,
+          "poolMatched": 50,
+          "totalPicks": 84,
+          "warningCount": 0
+        },
+        {
+          "id": "2903",
+          "name": "SK Gaming",
+          "draftCount": 18,
+          "datesCovered": 18,
+          "poolMatched": 64,
+          "totalPicks": 90,
+          "warningCount": 0
+        },
+        {
+          "id": "2904",
+          "name": "Team Heretics",
+          "draftCount": 16,
+          "datesCovered": 16,
+          "poolMatched": 49,
+          "totalPicks": 80,
+          "warningCount": 0
+        },
+        {
+          "id": "2905",
+          "name": "Team Vitality",
+          "draftCount": 18,
+          "datesCovered": 18,
+          "poolMatched": 63,
+          "totalPicks": 89,
+          "warningCount": 0
+        }
+      ],
+      "uniqueGameIds": 81,
+      "totalDrafts": 162,
+      "totalDates": 162,
+      "totalPicks": 808,
+      "totalPoolMatched": 532,
+      "elapsedSec": 82.836
+    }
+  }
+}

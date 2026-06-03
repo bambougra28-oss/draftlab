@@ -1,0 +1,764 @@
+{
+  "elapsedSec": "7.2",
+  "team": {
+    "id": "2924",
+    "name": "ZYB Esport",
+    "leagueId": "lfl",
+    "tournamentSlug": "LFL 2026 Spring Split",
+    "players": [
+      {
+        "id": "4981",
+        "name": "Wao",
+        "role": 0,
+        "pool": [
+          {
+            "championKey": "68",
+            "displayName": "Rumble",
+            "games": 3,
+            "wins": 2.0010000000000003,
+            "kda": 3.6
+          },
+          {
+            "championKey": "24",
+            "displayName": "Jax",
+            "games": 2,
+            "wins": 1,
+            "kda": 2
+          },
+          {
+            "championKey": "516",
+            "displayName": "Ornn",
+            "games": 1,
+            "wins": 0,
+            "kda": 1.3
+          },
+          {
+            "championKey": "14",
+            "displayName": "Sion",
+            "games": 1,
+            "wins": 0,
+            "kda": 1.2
+          },
+          {
+            "championKey": "2",
+            "displayName": "Olaf",
+            "games": 1,
+            "wins": 0,
+            "kda": 0.7
+          }
+        ],
+        "recordW": 3,
+        "recordL": 5
+      },
+      {
+        "id": "2048",
+        "name": "Manaty",
+        "role": 1,
+        "pool": [
+          {
+            "championKey": "5",
+            "displayName": "Xin Zhao",
+            "games": 4,
+            "wins": 1,
+            "kda": 5.6
+          },
+          {
+            "championKey": "904",
+            "displayName": "Zaahen",
+            "games": 2,
+            "wins": 1,
+            "kda": 3.2
+          },
+          {
+            "championKey": "24",
+            "displayName": "Jax",
+            "games": 1,
+            "wins": 1,
+            "kda": 10.5
+          },
+          {
+            "championKey": "126",
+            "displayName": "Jayce",
+            "games": 1,
+            "wins": 0,
+            "kda": 1.5
+          }
+        ],
+        "recordW": 3,
+        "recordL": 5
+      },
+      {
+        "id": "873",
+        "name": "Nisqy",
+        "role": 2,
+        "pool": [
+          {
+            "championKey": "103",
+            "displayName": "Ahri",
+            "games": 2,
+            "wins": 2,
+            "kda": 6.5
+          },
+          {
+            "championKey": "13",
+            "displayName": "Ryze",
+            "games": 2,
+            "wins": 0,
+            "kda": 0.7
+          },
+          {
+            "championKey": "34",
+            "displayName": "Anivia",
+            "games": 1,
+            "wins": 1,
+            "kda": 0
+          },
+          {
+            "championKey": "112",
+            "displayName": "Viktor",
+            "games": 1,
+            "wins": 0,
+            "kda": 1.4
+          },
+          {
+            "championKey": "3",
+            "displayName": "Galio",
+            "games": 1,
+            "wins": 0,
+            "kda": 3.5
+          },
+          {
+            "championKey": "7",
+            "displayName": "LeBlanc",
+            "games": 1,
+            "wins": 0,
+            "kda": 1.1
+          }
+        ],
+        "recordW": 3,
+        "recordL": 5
+      },
+      {
+        "id": "2678",
+        "name": "Jezu",
+        "role": 3,
+        "pool": [
+          {
+            "championKey": "51",
+            "displayName": "Caitlyn",
+            "games": 2,
+            "wins": 1,
+            "kda": 3.8
+          },
+          {
+            "championKey": "429",
+            "displayName": "Kalista",
+            "games": 2,
+            "wins": 1,
+            "kda": 5
+          },
+          {
+            "championKey": "42",
+            "displayName": "Corki",
+            "games": 1,
+            "wins": 0,
+            "kda": 5
+          },
+          {
+            "championKey": "18",
+            "displayName": "Tristana",
+            "games": 1,
+            "wins": 1,
+            "kda": 5.5
+          },
+          {
+            "championKey": "67",
+            "displayName": "Vayne",
+            "games": 1,
+            "wins": 0,
+            "kda": 4
+          },
+          {
+            "championKey": "145",
+            "displayName": "Kaisa",
+            "games": 1,
+            "wins": 0,
+            "kda": 1
+          }
+        ],
+        "recordW": 3,
+        "recordL": 5
+      },
+      {
+        "id": "6710",
+        "name": "Riippp",
+        "role": 4,
+        "pool": [
+          {
+            "championKey": "111",
+            "displayName": "Nautilus",
+            "games": 4,
+            "wins": 2,
+            "kda": 2.7
+          },
+          {
+            "championKey": "518",
+            "displayName": "Neeko",
+            "games": 2,
+            "wins": 0,
+            "kda": 1.3
+          },
+          {
+            "championKey": "526",
+            "displayName": "Rell",
+            "games": 1,
+            "wins": 0,
+            "kda": 2.3
+          },
+          {
+            "championKey": "60",
+            "displayName": "Elise",
+            "games": 1,
+            "wins": 1,
+            "kda": 2
+          }
+        ],
+        "recordW": 3,
+        "recordL": 5
+      }
+    ],
+    "sideStats": {
+      "blue": {
+        "games": 4,
+        "wins": 2,
+        "winrate": 0.5
+      },
+      "red": {
+        "games": 4,
+        "wins": 1,
+        "winrate": 0.25
+      }
+    },
+    "recentDrafts": [
+      {
+        "gameId": "77034",
+        "playedAt": "2026-04-23T00:00:00.000Z",
+        "date": "2026-04-23T00:00:00.000Z",
+        "vsTeamName": "KCB",
+        "side": "red",
+        "result": "L",
+        "durationSeconds": null,
+        "patch": null,
+        "picks": [
+          {
+            "role": 3,
+            "championKey": "145",
+            "playerId": null
+          },
+          {
+            "role": 1,
+            "championKey": "42",
+            "playerId": null
+          },
+          {
+            "role": 2,
+            "championKey": "498",
+            "playerId": null
+          },
+          {
+            "role": 4,
+            "championKey": "518",
+            "playerId": null
+          },
+          {
+            "role": 0,
+            "championKey": "2",
+            "playerId": null
+          }
+        ],
+        "bans": [
+          {
+            "championKey": "61",
+            "slug": "Orianna",
+            "banOrder": 1
+          },
+          {
+            "championKey": "68",
+            "slug": "Rumble",
+            "banOrder": 2
+          },
+          {
+            "championKey": "80",
+            "slug": "Pantheon",
+            "banOrder": 3
+          },
+          {
+            "championKey": "904",
+            "slug": "Zaahen",
+            "banOrder": 4
+          },
+          {
+            "championKey": "13",
+            "slug": "Ryze",
+            "banOrder": 5
+          }
+        ]
+      },
+      {
+        "gameId": "77029",
+        "playedAt": "2026-04-22T00:00:00.000Z",
+        "date": "2026-04-22T00:00:00.000Z",
+        "vsTeamName": "ES",
+        "side": "blue",
+        "result": "L",
+        "durationSeconds": null,
+        "patch": null,
+        "picks": [
+          {
+            "role": 1,
+            "championKey": "5",
+            "playerId": null
+          },
+          {
+            "role": 3,
+            "championKey": "42",
+            "playerId": null
+          },
+          {
+            "role": 0,
+            "championKey": "804",
+            "playerId": null
+          },
+          {
+            "role": 2,
+            "championKey": "67",
+            "playerId": null
+          },
+          {
+            "role": 4,
+            "championKey": "111",
+            "playerId": null
+          }
+        ],
+        "bans": [
+          {
+            "championKey": "110",
+            "slug": "Varus",
+            "banOrder": 1
+          },
+          {
+            "championKey": "22",
+            "slug": "Ashe",
+            "banOrder": 2
+          },
+          {
+            "championKey": "254",
+            "slug": "Vi",
+            "banOrder": 3
+          },
+          {
+            "championKey": "13",
+            "slug": "Ryze",
+            "banOrder": 4
+          },
+          {
+            "championKey": "24",
+            "slug": "Jax",
+            "banOrder": 5
+          }
+        ]
+      },
+      {
+        "gameId": "76633",
+        "playedAt": "2026-04-17T00:00:00.000Z",
+        "date": "2026-04-17T00:00:00.000Z",
+        "vsTeamName": "Joblife",
+        "side": "blue",
+        "result": "L",
+        "durationSeconds": null,
+        "patch": null,
+        "picks": [
+          {
+            "role": 4,
+            "championKey": "111",
+            "playerId": null
+          },
+          {
+            "role": 3,
+            "championKey": "42",
+            "playerId": null
+          },
+          {
+            "role": 1,
+            "championKey": "799",
+            "playerId": null
+          },
+          {
+            "role": 0,
+            "championKey": "14",
+            "playerId": null
+          },
+          {
+            "role": 2,
+            "championKey": "7",
+            "playerId": null
+          }
+        ],
+        "bans": [
+          {
+            "championKey": "22",
+            "slug": "Ashe",
+            "banOrder": 1
+          },
+          {
+            "championKey": "254",
+            "slug": "Vi",
+            "banOrder": 2
+          },
+          {
+            "championKey": "804",
+            "slug": "Yunara",
+            "banOrder": 3
+          },
+          {
+            "championKey": "126",
+            "slug": "Jayce",
+            "banOrder": 4
+          },
+          {
+            "championKey": "429",
+            "slug": "Kalista",
+            "banOrder": 5
+          }
+        ]
+      },
+      {
+        "gameId": "76627",
+        "playedAt": "2026-04-16T00:00:00.000Z",
+        "date": "2026-04-16T00:00:00.000Z",
+        "vsTeamName": "TLN Pirates",
+        "side": "blue",
+        "result": "W",
+        "durationSeconds": null,
+        "patch": null,
+        "picks": [
+          {
+            "role": 1,
+            "championKey": "904",
+            "playerId": null
+          },
+          {
+            "role": 0,
+            "championKey": "516",
+            "playerId": null
+          },
+          {
+            "role": 3,
+            "championKey": "800",
+            "playerId": null
+          },
+          {
+            "role": 2,
+            "championKey": "103",
+            "playerId": null
+          },
+          {
+            "role": 4,
+            "championKey": "60",
+            "playerId": null
+          }
+        ],
+        "bans": [
+          {
+            "championKey": "59",
+            "slug": "JarvanIV",
+            "banOrder": 1
+          },
+          {
+            "championKey": "34",
+            "slug": "Anivia",
+            "banOrder": 2
+          },
+          {
+            "championKey": "56",
+            "slug": "Nocturne",
+            "banOrder": 3
+          },
+          {
+            "championKey": "68",
+            "slug": "Rumble",
+            "banOrder": 4
+          },
+          {
+            "championKey": "18",
+            "slug": "Tristana",
+            "banOrder": 5
+          }
+        ]
+      },
+      {
+        "gameId": "76622",
+        "playedAt": "2026-04-15T00:00:00.000Z",
+        "date": "2026-04-15T00:00:00.000Z",
+        "vsTeamName": "Galions",
+        "side": "red",
+        "result": "L",
+        "durationSeconds": null,
+        "patch": null,
+        "picks": [
+          {
+            "role": 3,
+            "championKey": "51",
+            "playerId": null
+          },
+          {
+            "role": 0,
+            "championKey": "950",
+            "playerId": null
+          },
+          {
+            "role": 2,
+            "championKey": "62",
+            "playerId": null
+          },
+          {
+            "role": 4,
+            "championKey": "518",
+            "playerId": null
+          },
+          {
+            "role": 1,
+            "championKey": "5",
+            "playerId": null
+          }
+        ],
+        "bans": [
+          {
+            "championKey": "59",
+            "slug": "JarvanIV",
+            "banOrder": 1
+          },
+          {
+            "championKey": "80",
+            "slug": "Pantheon",
+            "banOrder": 2
+          },
+          {
+            "championKey": "56",
+            "slug": "Nocturne",
+            "banOrder": 3
+          },
+          {
+            "championKey": "68",
+            "slug": "Rumble",
+            "banOrder": 4
+          },
+          {
+            "championKey": "3",
+            "slug": "Galio",
+            "banOrder": 5
+          }
+        ]
+      },
+      {
+        "gameId": "76304",
+        "playedAt": "2026-04-10T00:00:00.000Z",
+        "date": "2026-04-10T00:00:00.000Z",
+        "vsTeamName": "Skillcamp",
+        "side": "blue",
+        "result": "W",
+        "durationSeconds": null,
+        "patch": null,
+        "picks": [
+          {
+            "role": 2,
+            "championKey": "103",
+            "playerId": null
+          },
+          {
+            "role": 0,
+            "championKey": "43",
+            "playerId": null
+          },
+          {
+            "role": 1,
+            "championKey": "201",
+            "playerId": null
+          },
+          {
+            "role": 3,
+            "championKey": "429",
+            "playerId": null
+          },
+          {
+            "role": 4,
+            "championKey": "111",
+            "playerId": null
+          }
+        ],
+        "bans": [
+          {
+            "championKey": "22",
+            "slug": "Ashe",
+            "banOrder": 1
+          },
+          {
+            "championKey": "804",
+            "slug": "Yunara",
+            "banOrder": 2
+          },
+          {
+            "championKey": "59",
+            "slug": "JarvanIV",
+            "banOrder": 3
+          },
+          {
+            "championKey": "68",
+            "slug": "Rumble",
+            "banOrder": 4
+          },
+          {
+            "championKey": "24",
+            "slug": "Jax",
+            "banOrder": 5
+          }
+        ]
+      },
+      {
+        "gameId": "76300",
+        "playedAt": "2026-04-09T00:00:00.000Z",
+        "date": "2026-04-09T00:00:00.000Z",
+        "vsTeamName": "VITB",
+        "side": "red",
+        "result": "L",
+        "durationSeconds": null,
+        "patch": null,
+        "picks": [
+          {
+            "role": 2,
+            "championKey": "112",
+            "playerId": null
+          },
+          {
+            "role": 0,
+            "championKey": "804",
+            "playerId": null
+          },
+          {
+            "role": 1,
+            "championKey": "22",
+            "playerId": null
+          },
+          {
+            "role": 3,
+            "championKey": "42",
+            "playerId": null
+          },
+          {
+            "role": 4,
+            "championKey": "526",
+            "playerId": null
+          }
+        ],
+        "bans": [
+          {
+            "championKey": "61",
+            "slug": "Orianna",
+            "banOrder": 1
+          },
+          {
+            "championKey": "80",
+            "slug": "Pantheon",
+            "banOrder": 2
+          },
+          {
+            "championKey": "254",
+            "slug": "Vi",
+            "banOrder": 3
+          },
+          {
+            "championKey": "516",
+            "slug": "Ornn",
+            "banOrder": 4
+          },
+          {
+            "championKey": "5",
+            "slug": "XinZhao",
+            "banOrder": 5
+          }
+        ]
+      },
+      {
+        "gameId": "76296",
+        "playedAt": "2026-04-08T00:00:00.000Z",
+        "date": "2026-04-08T00:00:00.000Z",
+        "vsTeamName": "IJC",
+        "side": "red",
+        "result": "W",
+        "durationSeconds": null,
+        "patch": null,
+        "picks": [
+          {
+            "role": 3,
+            "championKey": "51",
+            "playerId": null
+          },
+          {
+            "role": 1,
+            "championKey": "799",
+            "playerId": null
+          },
+          {
+            "role": 2,
+            "championKey": "56",
+            "playerId": null
+          },
+          {
+            "role": 4,
+            "championKey": "111",
+            "playerId": null
+          },
+          {
+            "role": 0,
+            "championKey": "24",
+            "playerId": null
+          }
+        ],
+        "bans": [
+          {
+            "championKey": "61",
+            "slug": "Orianna",
+            "banOrder": 1
+          },
+          {
+            "championKey": "80",
+            "slug": "Pantheon",
+            "banOrder": 2
+          },
+          {
+            "championKey": "22",
+            "slug": "Ashe",
+            "banOrder": 3
+          },
+          {
+            "championKey": "5",
+            "slug": "XinZhao",
+            "banOrder": 4
+          },
+          {
+            "championKey": "34",
+            "slug": "Anivia",
+            "banOrder": 5
+          }
+        ]
+      }
+    ],
+    "lastSyncedAt": "2026-05-01T14:13:12.634Z",
+    "warnings": []
+  },
+  "diagnostic": {
+    "totalPicks": 40,
+    "poolMatches": 26,
+    "poolMatchRatio": 0.65
+  }
+}

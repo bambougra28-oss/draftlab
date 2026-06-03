@@ -1,0 +1,174 @@
+{
+  "elapsedSec": "7.2",
+  "leagueId": "lec",
+  "team": {
+    "id": "2897",
+    "name": "G2 Esports",
+    "tournamentSlug": "LEC 2026 Spring Season",
+    "playerCount": 5,
+    "draftCount": 12,
+    "datesCovered": 12,
+    "warnings": [],
+    "mappingWarnings": 0,
+    "poolMatchedPicks": 42,
+    "totalPicks": 60,
+    "poolMatchRatio": "0.700",
+    "sideStats": {
+      "blue": {
+        "games": 9,
+        "wins": 6,
+        "winrate": 0.6666666666666666
+      },
+      "red": {
+        "games": 3,
+        "wins": 2,
+        "winrate": 0.6666666666666666
+      }
+    },
+    "playersSummary": [
+      {
+        "name": "Brokenblade",
+        "id": "1310",
+        "role": 0,
+        "poolSize": 9,
+        "topChamp": "KSante",
+        "recordW": 8,
+        "recordL": 4
+      },
+      {
+        "name": "SkewMond",
+        "id": "4946",
+        "role": 1,
+        "poolSize": 8,
+        "topChamp": "Xin Zhao",
+        "recordW": 8,
+        "recordL": 4
+      },
+      {
+        "name": "Caps",
+        "id": "802",
+        "role": 2,
+        "poolSize": 8,
+        "topChamp": "Ahri",
+        "recordW": 8,
+        "recordL": 4
+      },
+      {
+        "name": "Hans Sama",
+        "id": "732",
+        "role": 3,
+        "poolSize": 8,
+        "topChamp": "Ashe",
+        "recordW": 8,
+        "recordL": 4
+      },
+      {
+        "name": "Labrov",
+        "id": "2887",
+        "role": 4,
+        "poolSize": 7,
+        "topChamp": "Seraphine",
+        "recordW": 8,
+        "recordL": 4
+      }
+    ],
+    "recentDraftsSummary": [
+      {
+        "gameId": "76615",
+        "playedAt": "2026-04-20T00:00:00.000Z",
+        "vs": "Shifters",
+        "side": "blue",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "76614",
+        "playedAt": "2026-04-20T00:00:00.000Z",
+        "vs": "Shifters",
+        "side": "blue",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "76606",
+        "playedAt": "2026-04-18T00:00:00.000Z",
+        "vs": "SK Gaming",
+        "side": "blue",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "76605",
+        "playedAt": "2026-04-18T00:00:00.000Z",
+        "vs": "SK Gaming",
+        "side": "red",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "76254",
+        "playedAt": "2026-04-11T00:00:00.000Z",
+        "vs": "VIT",
+        "side": "red",
+        "result": "L",
+        "pickCount": 5
+      },
+      {
+        "gameId": "76253",
+        "playedAt": "2026-04-11T00:00:00.000Z",
+        "vs": "VIT",
+        "side": "red",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "76252",
+        "playedAt": "2026-04-11T00:00:00.000Z",
+        "vs": "VIT",
+        "side": "blue",
+        "result": "L",
+        "pickCount": 5
+      },
+      {
+        "gameId": "76045",
+        "playedAt": "2026-04-05T00:00:00.000Z",
+        "vs": "Fnatic",
+        "side": "blue",
+        "result": "L",
+        "pickCount": 5
+      },
+      {
+        "gameId": "76044",
+        "playedAt": "2026-04-05T00:00:00.000Z",
+        "vs": "Fnatic",
+        "side": "red",
+        "result": "L",
+        "pickCount": 5
+      },
+      {
+        "gameId": "76043",
+        "playedAt": "2026-04-05T00:00:00.000Z",
+        "vs": "Fnatic",
+        "side": "red",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "75885",
+        "playedAt": "2026-04-04T00:00:00.000Z",
+        "vs": "TH",
+        "side": "red",
+        "result": "W",
+        "pickCount": 5
+      },
+      {
+        "gameId": "75884",
+        "playedAt": "2026-04-04T00:00:00.000Z",
+        "vs": "TH",
+        "side": "blue",
+        "result": "W",
+        "pickCount": 5
+      }
+    ]
+  }
+}
