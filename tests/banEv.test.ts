@@ -97,7 +97,7 @@ describe('banEV — expected damage against the field', () => {
         const result = banEV(['c', 'd'], ctx({ fearlessConsumed: new Set(['c']) }));
         expect(result.map((e) => e.championKey)).toEqual(['d', 'c']);
         expect(result[1].ev).toBe(0);
-        expect(result[1].components).toEqual({ takeProbability: 0, damage: 0, structural: 0 });
+        expect(result[1].components).toEqual({ takeProbability: 0, damage: 0, structural: 0, threat: 0 });
         expect(result[1].rationaleFr).toEqual(['Déjà consommé en Fearless — un ban serait gaspillé']);
     });
 
@@ -156,5 +156,56 @@ describe('banEV — expected damage against the field', () => {
         const result = banEV(['c', 'd'], ctx({ upcomingSlotGroups: [] }));
         expect(result.map((e) => e.ev)).toEqual([0, 0]);
         expect(result.map((e) => e.championKey)).toEqual(['c', 'd']);
+    });
+});
+
+describe('banEV — composition regime (phase 2, draft science §E)', () => {
+    // threat-driven: 'z' is never in their tendencies (take 0) but
+    // hard-counters our comp (+3 pp); 'c' is their comfort (take 0.7)
+    // but neutral against our revealed comp.
+    const compositionCtx = ctx({
+        regime: 'composition',
+        threatPp: (key: string) => (key === 'z' ? 3 : 0)
+    });
+
+    it('ranks the comp-counter above the comfort pick, components separated', () => {
+        const result = banEV(['z', 'c'], compositionCtx);
+        expect(result[0].championKey).toBe('z');
+        // plausibility floor 0.3 (take = 0) → ev = 0.3 · 3 = 0.9.
+        expect(result[0].ev).toBeCloseTo(0.9, 10);
+        expect(result[0].components.threat).toBe(3);
+        expect(result[0].components.damage).toBe(0);
+        // 'c': threat 0 → ev 0 despite a 0.7 take probability.
+        expect(result[1].championKey).toBe('c');
+        expect(result[1].ev).toBe(0);
+        expect(result[1].components.takeProbability).toBeCloseTo(0.7, 10);
+    });
+
+    it('plausibility scales with tendency: floor + (1−floor)·take', () => {
+        const threatBoth = ctx({ regime: 'composition', threatPp: () => 2 });
+        const result = banEV(['z', 'c'], threatBoth);
+        // 'c' take 0.7 → (0.3 + 0.7·0.7) · 2 = 1.58 ; 'z' take 0 → 0.3·2 = 0.6.
+        const c = result.find((e) => e.championKey === 'c')!;
+        const z = result.find((e) => e.championKey === 'z')!;
+        expect(c.ev).toBeCloseTo(1.58, 10);
+        expect(z.ev).toBeCloseTo(0.6, 10);
+        expect(result[0].championKey).toBe('c');
+    });
+
+    it('negative threat clamps to 0 (never reward banning what loses to us)', () => {
+        const result = banEV(['z'], ctx({ regime: 'composition', threatPp: () => -5 }));
+        expect(result[0].ev).toBe(0);
+        expect(result[0].components.threat).toBe(-5);
+        expect(result[0].rationaleFr.some((r) => r.includes('Aucune menace'))).toBe(true);
+    });
+
+    it('fearless-consumed still zeroes everything in composition regime', () => {
+        const result = banEV(['z'], ctx({
+            regime: 'composition',
+            threatPp: () => 4,
+            fearlessConsumed: new Set(['z'])
+        }));
+        expect(result[0].ev).toBe(0);
+        expect(result[0].rationaleFr[0]).toContain('Fearless');
     });
 });

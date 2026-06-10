@@ -148,6 +148,39 @@ describe('fitTagPairCells (synthetic)', () => {
     });
 });
 
+describe('fitTagCounterCells / counterThreat (synthetic, ordered)', () => {
+    // Same engineered corpus: blue ENG+CAR beats red BRU+PEL 8/10. The
+    // ORDERED cell 'engage-hard>peel' (mine engage vs their peel) must be
+    // positive, and its mirror 'peel>engage-hard' symmetric negative.
+    it('fits ordered cross-team cells with symmetric mirrors', async () => {
+        const { fitTagCounterCells, counterCellKey } = await import('$lib/estimators/tagPairs');
+        const fit = fitTagCounterCells(corpus, { tagsFile: synthetic, priorN: 10 });
+        // Cross pairs: 2 mine × 2 theirs × 2 perspectives × 10 games = 80 obs.
+        expect(fit.pairObservations).toBe(80);
+        expect(fit.baseline).toBe(0.5);
+        const win = fit.cells.get(counterCellKey('engage-hard', 'peel'))!;
+        // ENG vs PEL from blue's perspective: 10 games, 8 wins → shrink(8,10,.5,10) = .65.
+        expect(win.games).toBe(10);
+        expect(win.residual).toBeCloseTo(0.15, 10);
+        const mirror = fit.cells.get(counterCellKey('peel', 'engage-hard'))!;
+        expect(mirror.residual).toBeCloseTo(-0.15, 10);
+    });
+
+    it('counterThreat sums a candidate’s ordered edges against a revealed comp', async () => {
+        const { fitTagCounterCells, counterThreat } = await import('$lib/estimators/tagPairs');
+        const fit = fitTagCounterCells(corpus, { tagsFile: synthetic, priorN: 10 });
+        // ENG2 shares ENG's engage-hard profile → positive threat vs [BRU, PEL].
+        const report = counterThreat(
+            synthetic.champions.ENG2,
+            [synthetic.champions.BRU, synthetic.champions.PEL],
+            fit
+        );
+        expect(report.threat).toBeGreaterThan(0);
+        expect(report.evidence).toBeGreaterThan(0);
+        expect(report.cells.length).toBeGreaterThan(0);
+    });
+});
+
 describe('pairPrior (synthetic)', () => {
     const fit = fitTagPairCells(corpus, { tagsFile: synthetic, priorN: 10 });
 

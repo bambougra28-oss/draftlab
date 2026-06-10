@@ -142,6 +142,109 @@ export function fitTagPairCells(records: DraftRecord[], options: FitTagPairOptio
     return { cells, baseline, pairObservations, priorN };
 }
 
+/**
+ * Cross-team COUNTER cells (draft-science integration: phase-2 bans target
+ * the revealed composition, so the ban engine needs a data-driven "how hard
+ * does trait X beat trait Y" table). Cells are ORDERED ('mine>theirs'): the
+ * observation unit is one (my champion, their champion) cross pair per
+ * decided game, win = my side won; the residual of 'a>b' is the edge trait a
+ * holds over trait b beyond the corpus baseline.
+ */
+export function counterCellKey(mine: PairTrait, theirs: PairTrait): string {
+    return `${mine}>${theirs}`;
+}
+
+export function fitTagCounterCells(records: DraftRecord[], options: FitTagPairOptions = {}): TagPairFit {
+    const tagsFile = options.tagsFile ?? loadDefaultTags();
+    const priorN = options.priorN ?? 400;
+
+    const tally = new Map<string, { games: number; wins: number }>();
+    let pairObservations = 0;
+    let totalWins = 0;
+
+    for (const record of records) {
+        if (record.winner === undefined) continue;
+        const picksOf = (side: DraftSide) =>
+            record.actions.filter((a) => a.type === 'pick' && a.side === side && a.championKey !== '');
+        const blue = picksOf('blue');
+        const red = picksOf('red');
+        for (const [mineSide, mine, theirs] of [
+            ['blue', blue, red],
+            ['red', red, blue]
+        ] as const) {
+            const won = record.winner === mineSide;
+            for (const my of mine) {
+                const tagMine = tagsFile.champions[my.championKey];
+                if (tagMine === undefined) continue;
+                for (const other of theirs) {
+                    const tagTheirs = tagsFile.champions[other.championKey];
+                    if (tagTheirs === undefined) continue;
+                    pairObservations++;
+                    if (won) totalWins++;
+                    const seen = new Set<string>();
+                    for (const a of traitsOf(tagMine)) {
+                        for (const b of traitsOf(tagTheirs)) {
+                            const key = counterCellKey(a, b);
+                            if (seen.has(key)) continue;
+                            seen.add(key);
+                            const cell = tally.get(key) ?? { games: 0, wins: 0 };
+                            cell.games++;
+                            if (won) cell.wins++;
+                            tally.set(key, cell);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    const baseline = pairObservations === 0 ? 0.5 : totalWins / pairObservations;
+    const cells = new Map<string, TagPairCell>();
+    for (const [key, { games, wins }] of tally) {
+        const posterior = shrinkWinrate(wins, games, baseline, priorN);
+        cells.set(key, { key, games, wins, posterior, residual: posterior.mean - baseline });
+    }
+    return { cells, baseline, pairObservations, priorN };
+}
+
+/**
+ * Threat of `candidate` against a revealed enemy comp: the evidence-weighted
+ * mean of the ordered cells candidate-traits > enemy-traits, summed over the
+ * comp. Positive = the candidate's profile historically beats that comp's
+ * profile — exactly what a phase-2 ban wants to remove.
+ */
+export function counterThreat(
+    candidate: ChampionTag,
+    enemyComp: ChampionTag[],
+    fit: TagPairFit
+): { threat: number; cells: TagPairCell[]; evidence: number } {
+    let weight = 0;
+    let weighted = 0;
+    let evidence = 0;
+    const fired: TagPairCell[] = [];
+    const seen = new Set<string>();
+    for (const enemy of enemyComp) {
+        for (const a of traitsOf(candidate)) {
+            for (const b of traitsOf(enemy)) {
+                const key = counterCellKey(a, b);
+                if (seen.has(key)) continue;
+                seen.add(key);
+                const cell = fit.cells.get(key);
+                if (cell === undefined) continue;
+                fired.push(cell);
+                weight += cell.games;
+                weighted += cell.residual * cell.games;
+                evidence += cell.games;
+            }
+        }
+    }
+    return {
+        threat: weight === 0 ? 0 : weighted / weight,
+        cells: fired.sort((a, b) => Math.abs(b.residual) - Math.abs(a.residual)),
+        evidence
+    };
+}
+
 export interface PairPrior {
     /** Evidence-weighted mean residual of the pair's active cells. */
     residual: number;
