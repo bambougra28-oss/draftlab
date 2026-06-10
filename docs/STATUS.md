@@ -27,16 +27,28 @@ tendances, harnais de backtest et runner de scorecards.
 - ✅ **Concordance gol.gg ⇄ Leaguepedia : 95,2 % critique** (20/21 ; side, vainqueur, bans à 100 % — l'unique écart est un trou de données amont chez gol.gg, détecté par le parser à la capture).
 - ✅ **Premier scorecard réel** (`docs/calibration/scorecard-26.11.md`, walk-forward 337 drafts) : le modèle de tendances **bat la baseline** en pick-in-range@8 (0,318 vs 0,271) ; ban-hit@5 à égalité avec la présence (le banEV complet n'est pas encore branché dans le runner) ; side-only ≈ pile-ou-face sur LCK 2026.
 
+## Verdicts du harnais (scorecard 26.11 + postdiction, 2026-06-10)
+
+| Piste | Verdict | Enseignement |
+|---|---|---|
+| pick-in-range@8 (tendances) | **bat la baseline** (0,318 vs 0,271, IC bootstrap) | premier claim mesuré de l'outil |
+| ban-hit@5 par side (banEV complet) | **loses** (0,94 vs 1,30, 2 itérations pré-enregistrées) | trouvaille structurelle : les ranges de pick ne voient pas la demande contrefactuelle des perma-bans → terme de demande informé par l'historique de bans à ajouter au moteur I1/banEV |
+| Postdiction G1 (statements gameLength d'I3) | **hasard** (48,6 % [45,1 ; 52,2], 759 statements / 774 games) | les poids d'axes posés à la main ne portent pas de signal de fenêtre → calibration des poids contre cette cible mesurable |
+
+Deux rouges honnêtes et un vert : le Summit Gate fonctionne — chaque rouge est
+désormais un problème d'optimisation bien posé avec sa métrique.
+
 ## Ce qui reste
 
 | # | Item | Note |
 |---|---|---|
-| 1 | Brancher le banEV complet (ranges + structurel) dans le corpusRunner et viser « beats » sur ban-hit@5 | prochaine session moteur |
-| 2 | Portes G1/G3/G4 (postdiction win conditions, rejeu Bo5 rétention, étude fog) sur les corpus | scripts à écrire sur le harnais existant |
-| 3 | Recalibrage des configs data-driven (priors N₀, poids ranges/axes) sur le corpus | après #2 |
-| 4 | Smoke navigateur réel (clic-through S1) | `pnpm dev` |
-| 5 | Annotation game-plan ~100 drafts (scoring M4.2/M5.1) | session Alain ~2h |
-| 6 | Secrets Cloudflare + `gh workflow enable deploy.yml` | quand Alain veut déployer |
+| 1 | Terme de demande contrefactuelle (ban-history) dans I1/banEV → re-passer la piste banEV | évolution moteur, cible : « beats » |
+| 2 | Calibrer `DEFAULT_WIN_CONDITION_CONFIG` contre la postdiction G1 | la cible existe (`pnpm` + `scripts/backtest/postdiction.ts`) |
+| 3 | Portes G3/G4 (rejeu Bo5 rétention, étude fog) | scripts sur le harnais existant |
+| 4 | Recalibrage des priors N₀ / poids ranges sur corpus | avec #1-#2 |
+| 5 | Smoke navigateur réel (clic-through S1) | `pnpm dev` |
+| 6 | Annotation game-plan ~100 drafts (scoring M4.2/M5.1) | session Alain ~2h |
+| 7 | Secrets Cloudflare + `gh workflow enable deploy.yml` | quand Alain veut déployer |
 
 ## Step-ups en attente de sign-off
 
