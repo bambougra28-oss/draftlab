@@ -17,6 +17,17 @@
  * the UI is team-anchored, so flipping the ally side re-anchors the stored
  * holder to keep the same team holding it. Every mutation persists via
  * $state.snapshot (reactive proxies cannot be structured-cloned).
+ *
+ * C1 war room (Fearless Bo3/Bo5 only): pools are entered MANUALLY through
+ * one textarea per team (one line per role, champion names comma-separated)
+ * — deliberately the simplest path, since this route has no gol.gg sync of
+ * its own; the raw text persists in localStorage per (series, side). Entries
+ * carry neutral 0/0 stats (posterior = prior mean), so the solver reads pure
+ * DEPTH, not quality. No tendency records exist here either, so
+ * `ctx.wantProbability` stays uninjected and the denial column honestly
+ * renders « non chiffré » (never zeroed). The FS holder of the upcoming game
+ * feeds the solver's side|pick arbitrage; the ExportBar downloads the
+ * one-page re-plan sheet (integrity + remaining pools as notes).
  */
 -->
 <script lang="ts">
@@ -35,11 +46,25 @@
     } from '$lib/storage/series';
     import { listDraftPlans, type DraftPlan } from '$lib/storage/draftPlans';
     import type { FirstSelectionInfo } from '$lib/data/types';
-    import { Role } from '$lib/types';
+    import { ROLES, Role } from '$lib/types';
     import { detectAdversaryPlan } from '$lib/strategic/adversaryPlanDetector';
+    import {
+        mustWinAnalysis,
+        poolIntegrity,
+        seriesValue,
+        type SeriesState,
+        type SeriesValueMemo
+    } from '$lib/strategic/seriesSolver';
+    import { seriesStateFromSeries } from '$lib/intel/opponentIntel';
+    import { parseRoleString, resolveChampionKey } from '$lib/data/normalize';
+    import { championNameByKey } from '$lib/dataDragon/version';
+    import { renderRePlanSheet } from '$lib/exports/prepPack';
+    import type { ChampionPoolEntry } from '$lib/pro/types';
     import ManualDraftPicker from '$lib/components/ManualDraftPicker.svelte';
     import ConsumptionTrackerPanel from '$lib/components/ConsumptionTrackerPanel.svelte';
     import AdversaryPlanEvolution from '$lib/components/AdversaryPlanEvolution.svelte';
+    import WarRoomPanel from '$lib/components/WarRoomPanel.svelte';
+    import ExportBar, { type ExportAction } from '$lib/components/ExportBar.svelte';
     import { ROLE_LABELS } from '$lib/components/ChampionSlot.svelte';
 
     /** SeriesGame + the 2026 First Selection annotation (see module header). */
@@ -55,12 +80,29 @@
     let selectedPlanId = $state('');
     let applyNotes = $state<string[]>([]);
 
+    // ---- C1 war room: manual pool text per side (localStorage-backed) ----
+    let poolTextAlly = $state('');
+    let poolTextEnemy = $state('');
+
     const seriesId = $derived(page.params.id ?? '');
+
+    const poolStorageKey = (id: string, side: 'ally' | 'enemy'): string =>
+        `draftlab:warroom:${id}:${side}`;
 
     $effect(() => {
         const id = seriesId;
-        if (id !== '') void load(id);
+        if (id !== '') {
+            void load(id);
+            poolTextAlly = localStorage.getItem(poolStorageKey(id, 'ally')) ?? '';
+            poolTextEnemy = localStorage.getItem(poolStorageKey(id, 'enemy')) ?? '';
+        }
     });
+
+    function setPoolText(side: 'ally' | 'enemy', text: string): void {
+        if (side === 'ally') poolTextAlly = text;
+        else poolTextEnemy = text;
+        if (seriesId !== '') localStorage.setItem(poolStorageKey(seriesId, side), text);
+    }
 
     onMount(() => {
         void loadPlans();
@@ -270,6 +312,121 @@
     function tabResult(n: number): GameWinner {
         return series?.games.find((g) => g.gameNumber === n)?.result ?? null;
     }
+
+    // ---- C1: Fearless war room (I4 solver) ----
+    interface ParsedPools {
+        pools: Partial<Record<Role, ChampionPoolEntry[]>>;
+        /** Names the champion lookup could not resolve. */
+        unresolved: string[];
+        /** Total resolved entries across the five roles. */
+        count: number;
+    }
+
+    /**
+     * One line per role ("Top : Rumble, Gnar"), names resolved through the
+     * champion lookup. Entries carry neutral 0/0 stats: the solver then reads
+     * pool DEPTH, not quality (manual entry has no winrate evidence).
+     */
+    function parsePoolText(text: string): ParsedPools {
+        const pools: Partial<Record<Role, ChampionPoolEntry[]>> = {};
+        const unresolved: string[] = [];
+        let count = 0;
+        for (const line of text.split('\n')) {
+            const sep = line.indexOf(':');
+            if (sep < 0) continue;
+            const role = parseRoleString(line.slice(0, sep));
+            if (role === undefined) continue;
+            const entries: ChampionPoolEntry[] = pools[role] ?? [];
+            for (const raw of line.slice(sep + 1).split(',')) {
+                const name = raw.trim();
+                if (name === '') continue;
+                const key = resolveChampionKey(name);
+                if (key === undefined) {
+                    unresolved.push(name);
+                } else if (!entries.some((e) => e.championKey === key)) {
+                    entries.push({ championKey: key, games: 0, wins: 0 });
+                    count += 1;
+                }
+            }
+            pools[role] = entries;
+        }
+        return { pools, unresolved, count };
+    }
+
+    const allyParsed = $derived(parsePoolText(poolTextAlly));
+    const enemyParsed = $derived(parsePoolText(poolTextEnemy));
+
+    /** The solver only models the Fearless resource war on Bo3/Bo5. */
+    const warRoomEligible = $derived(
+        series !== null && series.mode === 'fearless' && series.format !== 'bo1'
+    );
+
+    /**
+     * Solver outputs, recomputed when the series or the pools change (never a
+     * hot path — both change on explicit edits). One memo shared between
+     * seriesValue and mustWinAnalysis. No want model on this route →
+     * mustWin's denial column stays null (« non chiffré »).
+     */
+    const warRoom = $derived.by(() => {
+        const s = series;
+        if (s === null || s.mode !== 'fearless' || s.format === 'bo1') return null;
+        if (allyParsed.count === 0 && enemyParsed.count === 0) return null;
+        const state = seriesStateFromSeries(
+            s,
+            { ally: allyParsed.pools, enemy: enemyParsed.pools },
+            fsTeam === 'none' ? undefined : fsTeam
+        );
+        const memo: SeriesValueMemo = new Map();
+        return {
+            state,
+            integrityAlly: poolIntegrity(state, 'ally'),
+            integrityEnemy: poolIntegrity(state, 'enemy'),
+            value: seriesValue(state, {}, memo),
+            mustWin: mustWinAnalysis(state, {}, memo)
+        };
+    });
+
+    /** FR note lines for the re-plan sheet: remaining champions per role. */
+    function remainingPoolNotes(state: SeriesState): string[] {
+        const notes: string[] = [];
+        for (const side of ['ally', 'enemy'] as const) {
+            const label = side === 'ally' ? 'Allié' : 'Adverse';
+            for (const role of ROLES) {
+                const remaining = (state.poolsBySide[side][role] ?? []).filter(
+                    (e) => !state.consumed.has(e.championKey)
+                );
+                if (remaining.length === 0) continue;
+                const names = remaining
+                    .map((e) => championNameByKey(e.championKey) ?? e.championKey)
+                    .join(', ');
+                notes.push(`${label} ${ROLE_LABELS[role]} restants : ${names}`);
+            }
+        }
+        return notes;
+    }
+
+    const replanActions = $derived.by((): ExportAction[] => {
+        const room = warRoom;
+        const s = series;
+        if (room === null || s === null) return [];
+        const slug =
+            s.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'serie';
+        return [
+            {
+                label: 'Feuille re-plan .md',
+                filename: `replan-${slug}-g${room.state.gameNumber}.md`,
+                mime: 'text/markdown;charset=utf-8',
+                build: () =>
+                    renderRePlanSheet({
+                        gameNumber: room.state.gameNumber,
+                        score: room.state.score,
+                        generatedAt: new Date().toLocaleString('fr-FR'),
+                        integrity: { ally: room.integrityAlly, enemy: room.integrityEnemy },
+                        notesFr: remainingPoolNotes(room.state)
+                    })
+            }
+        ];
+    });
 </script>
 
 <svelte:head>
@@ -480,5 +637,62 @@
                 {/if}
             </div>
         </div>
+
+        <!-- C1: Fearless war room (Bo3/Bo5 only) -->
+        {#if warRoomEligible}
+            <section class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+                <h2 class="pb-1 text-[11px] font-semibold tracking-widest text-slate-500 uppercase">
+                    Pools par rôle (saisie manuelle)
+                </h2>
+                <p class="pb-2 text-[11px] text-slate-500">
+                    Une ligne par rôle, champions séparés par des virgules — ex. «&nbsp;Top : Rumble, Gnar&nbsp;».
+                    Sauvegardé localement pour cette série. Sans stats, le solveur lit la
+                    <em>profondeur</em> des pools, pas leur qualité.
+                </p>
+                <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                    {#each [{ side: 'ally' as const, label: series.allyTeam || 'Allié', accent: 'text-blue-400', text: poolTextAlly, parsed: allyParsed }, { side: 'enemy' as const, label: series.enemyTeam || 'Adverse', accent: 'text-red-400', text: poolTextEnemy, parsed: enemyParsed }] as col (col.side)}
+                        <div>
+                            <span class="block pb-1 text-xs font-semibold {col.accent}">
+                                {col.label} — {col.parsed.count} champion{col.parsed.count > 1 ? 's' : ''}
+                            </span>
+                            <textarea
+                                value={col.text}
+                                oninput={(e) => setPoolText(col.side, e.currentTarget.value)}
+                                rows="6"
+                                spellcheck="false"
+                                aria-label="Pools par rôle — {col.label}"
+                                placeholder="Top : Rumble, Gnar&#10;Jungle : Vi, Sejuani&#10;Mid : Ahri&#10;ADC : Xayah, Tristana&#10;Support : Rakan"
+                                class="w-full rounded-md border border-slate-700 bg-slate-800 px-2 py-1.5 font-mono text-xs text-slate-200 placeholder:text-slate-600 focus:border-blue-500 focus:outline-none"
+                            ></textarea>
+                            {#if col.parsed.unresolved.length > 0}
+                                <p class="pt-1 text-[11px] text-amber-400">
+                                    ⚠ Non reconnus : {col.parsed.unresolved.join(', ')}
+                                </p>
+                            {/if}
+                        </div>
+                    {/each}
+                </div>
+            </section>
+
+            {#if warRoom !== null}
+                <WarRoomPanel
+                    integrityAlly={warRoom.integrityAlly}
+                    integrityEnemy={warRoom.integrityEnemy}
+                    series={warRoom.value}
+                    mustWin={warRoom.mustWin}
+                    title="War room — game {warRoom.state.gameNumber} à venir"
+                />
+                <ExportBar
+                    actions={replanActions}
+                    title="Exports — entre les games"
+                    note="Feuille re-plan une page : intégrité des deux pools + champions restants par rôle. Générée au clic depuis l'état affiché."
+                />
+            {:else}
+                <div class="rounded-lg border border-dashed border-slate-800 bg-slate-900/40 p-4 text-xs text-slate-500">
+                    War room : renseignez au moins un pool ci-dessus pour lire l'intégrité des pools, la
+                    valeur de série et l'arbitrage dépenser/garder.
+                </div>
+            {/if}
+        {/if}
     {/if}
 </div>

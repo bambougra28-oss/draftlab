@@ -12,6 +12,11 @@
  *
  * Provenance (DA-V2-4): tags coverage under the game plans, dataset version
  * under the curves; sample drafts carry their illustrative-only caveat.
+ *
+ * C1: the bilateral win-condition graph (I3) reads the same sample/manual
+ * comps as soon as each side has one champion — role-ordered arrays with ''
+ * holes keep the lane indices for the snowball axis; the dataset refinement
+ * of the scaling axis kicks in when both comps are full.
  */
 -->
 <script lang="ts">
@@ -21,7 +26,9 @@
     import { classifyGamePlan } from '$lib/strategic/gamePlanClassifier';
     import { detectRiskMarkers } from '$lib/strategic/riskMarkerDetector';
     import { detectAdversaryPlan } from '$lib/strategic/adversaryPlanDetector';
+    import { analyzeWinConditions } from '$lib/strategic/winConditionGraph';
     import { loadDefaultTags } from '$lib/tags';
+    import WinConditionPanel from '$lib/components/WinConditionPanel.svelte';
     import GamePlanCard from '$lib/components/GamePlanCard.svelte';
     import PowerCurveVisualizer from '$lib/components/PowerCurveVisualizer.svelte';
     import RiskMarkerList from '$lib/components/RiskMarkerList.svelte';
@@ -113,6 +120,15 @@
     const adversaryRead = $derived(
         enemyKeys.length > 0 ? detectAdversaryPlan(enemyKeys, { tagsFile }) : null
     );
+
+    /** I3 bilateral read — role-ordered comps ('' holes keep lane indices). */
+    const winConditionReport = $derived.by(() => {
+        if (allyKeys.length === 0 || enemyKeys.length === 0) return null;
+        return analyzeWinConditions(allyComp, enemyComp, {
+            tagsFile,
+            ...(datasets !== null ? { dataset: datasets.fullDataset } : {})
+        });
+    });
 
     const taggedCount = $derived(Object.keys(tagsFile.champions).length);
 
@@ -231,6 +247,20 @@
     <p class="px-1 text-[10px] text-slate-600">
         Source : tags champions DraftLab — {taggedCount} champions tagués (M4.1).
     </p>
+
+    <!-- Win conditions (I3 bilateral graph) -->
+    {#if winConditionReport !== null}
+        <WinConditionPanel report={winConditionReport} />
+        <p class="px-1 text-[10px] text-slate-600">
+            8 axes de conflit bilatéraux (tags M4.1{datasets !== null
+                ? ' + courbe de puissance observée sur comps complètes'
+                : ''}) — score positif = avantage allié.
+        </p>
+    {:else}
+        <div class="rounded-lg border border-dashed border-slate-800 bg-slate-900/40 p-4 text-xs text-slate-500">
+            Conditions de victoire : il faut au moins un champion de chaque côté.
+        </div>
+    {/if}
 
     <!-- Power curves + risks -->
     <div class="grid grid-cols-1 items-start gap-3 lg:grid-cols-2">

@@ -34,6 +34,7 @@
         { href: '/prototype', label: 'Stratégie' },
         { href: '/plans', label: 'Plans' },
         { href: '/series', label: 'Séries' },
+        { href: '/review', label: 'Revue' },
         { href: '/live', label: 'Live', live: true }
     ];
 

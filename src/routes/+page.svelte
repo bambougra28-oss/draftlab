@@ -16,6 +16,14 @@
  *
  * Provenance badges (DA-V2-4): dataset version/patch under the winrate bar,
  * gol.gg + season on the scouting panels, sample sizes in the score breakdown.
+ *
+ * C1 additions: the win-condition graph reads the current draft as soon as
+ * each side has one champion; syncing team B feeds `buildOpponentIntel` (the
+ * single routes→engines glue) whose tendency table, ranges and ban pages
+ * render below the analyzer; the ExportBar downloads the prep pack (plans
+ * from IndexedDB + intel + win conditions) and the CSV artefacts. The intel
+ * clock is `nowTick` (injected, refreshed at sync) — never read inside the
+ * derived computations.
  */
 -->
 <script lang="ts">
@@ -44,6 +52,22 @@
     import ChampionPicker from '$lib/components/ChampionPicker.svelte';
     import WinrateBar from '$lib/components/WinrateBar.svelte';
     import PoolTierPanel from '$lib/components/PoolTierPanel.svelte';
+    import WinConditionPanel from '$lib/components/WinConditionPanel.svelte';
+    import TendencyPanel, { tendencyBlocksOf } from '$lib/components/TendencyPanel.svelte';
+    import RangePanel from '$lib/components/RangePanel.svelte';
+    import ExportBar, { type ExportAction } from '$lib/components/ExportBar.svelte';
+    import ChampionIcon from '$lib/components/ChampionIcon.svelte';
+    import { analyzeWinConditions } from '$lib/strategic/winConditionGraph';
+    import { buildOpponentIntel } from '$lib/intel/opponentIntel';
+    import { classifyPoolTier } from '$lib/strategic/poolTierClassifier';
+    import { championNameByKey } from '$lib/dataDragon/version';
+    import {
+        exportPoolGridCsv,
+        exportTendenciesCsv,
+        renderPrepPackMarkdown,
+        type PoolGridPlayer
+    } from '$lib/exports/prepPack';
+    import { listDraftPlans, type DraftPlan } from '$lib/storage/draftPlans';
 
     /**
      * gol.gg region code per league id. LEAGUE_REGISTRY carries no such mapping
@@ -95,9 +119,21 @@
     // ---- pool tier panel ----
     let poolTierRole = $state<Role>(Role.Top);
 
+    // ---- saved plans (prep-pack export input) ----
+    let plans = $state<DraftPlan[]>([]);
+
     onMount(() => {
         void loadDatasets();
+        void loadPlans();
     });
+
+    async function loadPlans(): Promise<void> {
+        try {
+            plans = (await listDraftPlans()).sort((a, b) => b.updatedAt - a.updatedAt);
+        } catch {
+            plans = []; // plans are optional export sugar — keep the page alive
+        }
+    }
 
     $effect(() => {
         comfortTags = readComfortTags();
@@ -350,6 +386,92 @@
     const poolTierPlayer = $derived(
         teamA?.players.find((p) => p.role === poolTierRole)?.name ?? null
     );
+
+    // ---- C1: win conditions on the current draft ----
+    /** Role-ordered comps with '' holes — lane indices preserved for I3. */
+    const winConditionReport = $derived.by(() => {
+        const allyComp = allyPicks.map((k) => k ?? '');
+        const enemyComp = enemyPicks.map((k) => k ?? '');
+        if (!allyComp.some((k) => k !== '') || !enemyComp.some((k) => k !== '')) return null;
+        return analyzeWinConditions(
+            allyComp,
+            enemyComp,
+            datasets !== null ? { dataset: datasets.fullDataset } : {}
+        );
+    });
+
+    // ---- C1: opponent intel (team B) ----
+    /** Recomputed on sync only (teamB / nowTick) — the clock is injected. */
+    const intel = $derived.by(() => {
+        if (teamB === null) return null;
+        return buildOpponentIntel(teamB, { now: new Date(nowTick).toISOString() });
+    });
+
+    const intelTendencyBlocks = $derived(intel === null ? [] : tendencyBlocksOf(intel.table));
+
+    // ---- C1: exports (prep pack + CSV) ----
+    const poolGrids = $derived.by((): PoolGridPlayer[] => {
+        if (teamB === null) return [];
+        return teamB.players.map((player) => ({
+            playerName: player.name,
+            roleLabel: ROLE_LABELS[player.role],
+            entries: player.pool.map((entry) => ({
+                championKey: entry.championKey,
+                tier: classifyPoolTier({ games: entry.games }),
+                games: entry.games
+            }))
+        }));
+    });
+
+    function exportSlug(name: string): string {
+        return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'equipe';
+    }
+
+    const exportActions = $derived.by((): ExportAction[] => {
+        const opponent = teamB;
+        const currentIntel = intel;
+        if (opponent === null || currentIntel === null) return [];
+        const slug = exportSlug(opponent.name);
+        return [
+            {
+                label: 'Prep pack .md',
+                filename: `prep-pack-${slug}.md`,
+                mime: 'text/markdown;charset=utf-8',
+                build: () =>
+                    renderPrepPackMarkdown({
+                        header: {
+                            title: `Prep pack — ${opponent.name}`,
+                            opponent: opponent.name,
+                            generatedAt: new Date().toLocaleString('fr-FR')
+                        },
+                        ...(plans.length > 0 ? { plans: $state.snapshot(plans) } : {}),
+                        banPages: currentIntel.banPages.map((page) => ({
+                            rotationLabel: page.rotationLabel,
+                            entries: page.entries.slice(0, 8)
+                        })),
+                        ...(poolGrids.length > 0 ? { poolGrids } : {}),
+                        tendencies: intelTendencyBlocks,
+                        ranges: currentIntel.rangesBySlotGroup.map((range) => ({
+                            slotLabel: range.labelFr,
+                            entries: range.entries.slice(0, 8)
+                        })),
+                        ...(winConditionReport !== null ? { winConditions: winConditionReport } : {})
+                    })
+            },
+            {
+                label: 'Tendances .csv',
+                filename: `tendances-${slug}.csv`,
+                mime: 'text/csv;charset=utf-8',
+                build: () => exportTendenciesCsv(intelTendencyBlocks)
+            },
+            {
+                label: 'Pools .csv',
+                filename: `pools-${slug}.csv`,
+                mime: 'text/csv;charset=utf-8',
+                build: () => exportPoolGridCsv(poolGrids)
+            }
+        ];
+    });
 
     const sideBadge = (side: 'blue' | 'red'): { label: string; cls: string } =>
         side === 'blue'
@@ -630,5 +752,109 @@
                 {/if}
             </div>
         </div>
+
+        <!-- C1: win conditions on the current draft -->
+        {#if winConditionReport !== null}
+            <WinConditionPanel report={winConditionReport} title="Conditions de victoire — draft courante" />
+        {:else}
+            <div class="rounded-lg border border-dashed border-slate-800 bg-slate-900/40 p-4 text-xs text-slate-500">
+                Conditions de victoire : placez au moins un champion de chaque côté pour lire les 8 axes
+                bilatéraux.
+            </div>
+        {/if}
+
+        <!-- C1: opponent intel from team B -->
+        {#if intel !== null && teamB !== null}
+            {#if intel.warnings.length > 0}
+                <details class="rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-xs text-slate-400">
+                    <summary class="cursor-pointer select-none">
+                        Conditions de lecture de l'intel ({intel.warnings.length})
+                    </summary>
+                    <ul class="list-disc space-y-0.5 pt-2 pl-5 text-slate-500">
+                        {#each intel.warnings as warning, i (i)}
+                            <li>{warning}</li>
+                        {/each}
+                    </ul>
+                </details>
+            {/if}
+
+            <div class="grid grid-cols-1 items-start gap-3 xl:grid-cols-2">
+                <TendencyPanel
+                    table={intel.table}
+                    records={intel.records}
+                    title="Tendances — {teamB.name}"
+                />
+                <RangePanel blocks={intel.rangesBySlotGroup} title="Ranges — {teamB.name}" />
+            </div>
+
+            <!-- Ban pages (EV vs the tendency distribution, components separated) -->
+            <section class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+                <h2 class="flex items-center gap-2 pb-2 text-[11px] font-semibold tracking-widest text-slate-500 uppercase">
+                    Pages de bans — {teamB.name}
+                    <span class="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-400 normal-case tracking-normal">
+                        Non calibré
+                    </span>
+                </h2>
+                {#if intel.banPages.length === 0}
+                    <p class="text-xs text-slate-600">
+                        Pas assez de tendances de première rotation pour chiffrer des bans.
+                    </p>
+                {:else}
+                    <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                        {#each intel.banPages as page (page.rotationLabel)}
+                            <div>
+                                <p class="pb-1 text-xs font-semibold text-slate-300">{page.rotationLabel}</p>
+                                <ul class="space-y-1">
+                                    {#each page.entries.slice(0, 6) as entry (entry.championKey)}
+                                        <li class="rounded-md bg-slate-800/40 px-2 py-1.5">
+                                            <div class="flex items-center gap-2">
+                                                <ChampionIcon championKey={entry.championKey} size={22} />
+                                                <span class="text-xs text-slate-200">
+                                                    {championNameByKey(entry.championKey) ?? entry.championKey}
+                                                </span>
+                                                <span class="ml-auto font-mono text-[11px] text-slate-300" title="EV du ban (clé de tri)">
+                                                    EV {entry.ev.toFixed(2).replace('.', ',')}
+                                                </span>
+                                            </div>
+                                            <p class="flex flex-wrap gap-1 pt-1 pl-8">
+                                                <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-400">
+                                                    sortie {Math.round(entry.components.takeProbability * 100)} %
+                                                </span>
+                                                <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-400">
+                                                    si pris −{entry.components.damage.toFixed(1).replace('.', ',')} pp
+                                                </span>
+                                                <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-400">
+                                                    structurel {Math.round(entry.components.structural * 100)} %
+                                                </span>
+                                            </p>
+                                            {#if entry.rationaleFr.length > 0}
+                                                <p class="pt-0.5 pl-8 text-[10px] text-slate-500">
+                                                    {entry.rationaleFr.join(' · ')}
+                                                </p>
+                                            {/if}
+                                        </li>
+                                    {/each}
+                                </ul>
+                            </div>
+                        {/each}
+                    </div>
+                    <p class="pt-2 text-[10px] text-slate-600">
+                        EV = sortie attendue × (dégât de remplacement + valeur structurelle) — composantes
+                        affichées séparément, l'EV n'est qu'une clé de tri.
+                    </p>
+                {/if}
+            </section>
+
+            <ExportBar
+                actions={exportActions}
+                title="Exports — prep pack"
+                note="Contenu généré au clic depuis l'état affiché (plans IndexedDB, intel {teamB.name}, conditions de victoire). Badge « Non calibré » imprimé sur chaque artefact."
+            />
+        {:else}
+            <div class="rounded-lg border border-dashed border-slate-800 bg-slate-900/40 p-4 text-xs text-slate-500">
+                Intel adverse : synchronisez l'Équipe B pour lire ses tendances par rotation, ses ranges par
+                slot, ses pages de bans et exporter le prep pack.
+            </div>
+        {/if}
     {/if}
 </div>

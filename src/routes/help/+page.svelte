@@ -6,6 +6,9 @@
  * (S1: scout → tendances → plans A/B/C → série Fearless → match day), the
  * data sources with their caveats (DA-V2-4 spirit: say where numbers come
  * from), and the badge legend (comfort tags, pool tiers, First Selection).
+ * C1 adds the summit-engine sections: opponent intel, war room, annotated
+ * review and the print/CSV exports, plus the Expérimental/Non calibré badge
+ * doctrine (DA-V2-11).
  */
 -->
 <script lang="ts">
@@ -36,7 +39,13 @@
             id: '/series',
             label: 'Séries',
             mode: 'Prep',
-            desc: 'Séries Bo1/Bo3/Bo5 : saisie game par game, First Selection (règle 2026), suivi de consommation Fearless, application des plans.'
+            desc: 'Séries Bo1/Bo3/Bo5 : saisie game par game, First Selection (règle 2026), suivi de consommation Fearless, application des plans, war room (intégrité des pools, dépenser/garder).'
+        },
+        {
+            id: '/review',
+            label: 'Revue',
+            mode: 'Prep',
+            desc: 'Revue annotée façon moteur d’échecs : chaque décision d’une game (série sauvée ou exemple) graduée en points de win % (?! / ? / ??), « mieux était », leak report.'
         },
         {
             id: '/live',
@@ -127,6 +136,68 @@
                 automatiquement les champions consommés.
             </li>
         </ol>
+    </section>
+
+    <!-- C1: summit engines -->
+    <section class="rounded-lg border border-slate-800 bg-slate-900 p-4">
+        <h2 class="pb-2 text-[11px] font-semibold tracking-widest text-slate-500 uppercase">
+            Intel adverse, war room, revue & exports
+        </h2>
+        <dl class="space-y-2 text-sm">
+            <div>
+                <dt class="font-semibold text-slate-200">Intel adverse (Draft, équipe B synchronisée)</dt>
+                <dd class="text-slate-400">
+                    Tendances conditionnelles par rotation et par side (« 4 des 6 dernières » — des comptes,
+                    jamais des logits), ranges par slot (B1-B3 / P1 / P2-3) avec composantes dépliables —
+                    blanc = choix proches —, et pages de bans : EV = sortie attendue × (dégât + valeur
+                    structurelle), composantes affichées séparément.
+                </dd>
+            </div>
+            <div>
+                <dt class="font-semibold text-slate-200">Conditions de victoire (Draft & Stratégie)</dt>
+                <dd class="text-slate-400">
+                    8 axes de conflit bilatéraux (engage/désengage, dive/peel, poke, split, scaling,
+                    snowball, objectifs, pick) — score positif = avantage allié, composantes auditables par
+                    axe, collision des plans en « vue 27 secondes » et conditions falsifiables (durée de
+                    partie, objectifs).
+                </dd>
+            </div>
+            <div>
+                <dt class="font-semibold text-slate-200">War room (éditeur de série, Fearless Bo3/Bo5)</dt>
+                <dd class="text-slate-400">
+                    Saisissez les pools par rôle (une ligne par rôle) : jauges d'intégrité Monte-Carlo des
+                    deux pools (rôle goulot, sous-minimum), valeur de série, conseil First Selection
+                    (side <em>ou</em> first pick) et table dépenser/garder — Maintenant / Option future /
+                    Net / Déni séparés ; le déni reste « non chiffré » sans modèle de tendances.
+                </dd>
+            </div>
+            <div>
+                <dt class="font-semibold text-slate-200">Revue annotée</dt>
+                <dd class="text-slate-400">
+                    Rejoue une game contre l'oracle navigator : grades larges ?! / ? / ?? (≈ −1/−2/−3 points
+                    de win %), « mieux était X » seulement au-dessus du seuil de confiance, choix quasi
+                    équivalents jamais reprochés, notes (ban gaspillé en Fearless…) et leak report
+                    multi-games.
+                </dd>
+            </div>
+            <div>
+                <dt class="font-semibold text-slate-200">Exports (sans appareil sur scène)</dt>
+                <dd class="text-slate-400">
+                    Prep pack A4 imprimable (.md : plans, pages de bans, pools, tendances, ranges,
+                    conditions de victoire), feuille re-plan une page entre les games (intégrité + pools
+                    restants), tendances et pools en .csv (RFC 4180, prêts pour Sheets). Générés au clic,
+                    téléchargés localement.
+                </dd>
+            </div>
+            <div>
+                <dt class="font-semibold text-slate-200">Badges « Expérimental » / « Non calibré »</dt>
+                <dd class="text-slate-400">
+                    Tout affichage d'un moteur non calibré porte ce badge : poids des ranges, EV de bans,
+                    axes de victoire, solveur de série et oracle de revue sont des défauts de comportement en
+                    attente de calibration — des aides à la décision, pas des oracles.
+                </dd>
+            </div>
+        </dl>
     </section>
 
     <!-- Legend -->
