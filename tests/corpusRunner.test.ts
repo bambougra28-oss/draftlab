@@ -204,19 +204,25 @@ describe('runCorpusScorecard — markdown rendering', () => {
         expect(results.patch).toBe('26.99-test');
     });
 
-    it('publishes exactly the six metric rows, every one next to its baseline', () => {
-        expect(results.entries).toHaveLength(6);
+    it('publishes exactly the seven metric rows, every one next to its baseline', () => {
+        expect(results.entries).toHaveLength(7);
         expect(results.entries.map((e) => e.metric)).toEqual([
             'log loss — issue de partie (side-only vs p=0,5)',
             'Brier — issue de partie (side-only vs p=0,5)',
             'accuracy — issue de partie (side-only vs p=0,5)',
             'pick-in-range@8 — tendances (vs fréquence brute)',
             'ban-hit@5 — bans du train (vs présence)',
-            'ban-hit@5 par side — banEV complet (vs présence)'
+            'ban-hit@5 par side — banEV complet (vs présence)',
+            'ban-hit@2 phase 2 — contre-compo (vs présence)'
         ]);
         for (const entry of results.entries) {
+            // The phase-2 track has zero events in this fixture (no ban2
+            // bans) — its NaN renders as '—' in the card, by design.
+            if (entry.metric.startsWith('ban-hit@2') && results.banEvPhase2.n === 0) continue;
             expect(Number.isNaN(entry.baseline)).toBe(false);
         }
+        expect(results.banEvPhase2.n).toBe(0);
+        expect(markdown).toContain('ban-hit@2 phase 2');
     });
 });
 

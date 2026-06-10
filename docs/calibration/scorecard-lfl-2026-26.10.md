@@ -1,0 +1,31 @@
+# Scorecard corpus — Summit Gate (R9) — Patch 26.10
+
+> Généré le 2026-06-10T19:33:03.024Z par le harnais de backtest (walk-forward par patch, IC bootstrap 95 %).
+
+| Métrique | Valeur | Baseline | Δ (IC 95 %) | Verdict |
+|---|---:|---:|---:|---|
+| log loss — issue de partie (side-only vs p=0,5) | 0.7058 | 0.6931 | +0.0127 [-0.0094, +0.0352] | à égalité (non significatif) |
+| Brier — issue de partie (side-only vs p=0,5) | 0.2561 | 0.25 | +0.0061 [-0.0039, +0.0167] | à égalité (non significatif) |
+| accuracy — issue de partie (side-only vs p=0,5) | 0.4972 | 0.5 | -0.0028 [-0.0698, +0.0698] | à égalité (non significatif) |
+| pick-in-range@8 — tendances (vs fréquence brute) | 0.3525 | 0.2994 | +0.0531 [+0.0268, +0.0782] | bat la baseline |
+| ban-hit@5 — bans du train (vs présence) | 2.0223 | 2.1341 | -0.1117 [-0.2011, -0.0279] | sous la baseline |
+| ban-hit@5 par side — banEV complet (vs présence) | 1.2598 | 1.067 | +0.1927 [+0.1061, +0.2793] | bat la baseline |
+| ban-hit@2 phase 2 — contre-compo (vs présence) | 0.0419 | 0.0223 | +0.0196 [-0.0084, +0.0475] | à égalité (non significatif) |
+
+## Notes
+
+- Corpus : 191 records, 191 avec patch exploitable (0 écartés sans patch plaçable), 9 patchs.
+- Issue de partie : 179 prédictions sur 8 folds (191 games avec vainqueur) ; side-only = winrate blue du train.
+- pick-in-range@8 : 1790 picks scorés sur 8 folds ; range = table de tendances de l’équipe (prior ligue = train complet), champions déjà révélés exclus ; équipe inconnue du train ⇒ miss honnête.
+- ban-hit@5 : 179 games scorées (≥ 1 ban résolu) sur 8 folds ; valeur = bans retrouvés en moyenne par game (0..5).
+- ban-hit@5 par side (banEV) : 358 événements (game × side bannissant) sur 8 folds ; cible = les 5 bans de CE side ; modèle = banEV (P de sortie via ranges de tendances de l'équipe adverse × dégât de remplacement + dommage structurel sur ses paires minées) sur les 30 candidats les plus présents du train ; pools joueurs non disponibles dans ce corpus (terme neutre).
+- ban-hit@2 phase 2 (contre-compo) : 358 événements (game × side avec ≥ 1 ban de phase 2) ; régime composition (draft science §E) : menace = cellules de counter par traits fittées sur le train (tagPairs), cible = les 2 bans de phase 2 de CE side.
+- Reproductibilité : seed 42, 1000 resamples bootstrap, ordre des IC fixe (log loss, Brier, accuracy, pick, ban, banEV-side, banEV-phase2).
+- side-only est lui-même une baseline (verdict M3.5) : il borne ce que tout modèle de draft doit dépasser avant de revendiquer un signal.
+
+## Légende
+
+- **bat la baseline** : l'IC bootstrap 95 % du delta exclut zéro en faveur du modèle.
+- **à égalité (non significatif)** : l'IC traverse zéro — aucune différence défendable à cette taille d'échantillon.
+- **sous la baseline** : l'IC exclut zéro en défaveur du modèle.
+- Honnêteté : cibles fixées après première mesure — aucune cible chiffrée n'est inventée avant d'avoir les baselines (R9).

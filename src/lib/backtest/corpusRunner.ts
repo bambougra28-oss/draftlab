@@ -41,6 +41,8 @@ import { banRotationProfile, rotationOf, type PickRotation } from '$lib/aggregat
 import { mineCombinations, type CombinationAsset } from '$lib/aggregates/combinations';
 import { banEV } from '$lib/strategic/banEv';
 import { predictEnemyRange } from '$lib/strategic/rangeModel';
+import { counterThreat, fitTagCounterCells, type TagPairFit } from '$lib/estimators/tagPairs';
+import { loadDefaultTags } from '$lib/tags';
 import {
     accuracy,
     banHitAtK,
@@ -71,6 +73,15 @@ const PICK_GROUPS_BY_SIDE: Record<DraftSide, PickRotation[]> = {
     blue: ['P1', 'P4-5', 'P8-9'],
     red: ['P2-3', 'P6', 'P7', 'P10']
 };
+
+/** Pick rotations still to come at BAN PHASE 2 time (6 picks revealed). */
+const PHASE2_PICK_GROUPS_BY_SIDE: Record<DraftSide, PickRotation[]> = {
+    blue: ['P8-9'],
+    red: ['P7', 'P10']
+};
+
+/** ban-hit@2: a side has at most two phase-2 bans. */
+const BAN_PHASE2_K = 2;
 
 /** Bootstrap resamples per CI (fixed: the seed is the reproducibility knob). */
 const BOOTSTRAP_ITERATIONS = 1000;
@@ -124,6 +135,8 @@ export interface CorpusScorecardResults {
     banHit: RetrievalTrackResult;
     /** Track 4: per-side ban suggestions from the full banEV engine. */
     banEvSide: RetrievalTrackResult;
+    /** Track 5: phase-2 bans, composition regime (counter the revealed comp). */
+    banEvPhase2: RetrievalTrackResult;
     /** Rows exactly as rendered (value, baseline, CI, verdict). */
     entries: ScorecardEntry[];
 }
@@ -418,6 +431,93 @@ export function runCorpusScorecard(
         outcome: () => true
     });
 
+    // ---- track 5: ban-hit@2 PHASE 2 — composition regime (draft science §E:
+    // phase-2 bans counter the REVEALED comp, not the repertoire). Threat =
+    // ordered tag-counter cells fitted on the train; target = the side's own
+    // phase-2 bans; baseline = the same presence ranking.
+    const tagsFile = loadDefaultTags();
+    const phase2Events: SideBanEvent[] = [];
+    for (const record of usable) {
+        for (const side of ['blue', 'red'] as const) {
+            const bans = record.actions
+                .filter((a) => a.type === 'ban' && a.side === side && a.phase === 'ban2' && a.championKey !== '')
+                .map((a) => a.championKey);
+            if (bans.length === 0) continue;
+            phase2Events.push({ patch: record.patch, record, side, bans });
+        }
+    }
+
+    /** First three picks of a side in true per-team order (revealed at ban 2). */
+    const firstThreePicks = (record: DraftRecord, side: DraftSide): string[] =>
+        record.actions
+            .filter((a) => a.type === 'pick' && a.side === side && a.championKey !== '')
+            .sort((a, b) => a.seq - b.seq)
+            .slice(0, 3)
+            .map((a) => a.championKey);
+
+    interface Phase2Model {
+        records: DraftRecord[];
+        candidates: string[];
+        presence: Map<string, PresenceEntry>;
+        tables: Map<string, TendencyTable>;
+        counterFit: TagPairFit;
+    }
+    const phase2Run = walkForward<SideBanEvent, Phase2Model>(phase2Events, {
+        fit: (train) => {
+            const records = uniqueRecords(train);
+            return {
+                records,
+                candidates: rankByPresence(records).slice(0, BAN_EV_CANDIDATES),
+                presence: computePresence(records),
+                tables: new Map(),
+                counterFit: fitTagCounterCells(records, { tagsFile })
+            };
+        },
+        predict: (model, event) => {
+            const enemySide: DraftSide = event.side === 'blue' ? 'red' : 'blue';
+            const enemyTeam = actingTeam(event.record, enemySide);
+            let table = model.tables.get(enemyTeam);
+            if (table === undefined) {
+                table = buildTendencyTable(model.records, model.records, {
+                    now: options.generatedAt,
+                    team: enemyTeam
+                });
+                model.tables.set(enemyTeam, table);
+            }
+            const ourComp = firstThreePicks(event.record, event.side)
+                .map((key) => tagsFile.champions[key])
+                .filter((tag) => tag !== undefined);
+            const revealed = new Set([
+                ...firstThreePicks(event.record, event.side),
+                ...firstThreePicks(event.record, enemySide)
+            ]);
+            const ranked = banEV(model.candidates, {
+                regime: 'composition',
+                upcomingSlotGroups: PHASE2_PICK_GROUPS_BY_SIDE[enemySide],
+                rangeFor: (slotGroup) =>
+                    predictEnemyRange({
+                        table: table!,
+                        slotGroup,
+                        side: enemySide,
+                        meta: model.presence,
+                        exclude: revealed
+                    }),
+                threatPp: (key) => {
+                    const tag = tagsFile.champions[key];
+                    if (tag === undefined || ourComp.length === 0) return 0;
+                    return counterThreat(tag, ourComp, model.counterFit).threat * 100;
+                }
+            }).map((entry) => entry.championKey);
+            return banHitAtK(ranked, event.bans, BAN_PHASE2_K) / BAN_PHASE2_K;
+        },
+        outcome: () => true
+    });
+    const phase2BaselineRun = walkForward<SideBanEvent, string[]>(phase2Events, {
+        fit: (train) => rankByPresence(uniqueRecords(train)),
+        predict: (ranked, event) => banHitAtK(ranked, event.bans, BAN_PHASE2_K) / BAN_PHASE2_K,
+        outcome: () => true
+    });
+
     // ---- assemble (bootstrap order is part of the determinism contract) ----
     const outcomeDeltas =
         sideOnlyRun.aggregate.n > 0
@@ -431,6 +531,8 @@ export function runCorpusScorecard(
     const banMetric = (pairs: PredictionPair[]): number => BAN_HIT_K * meanP(pairs);
     const banDelta = bootstrap(banModelRun.aggregate.pairs, banBaselineRun.aggregate.pairs, banMetric);
     const banEvDelta = bootstrap(banEvRun.aggregate.pairs, sideBanBaselineRun.aggregate.pairs, banMetric);
+    const banMetric2 = (pairs: PredictionPair[]): number => BAN_PHASE2_K * meanP(pairs);
+    const phase2Delta = bootstrap(phase2Run.aggregate.pairs, phase2BaselineRun.aggregate.pairs, banMetric2);
 
     const outcome: OutcomeTrackResult = {
         n: sideOnlyRun.aggregate.n,
@@ -483,6 +585,14 @@ export function runCorpusScorecard(
     };
     if (banEvDelta !== undefined) banEvSide.delta = banEvDelta;
 
+    const banEvPhase2: RetrievalTrackResult = {
+        n: phase2Run.aggregate.n,
+        foldCount: phase2Run.folds.length,
+        model: banMetric2(phase2Run.aggregate.pairs),
+        baseline: banMetric2(phase2BaselineRun.aggregate.pairs)
+    };
+    if (phase2Delta !== undefined) banEvPhase2.delta = phase2Delta;
+
     const entry = (
         metric: string,
         value: number,
@@ -529,6 +639,13 @@ export function runCorpusScorecard(
             banEvSide.baseline,
             banEvDelta,
             true
+        ),
+        entry(
+            'ban-hit@2 phase 2 — contre-compo (vs présence)',
+            banEvPhase2.model,
+            banEvPhase2.baseline,
+            phase2Delta,
+            true
         )
     ];
 
@@ -547,8 +664,11 @@ export function runCorpusScorecard(
             `(P de sortie via ranges de tendances de l'équipe adverse × dégât de remplacement + ` +
             `dommage structurel sur ses paires minées) sur les ${fmtNote(BAN_EV_CANDIDATES)} ` +
             'candidats les plus présents du train ; pools joueurs non disponibles dans ce corpus (terme neutre).',
+        `ban-hit@2 phase 2 (contre-compo) : ${banEvPhase2.n} événements (game × side avec ≥ 1 ban ` +
+            'de phase 2) ; régime composition (draft science §E) : menace = cellules de counter par ' +
+            'traits fittées sur le train (tagPairs), cible = les 2 bans de phase 2 de CE side.',
         `Reproductibilité : seed ${options.seed}, ${fmtNote(BOOTSTRAP_ITERATIONS)} resamples bootstrap, ` +
-            'ordre des IC fixe (log loss, Brier, accuracy, pick, ban, banEV-side).',
+            'ordre des IC fixe (log loss, Brier, accuracy, pick, ban, banEV-side, banEV-phase2).',
         'side-only est lui-même une baseline (verdict M3.5) : il borne ce que tout ' +
             'modèle de draft doit dépasser avant de revendiquer un signal.'
     ];
@@ -574,6 +694,7 @@ export function runCorpusScorecard(
             pickInRange,
             banHit,
             banEvSide,
+            banEvPhase2,
             entries
         }
     };

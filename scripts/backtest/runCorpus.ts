@@ -124,10 +124,15 @@ if (args.patch !== undefined) runnerOptions.patch = args.patch;
 const { markdown, results } = runCorpusScorecard(records, runnerOptions);
 
 // Patch labels are file-name material — neutralize separators defensively.
+// The corpus basename keys the card too: two leagues ending on the same
+// patch must not overwrite each other (LEC/LFL both close on 26.10).
 const fileSafePatch = results.patch.replace(/[^A-Za-z0-9._-]/g, '_');
+const corpusLabel = (args.recordsPath.split(/[\\/]/).pop() ?? 'corpus')
+    .replace(/\.json$/i, '')
+    .replace(/[^A-Za-z0-9._-]/g, '_');
 const outDir = resolve(repoRoot, 'docs', 'calibration');
 mkdirSync(outDir, { recursive: true });
-const outPath = resolve(outDir, `scorecard-${fileSafePatch}.md`);
+const outPath = resolve(outDir, `scorecard-${corpusLabel}-${fileSafePatch}.md`);
 writeFileSync(outPath, markdown, 'utf8');
 
 console.log(`Scorecard patch ${results.patch} — seed ${results.seed}, ${results.usableRecords}/${results.records} records exploitables (${results.droppedNoPatch} sans patch).`);

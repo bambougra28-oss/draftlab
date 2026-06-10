@@ -1,7 +1,7 @@
 # Calibration — protocole de backtest et scorecards (R3/R9)
 
-> Ce dossier contient les scorecards versionnés par patch
-> (`scorecard-<patch>.md`) produits par le harnais de backtest. C'est la
+> Ce dossier contient les scorecards versionnés par corpus et patch
+> (`scorecard-<corpus>-<patch>.md`) produits par le harnais de backtest. C'est la
 > définition opérationnelle du « Summit Gate » (ARCHITECTURE_V2 §8 R9, S7) :
 > le jour où le scorecard rejoue les drafts tier-1 mieux que toute baseline
 > publique, on y est — et on peut le prouver.
@@ -49,7 +49,9 @@ pnpm backtest -- <records.json> [--seed N] [--generated-at ISO] [--patch X]
 - `--generated-at` (défaut : maintenant) : horodatage injecté ; le runner est
   le seul endroit autorisé à lire l'horloge, la lib est pure.
 - `--patch` (défaut : dernier patch du corpus) : libellé de la carte et
-  suffixe du fichier `scorecard-<patch>.md`.
+  suffixe du fichier `scorecard-<corpus>-<patch>.md` (le préfixe corpus vient
+  du nom du fichier de records — deux ligues finissant sur le même patch ne
+  s'écrasent pas).
 
 Le script (`scripts/backtest/runCorpus.ts`) ne contient aucune logique de
 scoring : tout vit dans la lib pure `src/lib/backtest/corpusRunner.ts`,
