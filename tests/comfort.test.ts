@@ -2,6 +2,14 @@ import { describe, it, expect } from 'vitest';
 import { analyzeDraft, blendedPriorWinrate } from '$lib/engine/analyzer';
 import { buildMockDataset, makeTeam } from '$lib/dataset/mock';
 import { Role, type AnalyzeDraftConfig, type PlayerContext } from '$lib/types';
+import {
+    COMFORT_STORAGE_KEY,
+    clearComfortTags,
+    getComfortTag,
+    readComfortTags,
+    setComfortTag,
+    subscribeComfort
+} from '$lib/comfort';
 
 // Closed-form targets from M2 Ping 2 (baseline 0.51).
 describe('comfort — blendedPriorWinrate (closed form)', () => {
@@ -97,5 +105,120 @@ describe('comfort — integration through analyzeDraft', () => {
         const without = analyzeDraft(dataset, team, team, base).winrate;
         expect(withEmpty).toBeCloseTo(without, 12);
         expect(without).toBeCloseTo(0.5, 10);
+    });
+});
+
+// ---- src/lib/comfort.ts — localStorage-backed comfort tag store ----
+
+/** Minimal in-memory Storage so the store logic runs in Node. */
+function fakeStorage(initial: Record<string, string> = {}): Storage {
+    const map = new Map<string, string>(Object.entries(initial));
+    return {
+        get length() {
+            return map.size;
+        },
+        clear: () => map.clear(),
+        getItem: (key: string) => map.get(key) ?? null,
+        key: (index: number) => [...map.keys()][index] ?? null,
+        removeItem: (key: string) => {
+            map.delete(key);
+        },
+        setItem: (key: string, value: string) => {
+            map.set(key, value);
+        }
+    };
+}
+
+describe('comfort store — defaults (no override)', () => {
+    it('returns "none" without an override or pool signal', () => {
+        expect(getComfortTag('157', { storage: fakeStorage() })).toBe('none');
+    });
+
+    it('derives the default from pool size via POOL_COMFORT_THRESHOLDS', () => {
+        const storage = fakeStorage();
+        // Thresholds from $lib/pro/comfortDefaults: comfort=5, cheese=1.
+        expect(getComfortTag('157', { storage, poolGames: 5 })).toBe('comfort'); // 5 ≥ 5
+        expect(getComfortTag('157', { storage, poolGames: 4 })).toBe('cheese'); // 1 ≤ 4 < 5
+        expect(getComfortTag('157', { storage, poolGames: 1 })).toBe('cheese'); // lower cheese bound
+        expect(getComfortTag('157', { storage, poolGames: 0 })).toBe('unavailable'); // 0 < 1
+    });
+});
+
+describe('comfort store — overrides + persistence', () => {
+    it('round-trips an override and lets it win over the pool default', () => {
+        const storage = fakeStorage();
+        setComfortTag('157', 'cheese', storage);
+        // Pool says comfort (10g ≥ 5) but the explicit override wins.
+        expect(getComfortTag('157', { storage, poolGames: 10 })).toBe('cheese');
+        // Persisted shape: one JSON map under the single storage key.
+        expect(storage.getItem(COMFORT_STORAGE_KEY)).toBe('{"157":"cheese"}');
+    });
+
+    it('setting "none" clears the override and restores the default path', () => {
+        const storage = fakeStorage();
+        setComfortTag('157', 'unavailable', storage);
+        setComfortTag('157', 'none', storage);
+        expect(readComfortTags(storage)).toEqual({});
+        expect(getComfortTag('157', { storage, poolGames: 10 })).toBe('comfort');
+    });
+
+    it('keeps independent champions side by side', () => {
+        const storage = fakeStorage();
+        setComfortTag('157', 'comfort', storage);
+        setComfortTag('103', 'unavailable', storage);
+        expect(readComfortTags(storage)).toEqual({ '157': 'comfort', '103': 'unavailable' });
+    });
+
+    it('clearComfortTags drops every override', () => {
+        const storage = fakeStorage();
+        setComfortTag('157', 'comfort', storage);
+        clearComfortTags(storage);
+        expect(readComfortTags(storage)).toEqual({});
+    });
+});
+
+describe('comfort store — robustness', () => {
+    it('ignores corrupt JSON and unknown stored values', () => {
+        expect(readComfortTags(fakeStorage({ [COMFORT_STORAGE_KEY]: 'not json{{' }))).toEqual({});
+        // 'banana' is not a storable mode; '103' keeps its valid entry.
+        const mixed = fakeStorage({
+            [COMFORT_STORAGE_KEY]: '{"157":"banana","103":"cheese"}'
+        });
+        expect(readComfortTags(mixed)).toEqual({ '103': 'cheese' });
+        // 'none' is never persisted, so a stored 'none' is also dropped.
+        expect(
+            readComfortTags(fakeStorage({ [COMFORT_STORAGE_KEY]: '{"157":"none"}' }))
+        ).toEqual({});
+    });
+
+    it('survives a quota-throwing storage and still notifies', () => {
+        const broken = fakeStorage();
+        broken.setItem = () => {
+            throw new Error('QuotaExceededError');
+        };
+        const seen: string[] = [];
+        const unsubscribe = subscribeComfort((key, mode) => seen.push(`${key}:${mode}`));
+        setComfortTag('157', 'comfort', broken);
+        unsubscribe();
+        expect(seen).toEqual(['157:comfort']);
+    });
+});
+
+describe('comfort store — subscriptions', () => {
+    it('notifies subscribers on every write and stops after unsubscribe', () => {
+        const storage = fakeStorage();
+        const seen: [string, string][] = [];
+        const unsubscribe = subscribeComfort((key, mode) => seen.push([key, mode]));
+
+        setComfortTag('157', 'comfort', storage);
+        setComfortTag('157', 'none', storage);
+        expect(seen).toEqual([
+            ['157', 'comfort'],
+            ['157', 'none']
+        ]);
+
+        unsubscribe();
+        setComfortTag('103', 'cheese', storage);
+        expect(seen).toHaveLength(2); // no notification after unsubscribe
     });
 });
