@@ -8,6 +8,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
     GOLGG_RATE_LIMIT_MS,
+    GolggHttpError,
     fetchTeam,
     fetchWithCache,
     urlTeamDraft,
@@ -114,6 +115,77 @@ describe('fetchWithCache', () => {
         // Not cached → second call refetches, still without throwing.
         expect(await fetchWithCache('https://gol.gg/x/', c)).toBe('big-page');
         expect(transport).toHaveBeenCalledTimes(2);
+    });
+});
+
+describe('fetchWithCache — concurrence (FIFO) et retry 429', () => {
+    it('serializes CONCURRENT callers on the shared limiter: FIFO order, one full slot each', async () => {
+        // Regression for the field bug: syncing team A and team B in parallel
+        // raced the naive read-sleep-write limiter — every caller computed its
+        // wait from the same stale lastAt during the synchronous phase, slept
+        // ZERO times in this fixture and burst the proxy's per-IP 1 req/s
+        // limit (429 cascade). The FIFO chain makes each successor wait one
+        // full slot from its predecessor's stamp: exactly two sleep(1000).
+        // (Transport-side now() readings are NOT asserted: the fake clock
+        // advances instantly inside other callers' sleeps, skewing them —
+        // the limiter stamps, which gate the sends, are what's serialized.)
+        const order: string[] = [];
+        const time = fakeTime();
+        const transport: Transport = async (url) => {
+            order.push(url);
+            return 'v';
+        };
+        const c = ctx(transport, undefined, time);
+
+        await Promise.all([
+            fetchWithCache('https://gol.gg/a/', c),
+            fetchWithCache('https://gol.gg/b/', c),
+            fetchWithCache('https://gol.gg/c/', c)
+        ]);
+
+        expect(order).toEqual(['https://gol.gg/a/', 'https://gol.gg/b/', 'https://gol.gg/c/']);
+        // a fires immediately (lastAt=0 far in the past); b and c each wait
+        // exactly one full rate-limit slot computed from the FRESH stamp.
+        expect(time.sleep.mock.calls).toEqual([[GOLGG_RATE_LIMIT_MS], [GOLGG_RATE_LIMIT_MS]]);
+    });
+
+    it('retries a 429 after the Retry-After delay and succeeds', async () => {
+        const time = fakeTime();
+        let calls = 0;
+        const transport: Transport = async (url) => {
+            calls++;
+            if (calls === 1) {
+                throw new GolggHttpError(`golgg proxy fetch failed: 429 (${url})`, 429, 1500);
+            }
+            return 'recovered';
+        };
+        const c = ctx(transport, memoryStorage(), time);
+
+        expect(await fetchWithCache('https://gol.gg/x/', c)).toBe('recovered');
+        expect(calls).toBe(2);
+        // Backoff = max(retryAfterMs 1500, rate limit 1000) × attempt 1.
+        expect(time.sleep).toHaveBeenCalledWith(1500);
+    });
+
+    it('gives up after MAX retries on a persistent 429 (initial + 3 retries)', async () => {
+        const time = fakeTime();
+        const transport = vi.fn(async (url: string) => {
+            throw new GolggHttpError(`golgg proxy fetch failed: 429 (${url})`, 429, 1000);
+        });
+        const c = ctx(transport, memoryStorage(), time);
+
+        await expect(fetchWithCache('https://gol.gg/x/', c)).rejects.toBeInstanceOf(GolggHttpError);
+        expect(transport).toHaveBeenCalledTimes(4);
+    });
+
+    it('does not retry non-429 failures (single transport call)', async () => {
+        const transport = vi.fn(async (url: string) => {
+            throw new GolggHttpError(`gol.gg fetch failed: 500 (${url})`, 500);
+        });
+        const c = ctx(transport, memoryStorage());
+
+        await expect(fetchWithCache('https://gol.gg/x/', c)).rejects.toThrow('500');
+        expect(transport).toHaveBeenCalledTimes(1);
     });
 });
 

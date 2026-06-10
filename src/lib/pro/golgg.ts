@@ -500,10 +500,34 @@ export function parseTournamentMatchList(html: string): Map<string, string> {
 
 export type Transport = (url: string) => Promise<string>;
 
+/** HTTP failure carrying the status (and Retry-After) for the retry layer. */
+export class GolggHttpError extends Error {
+    readonly status: number;
+    readonly retryAfterMs?: number;
+
+    constructor(message: string, status: number, retryAfterMs?: number) {
+        super(message);
+        this.name = 'GolggHttpError';
+        this.status = status;
+        if (retryAfterMs !== undefined) this.retryAfterMs = retryAfterMs;
+    }
+}
+
+function retryAfterMsOf(res: Response): number | undefined {
+    const seconds = Number.parseFloat(res.headers.get('retry-after') ?? '');
+    return Number.isFinite(seconds) && seconds >= 0 ? Math.round(seconds * 1000) : undefined;
+}
+
 /** Browser default: same-origin hardened proxy (see /api/golgg). */
 export const proxyTransport: Transport = async (url) => {
     const res = await fetch(`/api/golgg?url=${encodeURIComponent(url)}`);
-    if (!res.ok) throw new Error(`golgg proxy fetch failed: ${res.status} (${url})`);
+    if (!res.ok) {
+        throw new GolggHttpError(
+            `golgg proxy fetch failed: ${res.status} (${url})`,
+            res.status,
+            retryAfterMsOf(res)
+        );
+    }
     return res.text();
 };
 
@@ -518,20 +542,52 @@ export const directTransport: Transport = async (url) => {
         headers: { 'user-agent': GOLGG_USER_AGENT, accept: 'text/html' }
     });
     if (res.status >= 300 && res.status < 400) {
-        throw new Error(`gol.gg redirect refused: ${res.status} → ${res.headers.get('location') ?? '?'} (${url})`);
+        throw new GolggHttpError(
+            `gol.gg redirect refused: ${res.status} → ${res.headers.get('location') ?? '?'} (${url})`,
+            res.status
+        );
     }
-    if (!res.ok) throw new Error(`gol.gg fetch failed: ${res.status} (${url})`);
+    if (!res.ok) {
+        throw new GolggHttpError(`gol.gg fetch failed: ${res.status} (${url})`, res.status, retryAfterMsOf(res));
+    }
     return res.text();
 };
 
 // ---- cached, rate-limited fetching ----
 
-/** Mutable token holding the last transport call time (injectable in tests). */
+/**
+ * Mutable token holding the last transport call time (injectable in tests).
+ * `tail` is the FIFO serialization chain: concurrent callers (e.g. syncing
+ * team A and team B in parallel) acquire turns in order, so the 1 s spacing
+ * holds across the UNION of all in-flight fetchers — the naive
+ * read-sleep-write pattern raced and burst the proxy's per-IP limit.
+ */
 export interface GolggRateLimiter {
     lastAt: number;
+    tail?: Promise<void>;
 }
 
 const sharedLimiter: GolggRateLimiter = { lastAt: 0 };
+
+/** 429 responses are retried (Retry-After honored) before giving up. */
+const MAX_429_RETRIES = 3;
+
+/** FIFO turn acquisition: wait for predecessors, then enforce the spacing. */
+async function acquireTurn(ctx: FetchContext): Promise<void> {
+    const previous = ctx.limiter.tail ?? Promise.resolve();
+    let release!: () => void;
+    ctx.limiter.tail = new Promise<void>((resolve) => {
+        release = resolve;
+    });
+    await previous;
+    try {
+        const wait = ctx.limiter.lastAt + GOLGG_RATE_LIMIT_MS - ctx.now();
+        if (wait > 0) await ctx.sleep(wait);
+        ctx.limiter.lastAt = ctx.now();
+    } finally {
+        release();
+    }
+}
 
 export interface GolggFetchOptions {
     transport?: Transport;
@@ -576,19 +632,29 @@ function resolveContext(opts: GolggFetchOptions): FetchContext {
 
 /**
  * URL-keyed 24h cache (TTL lives in $lib/dataset/cache) around the transport,
- * with a 1 s client-side rate limit between actual transport calls. Cache
- * hits don't consume the rate limit.
+ * with a FIFO-serialized 1 s client-side rate limit between actual transport
+ * calls (spacing holds across concurrent fetchers) and a Retry-After-honoring
+ * retry on 429. Cache hits consume neither the rate limit nor a retry.
  */
 export async function fetchWithCache(url: string, ctx: FetchContext): Promise<string> {
     const key = GOLGG_CACHE_PREFIX + url;
     const cached = readCache<string>(key, ctx.now(), ctx.storage);
     if (cached !== null) return cached;
 
-    const wait = ctx.limiter.lastAt + GOLGG_RATE_LIMIT_MS - ctx.now();
-    if (wait > 0) await ctx.sleep(wait);
-    ctx.limiter.lastAt = ctx.now();
+    let html: string;
+    for (let attempt = 0; ; attempt++) {
+        await acquireTurn(ctx);
+        try {
+            html = await ctx.transport(url);
+            break;
+        } catch (error) {
+            const throttled = error instanceof GolggHttpError && error.status === 429;
+            if (!throttled || attempt >= MAX_429_RETRIES) throw error;
+            const backoff = Math.max(error.retryAfterMs ?? 0, GOLGG_RATE_LIMIT_MS) * (attempt + 1);
+            await ctx.sleep(backoff);
+        }
+    }
 
-    const html = await ctx.transport(url);
     writeCache(key, html, ctx.now(), ctx.storage); // quota failure → uncached, fine
     return html;
 }
