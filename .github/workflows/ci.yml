@@ -22,6 +22,9 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           run_install: false
+          # Standalone binary: the runner's default node (20) predates
+          # pnpm 11's engines requirement; setup-node runs after this step.
+          standalone: true
 
       - uses: actions/setup-node@v4
         with:
