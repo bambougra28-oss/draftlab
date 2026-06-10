@@ -5,10 +5,11 @@ freelance / ERL / analyst. Public-data-only (gol.gg, Oracle's Elixir,
 Data Dragon). Game plan classification, adversary plan reading, ban
 priority hierarchy, Fearless first-class.
 
-> **Status:** V1.0-beta — strategic layer (M4–M7) + Plan A/B/C builder
-> + Series with Fearless tracking shipped. ~330 tests, 12/12 risk markers.
-> See `docs/ARCHITECTURE_V1.md` for the full plan and `docs/USER_GUIDE.md`
-> for the coach-facing how-to.
+> **Status:** post-recovery — all M1–M7 logic reconstructed & green
+> (210 tests); UI + gol.gg scraper + M3 runner being rebuilt.
+> See `docs/RECOVERY_HANDOFF.md` for the recovery state and
+> **`docs/ARCHITECTURE_V2.md` for the master plan toward pro-grade**
+> (replaces the lost `ARCHITECTURE_V1.md`).
 
 ## Why DraftLab
 

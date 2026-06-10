@@ -15,6 +15,8 @@ Many were already flagged by the project itself (`docs/unresolved.md`,
 | 6 | **`removeRankBias` on the live dataset.** DraftGap normalises global WR to 50% on load; confirm whether DraftLab must apply it for DraftGap.com parity. | DraftGap source | low (live-only) | to verify |
 | 7 | **Review the 3 `confidence:low` tags** (Mel 800, Yunara 804, Zaahen 904) and promote 154 `confidence:medium` after human review. | unresolved.md / STATUS.md | none | human pass |
 | 8 | **Game-stats page parsing (M2/M3)** for ground-truth role attribution (~31% LFL picks fall back to dataset primary role). | BACKLOG.md | medium | proposed |
+| 9 | **Pool tier thresholds 20/10/3 → 14/5/1.** The reconstructed `poolTierClassifier` uses ≥20/≥10/≥3 effective games, but the surviving research dossier (§2.2, iTero "diminishing returns after 14 stage games") and the journal ("iTero thresholds") indicate the original used **14/5/1**. Realign or, better, recalibrate empirically in the V2 validation harness. Downstream: ban-priority weights consume the tier. | draftlab-frameworks-research.md §2.2 vs `src/lib/strategic/poolTierClassifier.ts` | medium (changes tiers) | proposed (2026-06-10) |
+| 10 | **Enable LCK/LPL/LEC in `LEAGUES`.** The registry ships LFL-only (`enabled: false` elsewhere, "M2.5" marker), yet M3.5 already scraped LCK/LEC/LPL corpora. V2 makes multi-league first-class — enable once the rebuilt data layer passes per-league smoke tests. | `src/lib/pro/types.ts` | low | proposed (2026-06-10) |
 
 ## Robustness tweaks already applied (no behaviour change)
 
