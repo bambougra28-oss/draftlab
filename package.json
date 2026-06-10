@@ -11,7 +11,8 @@
         "lint": "eslint .",
         "test": "vitest run",
         "test:watch": "vitest",
-        "coverage:tags": "node --experimental-strip-types --no-warnings scripts/checkTagCoverage.ts"
+        "coverage:tags": "node --experimental-strip-types --no-warnings scripts/checkTagCoverage.ts",
+        "backtest": "node --experimental-strip-types --no-warnings scripts/backtest/runCorpus.ts"
     },
     "pnpm": {
         "onlyBuiltDependencies": [
