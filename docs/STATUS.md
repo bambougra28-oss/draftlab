@@ -58,7 +58,8 @@ durées et rôles complets)** → 1219 drafts au total.
 | ban-hit@5 par side (banEV répertoire) | loses 0,94/1,30 | loses 1,11/1,20 | **beats** 1,26/1,07 | loses 1,04/1,25 | les ranges de pick ne voient pas la demande contrefactuelle des perma-bans → terme ban-history à ajouter |
 | **ban-hit@2 phase 2 (contre-compo)** | **beats** 0,042/0,016 | **beats** 0,086/0,033 | ties 0,042/0,022 | **beats** 0,080/0,011 (×7,3) | **la nature deux-régimes des bans est validée** : 3 beats + 1 tie, jamais perdant |
 | Postdiction G1 — piste tags | hasard 49,3 % [46,5 ; 52,1] (n=1226) | | | | confirmé sur 4 ligues : les tags ne portent pas le signal de durée |
-| Postdiction G1 — piste **courbes pro** (walk-forward, priors 12/50 pré-enregistrés) | hasard 48,1 % [43,8 ; 52,5] (n=511) | | | | **rouge honnête** : les courbes EB-shrunk aplatissent l'axe (statements « late » 423→72) ; prochaine hypothèse pré-enregistrable : recalibrer `statementMinScore` à l'échelle des courbes, ou le signal durée n'est pas champion-niveau |
+| Postdiction G1 — piste **courbes pro** (walk-forward, priors 12/50 pré-enregistrés) | hasard 48,1 % [43,8 ; 52,5] (n=511) | | | | **rouge honnête** : les courbes EB-shrunk aplatissent l'axe (statements « late » 423→72) — gelée, pas de retuning |
+| Postdiction G1 — piste **compo-niveau** (cellules paires de traits × durée, priorN 200, poids nL·nS/(nL+nS), pré-enregistrée) | **52,1 % [49,1 ; 55,1]** (n=1059) | | | | la PREMIÈRE piste qui penche : 4 ligues ≥ 51 %, deux directions cohérentes — mais IC touche 50 % ET la tranche haute-confiance fait 49,9 % (la magnitude ne prédit pas le hit). Verdict : non significatif. Suite propre : réplication à règle GELÉE sur les corpus 2025 (puissance n≈2400) |
 
 Le Summit Gate fonctionne : chaque rouge est un problème d'optimisation bien
 posé, et la découverte §E (bans phase 2 = contre-compo) est passée de
@@ -72,7 +73,7 @@ overlay compatible M4.3) — le mécanisme #15 est en place, le signal G1 reste
 | # | Item | Note |
 |---|---|---|
 | 1 | Terme de demande contrefactuelle (ban-history) dans I1/banEV **phase 1** → re-passer la piste répertoire | évolution moteur, cible : « beats » (la phase 2 est déjà verte) |
-| 2 | G1 : pré-enregistrer la prochaine hypothèse (seuil de statement à l'échelle des courbes ? signal durée compo-niveau plutôt que champion-niveau ?) | piste courbes mesurée au hasard le 2026-06-10 — pas de fishing, nouvelle règle AVANT nouveau run |
+| 2 | G1 : réplication de la piste compo-niveau à règle GELÉE sur les corpus 2025 (LCK/LEC/LFL/LPL) — 52,1 % à n=1059 demande n≈2400 pour conclure | pull 2025 + re-run, AUCUN paramètre ne bouge ; si ça réplique → gate verte et branchement I3 |
 | 3 | Portes G3/G4 (rejeu Bo5 rétention, étude fog) | scripts sur le harnais existant |
 | 4 | Recalibrage des priors N₀ / poids ranges sur corpus | avec #1-#2 |
 | 5 | Smoke navigateur réel (clic-through S1) | `pnpm dev` |

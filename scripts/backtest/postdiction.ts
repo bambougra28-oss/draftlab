@@ -23,6 +23,22 @@
  * without a patch fall back to tags-only statements by construction). This
  * measures STEP_UP #15 end to end: do observed pro power curves give the
  * scaling axis a falsifiable game-length signal that tags alone do not?
+ * MEASURED 2026-06-10: chance (48.1 % [43.8 ; 52.5], n=511) — kept for
+ * comparability, frozen, no parameter retuning on this track.
+ *
+ * COMP-LEVEL TRACK (pre-registered 2026-06-10 evening, before any result was
+ * read — the hypothesis after both tracks above measured at chance: the
+ * duration signal lives in COMPOSITION INTERACTIONS, not per-champion sums):
+ * same eligibility, same per-corpus length median, same hit rule. For a game
+ * on patch k, `fitCompDurationCells` (trait-pair cells split long/short on
+ * the TRAINING median, priorN 200, all fixed before scoring) is fitted on
+ * the same corpus's records of strictly earlier patches; the game emits ONE
+ * statement: direction = sign of compLateAffinity(blue) − compLateAffinity
+ * (red) ('late' if positive, 'early' if negative, none if 0 — first-patch
+ * and no-patch games are therefore NOT scored on this track: it measures
+ * the model, not a fallback). Published: all scored games, plus the
+ * pre-registered high-confidence slice |diff| STRICTLY ABOVE the per-corpus
+ * median of |diff| (median ties excluded, mirroring the length rule).
  *
  * Run: node --experimental-transform-types --no-warnings scripts/backtest/postdiction.ts \
  *        static/corpus/lck-2026.json static/corpus/lfl-2026.json static/corpus/lec-2026.json \
@@ -85,6 +101,10 @@ const { comparePatches, parsePatch } = (await import(
 const { fitProPowerCurves } = (await import(
     `${libRootHref}/estimators/proPowerCurves.ts`
 )) as ProCurvesModule;
+type CompDurationModule = typeof import('../../src/lib/estimators/compDurationAffinity');
+const { fitCompDurationCells, compLateAffinity } = (await import(
+    `${libRootHref}/estimators/compDurationAffinity.ts`
+)) as CompDurationModule;
 
 // ---- argv -------------------------------------------------------------------
 
@@ -104,13 +124,15 @@ if (inputs.length === 0) {
 
 // ---- scoring ----------------------------------------------------------------
 
-type Track = 'tags' | 'curves';
+type Track = 'tags' | 'curves' | 'comp';
 
 interface ScoredStatement {
     corpus: string;
     track: Track;
     direction: 'early' | 'late';
     hit: boolean;
+    /** Comp track only: |affinity(blue) − affinity(red)| for the confidence slice. */
+    magnitude?: number;
 }
 
 interface CorpusStats {
@@ -122,6 +144,8 @@ interface CorpusStats {
     scored: ScoredStatement[];
     /** Curves track: games whose scaling axis actually consumed a curve. */
     curveActive: number;
+    /** Comp track: games that emitted a (non-zero) affinity statement. */
+    compActive: number;
 }
 
 /** Role-ordered comp [Top..Support] from a side's picks; undefined if incomplete. */
@@ -161,8 +185,13 @@ for (const input of inputs) {
             ? lengths[(lengths.length - 1) / 2]
             : (lengths[lengths.length / 2 - 1] + lengths[lengths.length / 2]) / 2;
 
-    // Walk-forward pro-curve folds: one dataset per distinct scored patch,
-    // fitted on the SAME corpus's records of strictly earlier patches.
+    // Walk-forward folds: one model per distinct scored patch, fitted on the
+    // SAME corpus's records of strictly earlier patches.
+    const trainingFor = (patch: string): DraftRecord[] =>
+        records.filter(
+            (r) =>
+                r.patch !== undefined && parsePatch(r.patch) !== undefined && comparePatches(r.patch, patch) < 0
+        );
     const foldByPatch = new Map<string, Dataset>();
     const foldFor = (patch: string | undefined): Dataset => {
         if (patch === undefined || parsePatch(patch) === undefined) {
@@ -170,14 +199,18 @@ for (const input of inputs) {
         }
         let fold = foldByPatch.get(patch);
         if (fold === undefined) {
-            const training = records.filter(
-                (r) =>
-                    r.patch !== undefined &&
-                    parsePatch(r.patch) !== undefined &&
-                    comparePatches(r.patch, patch) < 0
-            );
-            fold = fitProPowerCurves(training);
+            fold = fitProPowerCurves(trainingFor(patch));
             foldByPatch.set(patch, fold);
+        }
+        return fold;
+    };
+    const compFoldByPatch = new Map<string, ReturnType<typeof fitCompDurationCells>>();
+    const compFoldFor = (patch: string | undefined): ReturnType<typeof fitCompDurationCells> | undefined => {
+        if (patch === undefined || parsePatch(patch) === undefined) return undefined;
+        let fold = compFoldByPatch.get(patch);
+        if (fold === undefined) {
+            fold = fitCompDurationCells(trainingFor(patch));
+            compFoldByPatch.set(patch, fold);
         }
         return fold;
     };
@@ -191,16 +224,20 @@ for (const input of inputs) {
     const scored: ScoredStatement[] = [];
     let withStatement = 0;
     let curveActive = 0;
+    let compActive = 0;
     for (const { record, blue, red } of eligible) {
         const length = record.gameLengthSeconds!;
         if (length === medianSeconds) continue; // pre-registered: median ties excluded
         const isShort = length < medianSeconds;
+        const hitOf = (direction: 'early' | 'late'): boolean => {
+            // Blue's preferred bucket; red winning flips the expectation.
+            const blueWantsShort = direction === 'early';
+            const expectShort = record.winner === 'blue' ? blueWantsShort : !blueWantsShort;
+            return expectShort === isShort;
+        };
         const score = (track: Track, statements: ReturnType<typeof gameLengthStatements>): void => {
             for (const statement of statements) {
-                // Blue's preferred bucket; red winning flips the expectation.
-                const blueWantsShort = statement.direction === 'early';
-                const expectShort = record.winner === 'blue' ? blueWantsShort : !blueWantsShort;
-                scored.push({ corpus: input, track, direction: statement.direction, hit: expectShort === isShort });
+                scored.push({ corpus: input, track, direction: statement.direction, hit: hitOf(statement.direction) });
             }
         };
 
@@ -213,6 +250,23 @@ for (const input of inputs) {
         const scalingAxis = curveReport.axes.find((a) => a.id === 'scaling-differential');
         if (scalingAxis !== undefined && scalingAxis.components.length === 3) curveActive++;
         score('curves', gameLengthStatements(curveReport));
+
+        // Comp track: one sign statement per game, walk-forward affinity diff.
+        const compFold = compFoldFor(record.patch);
+        if (compFold !== undefined && compFold.pairObservations > 0) {
+            const diff = compLateAffinity(blue, compFold).affinity - compLateAffinity(red, compFold).affinity;
+            if (diff !== 0) {
+                compActive++;
+                const direction = diff > 0 ? ('late' as const) : ('early' as const);
+                scored.push({
+                    corpus: input,
+                    track: 'comp',
+                    direction,
+                    hit: hitOf(direction),
+                    magnitude: Math.abs(diff)
+                });
+            }
+        }
     }
 
     allStats.push({
@@ -222,7 +276,8 @@ for (const input of inputs) {
         withStatement,
         medianSeconds,
         scored,
-        curveActive
+        curveActive,
+        compActive
     });
 }
 
@@ -270,17 +325,55 @@ const rows: string[] = [
     '> patchs strictement antérieurs du même corpus. Premier patch et patchs',
     '> absents ⇒ repli tags (mesure du SYSTÈME, pas du sous-ensemble facile).',
     '',
-    ...trackRows('curves')
+    ...trackRows('curves'),
+    '',
+    '## Piste 3 — affinité de durée COMPO-NIVEAU (interactions de paires de traits)',
+    '',
+    '> Hypothèse pré-enregistrée après les pistes 1-2 au hasard : le signal de',
+    '> durée vit dans les INTERACTIONS de la compo. Cellules `fitCompDurationCells`',
+    '> (paires de traits, split long/court sur la médiane du TRAIN, priorN 200,',
+    '> poids nL·nS/(nL+nS) — tout fixé avant scoring), walk-forward par patch ;',
+    "> un statement par game = signe de l'écart d'affinité (bleu − rouge).",
+    '> Premier patch / patch absent / écart nul ⇒ non scoré (mesure du modèle).',
+    '',
+    ...trackRows('comp')
 ];
+
+// Pre-registered high-confidence slice: |diff| strictly above the per-corpus
+// median of |diff| among that corpus's comp statements (ties excluded).
+const compTop: ScoredStatement[] = [];
+for (const stats of allStats) {
+    const comp = stats.scored.filter((x) => x.track === 'comp' && x.magnitude !== undefined);
+    if (comp.length === 0) continue;
+    const mags = comp.map((x) => x.magnitude!).sort((a, b) => a - b);
+    const median =
+        mags.length % 2 === 1 ? mags[(mags.length - 1) / 2] : (mags[mags.length / 2 - 1] + mags[mags.length / 2]) / 2;
+    compTop.push(...comp.filter((x) => x.magnitude! > median));
+}
+rows.push(
+    '',
+    '### Tranche haute-confiance (|écart| strictement au-dessus de la médiane par corpus)',
+    '',
+    '| Tranche | n statements | Taux de réussite | Wilson 95 % | Verdict vs hasard |',
+    '|---|---|---|---|---|',
+    line('TOUS corpus (haute confiance)', compTop),
+    line('— direction early', compTop.filter((s) => s.direction === 'early')),
+    line('— direction late', compTop.filter((s) => s.direction === 'late'))
+);
+for (const stats of allStats) {
+    rows.push(line(`${basename(stats.corpus)} (haute confiance)`, compTop.filter((s) => s.corpus === stats.corpus)));
+}
 rows.push('', '## Couverture', '');
 for (const stats of allStats) {
     const tagScored = stats.scored.filter((x) => x.track === 'tags').length;
     const curveScored = stats.scored.filter((x) => x.track === 'curves').length;
+    const compScored = stats.scored.filter((x) => x.track === 'comp').length;
     rows.push(
         `- ${basename(stats.corpus)} : ${stats.records} records → ${stats.eligible} éligibles ` +
             `(vainqueur + durée + 10 picks rôle-complets) → ${stats.withStatement} avec ≥ 1 statement ` +
             `gameLength (tags) → ${tagScored} statements scorés piste 1, ${curveScored} piste 2 ` +
-            `(${stats.curveActive} games avec courbe active) ; médiane ${(stats.medianSeconds / 60).toFixed(1)} min.`
+            `(${stats.curveActive} games avec courbe active), ${compScored} piste 3 ; ` +
+            `médiane ${(stats.medianSeconds / 60).toFixed(1)} min.`
     );
 }
 rows.push(
