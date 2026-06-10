@@ -14,6 +14,16 @@
  * pooled and per direction. A statement family that cannot beat chance here
  * goes back to the config bench (DA-V2-6), it does not ship as a claim.
  *
+ * PRO-CURVE TRACK (pre-registered 2026-06-10, before any result was read):
+ * same eligibility, same median, same hit rule — the statements are simply
+ * regenerated with `analyzeWinConditions(blue, red, { dataset })` where the
+ * dataset is `fitProPowerCurves` (defaults 12/50, set before scoring) fitted
+ * WALK-FORWARD on the SAME corpus: for a game on patch k, training = records
+ * of patches strictly before k (leak-proof; first-patch games and games
+ * without a patch fall back to tags-only statements by construction). This
+ * measures STEP_UP #15 end to end: do observed pro power curves give the
+ * scaling axis a falsifiable game-length signal that tags alone do not?
+ *
  * Run: node --experimental-transform-types --no-warnings scripts/backtest/postdiction.ts \
  *        static/corpus/lck-2026.json static/corpus/lfl-2026.json static/corpus/lec-2026.json \
  *        [--generated-at ISO] [--out docs/calibration/postdiction-2026.md]
@@ -60,12 +70,21 @@ registerHooks({
 
 type WinConditionsModule = typeof import('../../src/lib/strategic/winConditionGraph');
 type MetricsModule = typeof import('../../src/lib/backtest/metrics');
+type WalkforwardModule = typeof import('../../src/lib/backtest/walkforward');
+type ProCurvesModule = typeof import('../../src/lib/estimators/proPowerCurves');
 type DraftRecord = import('../../src/lib/data/types').DraftRecord;
+type Dataset = import('../../src/lib/types').Dataset;
 
 const { analyzeWinConditions } = (await import(
     `${libRootHref}/strategic/winConditionGraph.ts`
 )) as WinConditionsModule;
 const { wilson95 } = (await import(`${libRootHref}/backtest/metrics.ts`)) as MetricsModule;
+const { comparePatches, parsePatch } = (await import(
+    `${libRootHref}/backtest/walkforward.ts`
+)) as WalkforwardModule;
+const { fitProPowerCurves } = (await import(
+    `${libRootHref}/estimators/proPowerCurves.ts`
+)) as ProCurvesModule;
 
 // ---- argv -------------------------------------------------------------------
 
@@ -85,8 +104,11 @@ if (inputs.length === 0) {
 
 // ---- scoring ----------------------------------------------------------------
 
+type Track = 'tags' | 'curves';
+
 interface ScoredStatement {
     corpus: string;
+    track: Track;
     direction: 'early' | 'late';
     hit: boolean;
 }
@@ -98,6 +120,8 @@ interface CorpusStats {
     withStatement: number;
     medianSeconds: number;
     scored: ScoredStatement[];
+    /** Curves track: games whose scaling axis actually consumed a curve. */
+    curveActive: number;
 }
 
 /** Role-ordered comp [Top..Support] from a side's picks; undefined if incomplete. */
@@ -137,25 +161,58 @@ for (const input of inputs) {
             ? lengths[(lengths.length - 1) / 2]
             : (lengths[lengths.length / 2 - 1] + lengths[lengths.length / 2]) / 2;
 
+    // Walk-forward pro-curve folds: one dataset per distinct scored patch,
+    // fitted on the SAME corpus's records of strictly earlier patches.
+    const foldByPatch = new Map<string, Dataset>();
+    const foldFor = (patch: string | undefined): Dataset => {
+        if (patch === undefined || parsePatch(patch) === undefined) {
+            return { version: 'pro-corpus', date: 'walk-forward', championData: {} };
+        }
+        let fold = foldByPatch.get(patch);
+        if (fold === undefined) {
+            const training = records.filter(
+                (r) =>
+                    r.patch !== undefined &&
+                    parsePatch(r.patch) !== undefined &&
+                    comparePatches(r.patch, patch) < 0
+            );
+            fold = fitProPowerCurves(training);
+            foldByPatch.set(patch, fold);
+        }
+        return fold;
+    };
+
+    const gameLengthStatements = (report: ReturnType<typeof analyzeWinConditions>) =>
+        report.statements.filter(
+            (s): s is (typeof report.statements)[number] & { direction: 'early' | 'late' } =>
+                s.falsifiableVia === 'gameLength' && (s.direction === 'early' || s.direction === 'late')
+        );
+
     const scored: ScoredStatement[] = [];
     let withStatement = 0;
+    let curveActive = 0;
     for (const { record, blue, red } of eligible) {
         const length = record.gameLengthSeconds!;
         if (length === medianSeconds) continue; // pre-registered: median ties excluded
-        const report = analyzeWinConditions(blue, red);
-        const statements = report.statements.filter(
-            (s): s is typeof s & { direction: 'early' | 'late' } =>
-                s.falsifiableVia === 'gameLength' && (s.direction === 'early' || s.direction === 'late')
-        );
-        if (statements.length === 0) continue;
-        withStatement++;
-        for (const statement of statements) {
-            // Blue's preferred bucket; red winning flips the expectation.
-            const blueWantsShort = statement.direction === 'early';
-            const expectShort = record.winner === 'blue' ? blueWantsShort : !blueWantsShort;
-            const isShort = length < medianSeconds;
-            scored.push({ corpus: input, direction: statement.direction, hit: expectShort === isShort });
-        }
+        const isShort = length < medianSeconds;
+        const score = (track: Track, statements: ReturnType<typeof gameLengthStatements>): void => {
+            for (const statement of statements) {
+                // Blue's preferred bucket; red winning flips the expectation.
+                const blueWantsShort = statement.direction === 'early';
+                const expectShort = record.winner === 'blue' ? blueWantsShort : !blueWantsShort;
+                scored.push({ corpus: input, track, direction: statement.direction, hit: expectShort === isShort });
+            }
+        };
+
+        const tagReport = analyzeWinConditions(blue, red);
+        const tagStatements = gameLengthStatements(tagReport);
+        if (tagStatements.length > 0) withStatement++;
+        score('tags', tagStatements);
+
+        const curveReport = analyzeWinConditions(blue, red, { dataset: foldFor(record.patch) });
+        const scalingAxis = curveReport.axes.find((a) => a.id === 'scaling-differential');
+        if (scalingAxis !== undefined && scalingAxis.components.length === 3) curveActive++;
+        score('curves', gameLengthStatements(curveReport));
     }
 
     allStats.push({
@@ -164,7 +221,8 @@ for (const input of inputs) {
         eligible: eligible.length,
         withStatement,
         medianSeconds,
-        scored
+        scored,
+        curveActive
     });
 }
 
@@ -180,28 +238,49 @@ function line(label: string, scored: ScoredStatement[]): string {
     return `| ${label} | ${n} | ${(100 * rate).toFixed(1)} % | [${(100 * ci.lo).toFixed(1)} ; ${(100 * ci.hi).toFixed(1)}] % | ${beats} |`;
 }
 
-const pooled = allStats.flatMap((s) => s.scored);
+const trackRows = (track: Track): string[] => {
+    const pooled = allStats.flatMap((s) => s.scored.filter((x) => x.track === track));
+    const rows = [
+        '| Tranche | n statements | Taux de réussite | Wilson 95 % | Verdict vs hasard |',
+        '|---|---|---|---|---|',
+        line('TOUS corpus', pooled),
+        line('— direction early', pooled.filter((s) => s.direction === 'early')),
+        line('— direction late', pooled.filter((s) => s.direction === 'late'))
+    ];
+    for (const stats of allStats) {
+        rows.push(line(basename(stats.corpus), stats.scored.filter((x) => x.track === track)));
+    }
+    return rows;
+};
+
 const rows: string[] = [
     '# Postdiction G1 — win conditions vs durée réelle des games',
     '',
-    `> Généré : ${generatedAt} · règle pré-enregistrée dans \`scripts/backtest/postdiction.ts\``,
+    `> Généré : ${generatedAt} · règles pré-enregistrées dans \`scripts/backtest/postdiction.ts\``,
     '> (statements `gameLength` early/late du graphe I3, médiane par corpus, baseline 50 %).',
     '',
-    '| Tranche | n statements | Taux de réussite | Wilson 95 % | Verdict vs hasard |',
-    '|---|---|---|---|---|',
-    line('TOUS corpus', pooled),
-    line('— direction early', pooled.filter((s) => s.direction === 'early')),
-    line('— direction late', pooled.filter((s) => s.direction === 'late'))
+    '## Piste 1 — tags seuls (règle originale)',
+    '',
+    ...trackRows('tags'),
+    '',
+    '## Piste 2 — courbes de puissance PRO, walk-forward par patch (STEP_UP #15)',
+    '',
+    '> Mêmes éligibilité, médiane et règle de hit ; statements régénérés avec',
+    '> `fitProPowerCurves` (priors 12/50 fixés avant scoring) entraîné sur les',
+    '> patchs strictement antérieurs du même corpus. Premier patch et patchs',
+    '> absents ⇒ repli tags (mesure du SYSTÈME, pas du sous-ensemble facile).',
+    '',
+    ...trackRows('curves')
 ];
-for (const stats of allStats) {
-    rows.push(line(basename(stats.corpus), stats.scored));
-}
 rows.push('', '## Couverture', '');
 for (const stats of allStats) {
+    const tagScored = stats.scored.filter((x) => x.track === 'tags').length;
+    const curveScored = stats.scored.filter((x) => x.track === 'curves').length;
     rows.push(
         `- ${basename(stats.corpus)} : ${stats.records} records → ${stats.eligible} éligibles ` +
             `(vainqueur + durée + 10 picks rôle-complets) → ${stats.withStatement} avec ≥ 1 statement ` +
-            `gameLength → ${stats.scored.length} statements scorés ; médiane ${(stats.medianSeconds / 60).toFixed(1)} min.`
+            `gameLength (tags) → ${tagScored} statements scorés piste 1, ${curveScored} piste 2 ` +
+            `(${stats.curveActive} games avec courbe active) ; médiane ${(stats.medianSeconds / 60).toFixed(1)} min.`
     );
 }
 rows.push(
