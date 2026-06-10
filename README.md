@@ -69,7 +69,8 @@ The tagline:
 
 ## Setup
 
-Requires Node ≥ 20 and pnpm ≥ 9.
+Requires Node ≥ 22.13 (24 LTS recommended) and pnpm 11 (pinned via
+`packageManager`, resolved by corepack).
 
 ```bash
 pnpm install
