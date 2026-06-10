@@ -47,25 +47,32 @@ moteurs ont bougé — trois branchements mesurés le jour même :
    sans courbe, repli tags-seuls plafonné à confiance `low` (r ≈ 0,006 avec
    la durée réelle — le signal mort à l'origine du G1 hasard).
 
-## Verdicts du harnais (3 ligues, seed 42, 2026-06-10)
+## Verdicts du harnais (4 ligues, seed 42, 2026-06-10)
 
-| Piste | LCK 337 | LEC 246 | LFL 191 | Enseignement |
-|---|---|---|---|---|
-| pick-in-range@8 (tendances) | **beats** 0,318/0,271 | **beats** 0,340/0,290 | **beats** 0,353/0,299 | premier claim mesuré, robuste sur 3 ligues |
-| ban-hit@5 par side (banEV répertoire) | loses 0,94/1,30 | loses 1,11/1,20 | **beats** 1,26/1,07 | les ranges de pick ne voient pas la demande contrefactuelle des perma-bans → terme ban-history à ajouter |
-| **ban-hit@2 phase 2 (contre-compo)** | **beats** 0,042/0,016 | **beats** 0,086/0,033 | ties 0,042/0,022 | **la nature deux-régimes des bans est validée** : ×2,6-2,7 sur LCK/LEC, jamais perdant |
-| Postdiction G1 (statements gameLength) | hasard 48,6 % | — | — | racine traitée par #15 (axe scaling data-primaire) → re-passer la postdiction |
+Corpus étendu le soir même : **LPL 2026 tiré (445 drafts, 100 % résolus,
+durées et rôles complets)** → 1219 drafts au total.
+
+| Piste | LCK 337 | LEC 246 | LFL 191 | LPL 445 | Enseignement |
+|---|---|---|---|---|---|
+| pick-in-range@8 (tendances) | **beats** 0,318/0,271 | **beats** 0,340/0,290 | **beats** 0,353/0,299 | **beats** 0,287/0,252 | premier claim mesuré, robuste sur 4 ligues |
+| ban-hit@5 par side (banEV répertoire) | loses 0,94/1,30 | loses 1,11/1,20 | **beats** 1,26/1,07 | loses 1,04/1,25 | les ranges de pick ne voient pas la demande contrefactuelle des perma-bans → terme ban-history à ajouter |
+| **ban-hit@2 phase 2 (contre-compo)** | **beats** 0,042/0,016 | **beats** 0,086/0,033 | ties 0,042/0,022 | **beats** 0,080/0,011 (×7,3) | **la nature deux-régimes des bans est validée** : 3 beats + 1 tie, jamais perdant |
+| Postdiction G1 — piste tags | hasard 49,3 % [46,5 ; 52,1] (n=1226) | | | | confirmé sur 4 ligues : les tags ne portent pas le signal de durée |
+| Postdiction G1 — piste **courbes pro** (walk-forward, priors 12/50 pré-enregistrés) | hasard 48,1 % [43,8 ; 52,5] (n=511) | | | | **rouge honnête** : les courbes EB-shrunk aplatissent l'axe (statements « late » 423→72) ; prochaine hypothèse pré-enregistrable : recalibrer `statementMinScore` à l'échelle des courbes, ou le signal durée n'est pas champion-niveau |
 
 Le Summit Gate fonctionne : chaque rouge est un problème d'optimisation bien
 posé, et la découverte §E (bans phase 2 = contre-compo) est passée de
-l'observation au moteur validé en une journée.
+l'observation au moteur validé en une journée. Les courbes de puissance PRO
+existent désormais comme module (`$lib/estimators/proPowerCurves`, Dataset
+overlay compatible M4.3) — le mécanisme #15 est en place, le signal G1 reste
+à trouver.
 
 ## Ce qui reste
 
 | # | Item | Note |
 |---|---|---|
 | 1 | Terme de demande contrefactuelle (ban-history) dans I1/banEV **phase 1** → re-passer la piste répertoire | évolution moteur, cible : « beats » (la phase 2 est déjà verte) |
-| 2 | Re-passer la postdiction G1 maintenant que l'axe scaling est data-primaire (#15 appliqué) | `scripts/backtest/postdiction.ts` — cible : sortir du hasard |
+| 2 | G1 : pré-enregistrer la prochaine hypothèse (seuil de statement à l'échelle des courbes ? signal durée compo-niveau plutôt que champion-niveau ?) | piste courbes mesurée au hasard le 2026-06-10 — pas de fishing, nouvelle règle AVANT nouveau run |
 | 3 | Portes G3/G4 (rejeu Bo5 rétention, étude fog) | scripts sur le harnais existant |
 | 4 | Recalibrage des priors N₀ / poids ranges sur corpus | avec #1-#2 |
 | 5 | Smoke navigateur réel (clic-through S1) | `pnpm dev` |
