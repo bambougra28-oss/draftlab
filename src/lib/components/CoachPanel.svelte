@@ -38,9 +38,13 @@
     const mismatches = $derived(roleReads === null ? [] : roleReads.reads.filter((r) => r.mismatch));
 </script>
 
-<section class="rounded-xl border border-slate-800 bg-slate-900 p-4">
+<section class="panel panel-gold p-4">
     <header class="mb-3 flex flex-wrap items-center gap-2">
-        <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-300">{title}</h2>
+        <h2
+            class="bg-gradient-to-b from-gold-200 to-gold-500 bg-clip-text text-sm font-bold tracking-[0.14em] text-transparent uppercase"
+        >
+            {title}
+        </h2>
         <span class="rounded bg-amber-900/60 px-1.5 py-0.5 text-[10px] font-medium text-amber-300">
             Expérimental — non calibré
         </span>
@@ -60,10 +64,19 @@
         {#if advice.turn !== null && advice.turn.isOurs && advice.candidates.length > 0}
             <ol class="mt-3 space-y-2">
                 {#each advice.candidates.slice(0, 3) as candidate, index (candidate.championKey)}
-                    <li class="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
+                    <li
+                        class="animate-fade-up rounded-lg border p-3 {index === 0
+                            ? 'border-gold-700/40 bg-gradient-to-r from-gold-500/8 to-transparent'
+                            : 'border-slate-800 bg-slate-950/60'}"
+                        style="animation-delay: {index * 60}ms"
+                    >
                         <div class="flex items-center gap-3">
-                            <span class="w-5 text-center text-sm font-bold text-slate-500">{index + 1}</span>
-                            <ChampionIcon championKey={candidate.championKey} size={40} ring={index === 0 ? 'blue' : 'none'} />
+                            <span
+                                class="w-5 text-center text-sm font-bold {index === 0
+                                    ? 'text-gold-400'
+                                    : 'text-slate-500'}">{index + 1}</span
+                            >
+                            <ChampionIcon championKey={candidate.championKey} size={40} ring={index === 0 ? 'gold' : 'none'} />
                             <div class="min-w-0 flex-1">
                                 <div class="flex flex-wrap items-baseline gap-2">
                                     <span class="font-semibold text-slate-100">{nameOf(candidate.championKey)}</span>

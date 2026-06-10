@@ -16,9 +16,13 @@
     let { children }: LayoutProps = $props();
 </script>
 
-<div class="min-h-screen bg-slate-950 text-slate-200">
-    <AppNav currentPath={page.url.pathname} />
-    <main class="mx-auto max-w-[1700px] p-4">
-        {@render children()}
-    </main>
+<div class="relative min-h-screen bg-abyss-950 text-slate-200">
+    <!-- Ambiance fixe : vignette abysse + lueurs or/arcane aux coins. -->
+    <div class="app-backdrop pointer-events-none fixed inset-0" aria-hidden="true"></div>
+    <div class="relative">
+        <AppNav currentPath={page.url.pathname} />
+        <main class="mx-auto max-w-[1700px] p-4">
+            {@render children()}
+        </main>
+    </div>
 </div>

@@ -48,22 +48,31 @@
         const active = isActive(route);
         if (route.live) {
             return active
-                ? 'bg-amber-500/15 text-amber-300'
-                : 'text-amber-400/80 hover:bg-amber-500/10 hover:text-amber-300';
+                ? 'border-amber-400/60 bg-amber-500/10 text-amber-300'
+                : 'border-transparent text-amber-400/80 hover:bg-amber-500/10 hover:text-amber-300';
         }
-        return active ? 'bg-slate-800 text-white' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200';
+        return active
+            ? 'border-gold-500/70 bg-gold-500/10 text-gold-200'
+            : 'border-transparent text-slate-400 hover:bg-slate-800/60 hover:text-slate-200';
     }
 </script>
 
-<nav class="flex items-center gap-1 border-b border-slate-800 bg-slate-950 px-4 py-2">
-    <a href="/" class="mr-4 text-sm font-bold tracking-wide text-slate-100">
-        Draft<span class="text-blue-400">Lab</span>
+<nav
+    class="sticky top-0 z-40 flex items-center gap-1 border-b border-gold-700/25 bg-abyss-950/85 px-4 py-2 backdrop-blur-md"
+>
+    <a href="/" class="group mr-5 flex items-baseline gap-0.5 select-none">
+        <span class="text-sm font-black tracking-[0.22em] text-slate-100 uppercase">Draft</span>
+        <span
+            class="bg-gradient-to-b from-gold-200 to-gold-500 bg-clip-text text-sm font-black tracking-[0.22em] text-transparent uppercase"
+        >
+            Lab
+        </span>
     </a>
 
     {#each ROUTES as route (route.href)}
         <a
             href={route.href}
-            class="rounded-md px-3 py-1.5 text-sm font-medium transition-colors {linkClass(route)}"
+            class="rounded-md border-b-2 px-3 py-1.5 text-sm font-medium transition-colors {linkClass(route)}"
             aria-current={isActive(route) ? 'page' : undefined}
         >
             {route.label}

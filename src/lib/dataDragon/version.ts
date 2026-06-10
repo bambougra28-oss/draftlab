@@ -133,3 +133,17 @@ export function championIconUrl(
     if (id === undefined) return null;
     return `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${id}.png`;
 }
+
+/**
+ * Tall loading-screen art (308×560) for a numeric key — the immersive slot
+ * backgrounds. The loading path is NOT patch-versioned on the CDN, so no
+ * version resolution is needed.
+ */
+export function championLoadingUrl(
+    championKey: string,
+    tagsFile: ChampionTagsFile = loadDefaultTags()
+): string | null {
+    const id = championIdByKey(championKey, tagsFile);
+    if (id === undefined) return null;
+    return `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${id}_0.jpg`;
+}

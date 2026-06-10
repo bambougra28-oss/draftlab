@@ -681,7 +681,12 @@
             <!-- Ally column -->
             <section class="space-y-2 xl:col-span-3">
                 <div class="flex items-center justify-between px-1">
-                    <p class="flex items-center gap-2 text-[11px] font-semibold tracking-widest text-slate-400 uppercase">
+                    <p class="flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] uppercase {allySide === 'blue' ? 'text-blue-300' : 'text-red-300'}">
+                        <span
+                            class="inline-block h-1.5 w-1.5 animate-pulse-glow rounded-full {allySide === 'blue'
+                                ? 'bg-blue-400 shadow-[0_0_8px_rgb(96_165_250)]'
+                                : 'bg-red-400 shadow-[0_0_8px_rgb(248_113_113)]'}"
+                        ></span>
                         Allié
                         <span class="rounded-full px-2 py-0.5 text-[10px] font-bold {sideBadge(allySide).cls}">
                             {sideBadge(allySide).label}
@@ -753,7 +758,9 @@
                         />
                     </div>
                 {:else}
-                    <div class="rounded-lg border border-dashed border-slate-800 bg-slate-900/40 p-6 text-center text-sm text-slate-500">
+                    <div
+                        class="rounded-xl border border-dashed border-gold-700/30 bg-abyss-900/40 p-6 text-center text-sm text-slate-500"
+                    >
                         Cliquez sur un slot (allié ou adverse) pour choisir un champion.
                     </div>
                 {/if}
@@ -762,7 +769,12 @@
             <!-- Enemy column -->
             <section class="space-y-2 xl:col-span-3">
                 <div class="flex items-center justify-between px-1">
-                    <p class="flex items-center gap-2 text-[11px] font-semibold tracking-widest text-slate-400 uppercase">
+                    <p class="flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] uppercase {enemySide === 'blue' ? 'text-blue-300' : 'text-red-300'}">
+                        <span
+                            class="inline-block h-1.5 w-1.5 rounded-full {enemySide === 'blue'
+                                ? 'bg-blue-400 shadow-[0_0_8px_rgb(96_165_250)]'
+                                : 'bg-red-400 shadow-[0_0_8px_rgb(248_113_113)]'}"
+                        ></span>
                         Adverse
                         <span class="rounded-full px-2 py-0.5 text-[10px] font-bold {sideBadge(enemySide).cls}">
                             {sideBadge(enemySide).label}
@@ -811,10 +823,8 @@
             </div>
 
             {#if breakdown !== null}
-                <section class="rounded-lg border border-slate-800 bg-slate-900 p-3">
-                    <p class="pb-2 text-[11px] font-semibold tracking-widest text-slate-500 uppercase">
-                        Détail du score (Elo)
-                    </p>
+                <section class="panel p-3">
+                    <p class="panel-title pb-2">Détail du score (Elo)</p>
                     <dl class="space-y-1 text-sm">
                         <div class="flex justify-between">
                             <dt class="text-slate-400">Champions (solo)</dt>
@@ -897,7 +907,7 @@
         />
 
         <!-- Corpus pro embarqué (Leaguepedia → IndexedDB) -->
-        <div class="rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-xs text-slate-400">
+        <div class="panel p-3 text-xs text-slate-400">
             <div class="flex flex-wrap items-center gap-2">
                 <span class="font-semibold uppercase tracking-wide text-slate-300">Corpus pro</span>
                 {#if corpusStatuses.length > 0}
@@ -967,8 +977,8 @@
             </div>
 
             <!-- Ban pages (EV vs the tendency distribution, components separated) -->
-            <section class="rounded-lg border border-slate-800 bg-slate-900 p-3">
-                <h2 class="flex items-center gap-2 pb-2 text-[11px] font-semibold tracking-widest text-slate-500 uppercase">
+            <section class="panel p-3">
+                <h2 class="panel-title flex items-center gap-2 pb-2">
                     Pages de bans — {teamB.name}
                     <span class="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-400 normal-case tracking-normal">
                         Non calibré

@@ -30,8 +30,8 @@
         championKey: string;
         /** Square size in px. */
         size?: number;
-        /** Side accent ring around the icon. */
-        ring?: 'blue' | 'red' | 'none';
+        /** Side accent ring around the icon ('gold' = highlighted pick). */
+        ring?: 'blue' | 'red' | 'gold' | 'none';
         /** Greyscale render (bans / Fearless-consumed champions). */
         grayscale?: boolean;
     }
@@ -56,9 +56,10 @@
     const url = $derived(version === null ? null : championIconUrl(championKey, version));
     const initials = $derived(name.replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase() || '?');
 
-    const RING_CLASS: Record<'blue' | 'red' | 'none', string> = {
+    const RING_CLASS: Record<'blue' | 'red' | 'gold' | 'none', string> = {
         blue: 'ring-2 ring-blue-500/70',
         red: 'ring-2 ring-red-500/70',
+        gold: 'ring-2 ring-gold-500/80',
         none: ''
     };
 </script>

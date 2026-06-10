@@ -20,7 +20,7 @@
 
 <script lang="ts">
     import type { ComfortMode, PlayerStats, Role } from '$lib/types';
-    import { championNameByKey } from '$lib/dataDragon/version';
+    import { championLoadingUrl, championNameByKey } from '$lib/dataDragon/version';
     import ChampionIcon from '$lib/components/ChampionIcon.svelte';
 
     interface Props {
@@ -56,6 +56,11 @@
 
     const championName = $derived(championKey === null ? null : (championNameByKey(championKey) ?? championKey));
 
+    /** Loading-screen art behind the picked slot; per-key failure fallback. */
+    let artFailedKey = $state<string | null>(null);
+    const artUrl = $derived(championKey === null ? null : championLoadingUrl(championKey));
+    const showArt = $derived(artUrl !== null && artFailedKey !== championKey);
+
     /** "4g · 75% WR" subtitle when the pick is in the assigned player's pool. */
     const poolSubtitle = $derived(
         playerStats === null ? null : `${playerStats.games}g · ${Math.round(playerStats.winrate * 100)}% WR`
@@ -73,7 +78,32 @@
     }
 </script>
 
-<div class="flex items-center gap-3 rounded-lg border border-slate-800 bg-slate-900 p-2">
+<div
+    class="group relative overflow-hidden rounded-xl border bg-abyss-900/85 p-2 transition-colors {championKey !==
+    null
+        ? side === 'ally'
+            ? 'border-blue-500/30'
+            : 'border-red-500/30'
+        : 'border-slate-800'}"
+>
+    {#if championKey !== null && showArt}
+        <!-- Art de chargement en fond, fondu vers le côté texte. -->
+        <img
+            src={artUrl}
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            draggable="false"
+            onerror={() => (artFailedKey = championKey)}
+            class="absolute inset-y-0 right-0 h-full w-2/3 object-cover object-[center_18%] opacity-40 transition-opacity duration-300 select-none group-hover:opacity-55"
+        />
+        <div class="absolute inset-0 bg-gradient-to-r from-abyss-900 via-abyss-900/80 to-abyss-900/10"></div>
+        <div
+            class="absolute inset-y-0 left-0 w-1 {side === 'ally' ? 'bg-blue-500/70' : 'bg-red-500/70'}"
+        ></div>
+    {/if}
+
+    <div class="relative flex items-center gap-3">
     <div class="w-10 shrink-0">
         <p class="text-xs font-bold tracking-wide text-slate-300">{ROLE_LABELS[role]}</p>
         <p class="truncate text-[11px] text-slate-500" title={playerName ?? undefined}>
@@ -129,9 +159,10 @@
         <button
             type="button"
             onclick={() => onSelect?.()}
-            class="flex h-12 flex-1 items-center justify-center rounded-md border border-dashed border-slate-700 text-xs text-slate-500 hover:border-slate-500 hover:text-slate-300"
+            class="flex h-12 flex-1 items-center justify-center rounded-md border border-dashed border-slate-700 text-xs text-slate-500 transition-colors hover:border-gold-600/60 hover:text-gold-300"
         >
             Choisir un champion
         </button>
     {/if}
+    </div>
 </div>
