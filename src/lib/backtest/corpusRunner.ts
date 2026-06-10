@@ -36,8 +36,11 @@
  * `now`). Same corpus + same seed + same timestamp ⇒ byte-identical card.
  */
 import { buildTendencyTable, predict, type TendencyTable } from '$lib/aggregates/tendency';
-import { computePresence } from '$lib/aggregates/presence';
+import { computePresence, type PresenceEntry } from '$lib/aggregates/presence';
 import { banRotationProfile, rotationOf, type PickRotation } from '$lib/aggregates/rotations';
+import { mineCombinations, type CombinationAsset } from '$lib/aggregates/combinations';
+import { banEV } from '$lib/strategic/banEv';
+import { predictEnemyRange } from '$lib/strategic/rangeModel';
 import {
     accuracy,
     banHitAtK,
@@ -56,6 +59,18 @@ import type { DraftAction, DraftRecord, DraftSide } from '$lib/data/types';
 /** Retrieval cutoffs — the Summit Gate names (§8 R9). */
 const PICK_RANGE_K = 8;
 const BAN_HIT_K = 5;
+
+/** banEV track: candidates evaluated per side = top-N train presence. */
+const BAN_EV_CANDIDATES = 30;
+
+/**
+ * Pick rotations where each side acts under the blue-first template — the
+ * enemy's upcoming slots feed banEV's take-probability sum (rotations.ts).
+ */
+const PICK_GROUPS_BY_SIDE: Record<DraftSide, PickRotation[]> = {
+    blue: ['P1', 'P4-5', 'P8-9'],
+    red: ['P2-3', 'P6', 'P7', 'P10']
+};
 
 /** Bootstrap resamples per CI (fixed: the seed is the reproducibility knob). */
 const BOOTSTRAP_ITERATIONS = 1000;
@@ -107,6 +122,8 @@ export interface CorpusScorecardResults {
     outcome: OutcomeTrackResult;
     pickInRange: RetrievalTrackResult;
     banHit: RetrievalTrackResult;
+    /** Track 4: per-side ban suggestions from the full banEV engine. */
+    banEvSide: RetrievalTrackResult;
     /** Rows exactly as rendered (value, baseline, CI, verdict). */
     entries: ScorecardEntry[];
 }
@@ -157,6 +174,14 @@ interface PickEvent {
 interface BanEvent {
     patch?: string;
     record: DraftRecord;
+    bans: string[];
+}
+
+/** One scorable (game, banning side) for the banEV track. */
+interface SideBanEvent {
+    patch?: string;
+    record: DraftRecord;
+    side: DraftSide;
     bans: string[];
 }
 
@@ -314,6 +339,85 @@ export function runCorpusScorecard(
         fit: (train) => rankByPresence(uniqueRecords(train))
     });
 
+    // ---- track 4: ban-hit@5 per side — full banEV engine (I1 ranges +
+    // structural damage) vs the same presence baseline. Events are
+    // (game, banning side): the product question is « which 5 bans should
+    // THIS side bring », so the target is that side's own resolved bans.
+    const sideBanEvents: SideBanEvent[] = [];
+    for (const record of usable) {
+        for (const side of ['blue', 'red'] as const) {
+            const bans = record.actions
+                .filter((a) => a.type === 'ban' && a.side === side && a.championKey !== '')
+                .map((a) => a.championKey);
+            if (bans.length === 0) continue;
+            sideBanEvents.push({ patch: record.patch, record, side, bans });
+        }
+    }
+
+    interface BanEvModel {
+        records: DraftRecord[];
+        candidates: string[];
+        presence: Map<string, PresenceEntry>;
+        tables: Map<string, TendencyTable>;
+        assets: Map<string, CombinationAsset[]>;
+    }
+    const teamRecordsOf = (records: DraftRecord[], team: string): DraftRecord[] =>
+        records.filter((r) => r.blueTeam === team || r.redTeam === team);
+    const banEvRun = walkForward<SideBanEvent, BanEvModel>(sideBanEvents, {
+        fit: (train) => {
+            const records = uniqueRecords(train);
+            return {
+                records,
+                candidates: rankByPresence(records).slice(0, BAN_EV_CANDIDATES),
+                presence: computePresence(records),
+                tables: new Map(),
+                assets: new Map()
+            };
+        },
+        predict: (model, event) => {
+            const enemySide: DraftSide = event.side === 'blue' ? 'red' : 'blue';
+            const enemyTeam = actingTeam(event.record, enemySide);
+            let table = model.tables.get(enemyTeam);
+            if (table === undefined) {
+                table = buildTendencyTable(model.records, model.records, {
+                    now: options.generatedAt,
+                    team: enemyTeam
+                });
+                model.tables.set(enemyTeam, table);
+            }
+            let assets = model.assets.get(enemyTeam);
+            if (assets === undefined) {
+                assets = mineCombinations(teamRecordsOf(model.records, enemyTeam), { minGames: 2 });
+                model.assets.set(enemyTeam, assets);
+            }
+            const ranked = banEV(model.candidates, {
+                upcomingSlotGroups: PICK_GROUPS_BY_SIDE[enemySide],
+                rangeFor: (slotGroup) =>
+                    predictEnemyRange({
+                        table: table!,
+                        slotGroup,
+                        side: enemySide,
+                        meta: model.presence,
+                        exclude: new Set<string>()
+                    }),
+                structuralAssets: assets,
+                // Replacement damage carries the meta term: pick-tendency
+                // ranges cannot see perma-bans (never picked ⇒ no tendency
+                // mass), so a champion's cost-to-face scales with how hard
+                // the league already bans it in the train (train-only data).
+                replacementDrop: (key) =>
+                    1.5 * (1 + 4 * (model.presence.get(key)?.banRate ?? 0))
+            }).map((entry) => entry.championKey);
+            return banHitAtK(ranked, event.bans, BAN_HIT_K) / BAN_HIT_K;
+        },
+        outcome: () => true
+    });
+    const sideBanBaselineRun = walkForward<SideBanEvent, string[]>(sideBanEvents, {
+        fit: (train) => rankByPresence(uniqueRecords(train)),
+        predict: (ranked, event) => banHitAtK(ranked, event.bans, BAN_HIT_K) / BAN_HIT_K,
+        outcome: () => true
+    });
+
     // ---- assemble (bootstrap order is part of the determinism contract) ----
     const outcomeDeltas =
         sideOnlyRun.aggregate.n > 0
@@ -326,6 +430,7 @@ export function runCorpusScorecard(
     const pickDelta = bootstrap(tendencyRun.aggregate.pairs, frequencyRun.aggregate.pairs, meanP);
     const banMetric = (pairs: PredictionPair[]): number => BAN_HIT_K * meanP(pairs);
     const banDelta = bootstrap(banModelRun.aggregate.pairs, banBaselineRun.aggregate.pairs, banMetric);
+    const banEvDelta = bootstrap(banEvRun.aggregate.pairs, sideBanBaselineRun.aggregate.pairs, banMetric);
 
     const outcome: OutcomeTrackResult = {
         n: sideOnlyRun.aggregate.n,
@@ -370,6 +475,14 @@ export function runCorpusScorecard(
     };
     if (banDelta !== undefined) banHit.delta = banDelta;
 
+    const banEvSide: RetrievalTrackResult = {
+        n: banEvRun.aggregate.n,
+        foldCount: banEvRun.folds.length,
+        model: banMetric(banEvRun.aggregate.pairs),
+        baseline: banMetric(sideBanBaselineRun.aggregate.pairs)
+    };
+    if (banEvDelta !== undefined) banEvSide.delta = banEvDelta;
+
     const entry = (
         metric: string,
         value: number,
@@ -409,7 +522,14 @@ export function runCorpusScorecard(
             true
         ),
         entry('pick-in-range@8 — tendances (vs fréquence brute)', pickInRange.model, pickInRange.baseline, pickDelta, true),
-        entry('ban-hit@5 — bans du train (vs présence)', banHit.model, banHit.baseline, banDelta, true)
+        entry('ban-hit@5 — bans du train (vs présence)', banHit.model, banHit.baseline, banDelta, true),
+        entry(
+            'ban-hit@5 par side — banEV complet (vs présence)',
+            banEvSide.model,
+            banEvSide.baseline,
+            banEvDelta,
+            true
+        )
     ];
 
     const notes: string[] = [
@@ -422,8 +542,13 @@ export function runCorpusScorecard(
             'champions déjà révélés exclus ; équipe inconnue du train ⇒ miss honnête.',
         `ban-hit@5 : ${banHit.n} games scorées (≥ 1 ban résolu) sur ${banHit.foldCount} folds ; ` +
             'valeur = bans retrouvés en moyenne par game (0..5).',
+        `ban-hit@5 par side (banEV) : ${banEvSide.n} événements (game × side bannissant) sur ` +
+            `${banEvSide.foldCount} folds ; cible = les 5 bans de CE side ; modèle = banEV ` +
+            `(P de sortie via ranges de tendances de l'équipe adverse × dégât de remplacement + ` +
+            `dommage structurel sur ses paires minées) sur les ${fmtNote(BAN_EV_CANDIDATES)} ` +
+            'candidats les plus présents du train ; pools joueurs non disponibles dans ce corpus (terme neutre).',
         `Reproductibilité : seed ${options.seed}, ${fmtNote(BOOTSTRAP_ITERATIONS)} resamples bootstrap, ` +
-            'ordre des IC fixe (log loss, Brier, accuracy, pick, ban).',
+            'ordre des IC fixe (log loss, Brier, accuracy, pick, ban, banEV-side).',
         'side-only est lui-même une baseline (verdict M3.5) : il borne ce que tout ' +
             'modèle de draft doit dépasser avant de revendiquer un signal.'
     ];
@@ -448,6 +573,7 @@ export function runCorpusScorecard(
             outcome,
             pickInRange,
             banHit,
+            banEvSide,
             entries
         }
     };

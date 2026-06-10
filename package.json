@@ -13,7 +13,7 @@
         "test": "vitest run",
         "test:watch": "vitest",
         "coverage:tags": "node --experimental-strip-types --no-warnings scripts/checkTagCoverage.ts",
-        "backtest": "node --experimental-strip-types --no-warnings scripts/backtest/runCorpus.ts",
+        "backtest": "node --experimental-transform-types --no-warnings scripts/backtest/runCorpus.ts",
         "corpus": "node --experimental-transform-types --no-warnings scripts/data/pullCorpus.ts",
         "concordance": "node --experimental-transform-types --no-warnings scripts/data/concordance.ts"
     },

@@ -27,7 +27,8 @@ function sampleRow(overrides: CargoRow = {}): CargoRow {
         dt: '2025-01-15 08:30:00',
         patch: '25.01',
         tournament: 'LCK 2025 Rounds 1-2',
-        ovp: 'LCK/2025 Season/Rounds 1-2'
+        ovp: 'LCK/2025 Season/Rounds 1-2',
+        glen: '28.5'
     };
     const t1Bans = ['Yone', 'Akali', 'Vi', 'Poppy', 'Hwei'];
     const t2Bans = ['Rumble', 'Corki', 'Jax', 'Gnar', 'Udyr'];
@@ -76,6 +77,8 @@ describe('rowToDraftRecord', () => {
         expect(record.winner).toBe('blue');
         expect(record.date).toBe('2025-01-15T08:30:00Z');
         expect(record.patch).toBe('25.01');
+        expect(record.gameLengthSeconds).toBe(1710); // 28.5 min
+
         expect(record.series).toEqual({
             gameNumber: 1,
             matchId: 'LCK/2025 Season/Rounds 1-2_Week 1_1'

@@ -7,6 +7,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 1888,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 1_1"
@@ -190,7 +191,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -201,6 +202,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "KT Rolster",
   "winner": "blue",
+  "gameLengthSeconds": 1650,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 1_1"
@@ -384,7 +386,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -395,6 +397,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 2197,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 1_1"
@@ -578,7 +581,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -589,6 +592,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "BRION",
   "winner": "red",
+  "gameLengthSeconds": 1699,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 1_2"
@@ -772,7 +776,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -783,6 +787,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "BRION",
   "winner": "red",
+  "gameLengthSeconds": 1530,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 1_2"
@@ -966,7 +971,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -977,6 +982,7 @@
   "blueTeam": "DRX",
   "redTeam": "Gen.G",
   "winner": "blue",
+  "gameLengthSeconds": 1783,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 1_3"
@@ -1160,7 +1166,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -1171,6 +1177,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1469,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 1_3"
@@ -1354,7 +1361,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -1365,6 +1372,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 2071,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 1_4"
@@ -1548,7 +1556,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -1559,6 +1567,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 1732,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 1_4"
@@ -1742,7 +1751,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -1753,6 +1762,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1505,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 1_5"
@@ -1936,7 +1946,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -1947,6 +1957,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1536,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 1_5"
@@ -2130,7 +2141,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -2141,6 +2152,7 @@
   "blueTeam": "T1",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 2205,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 1_6"
@@ -2324,7 +2336,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -2335,6 +2347,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "T1",
   "winner": "red",
+  "gameLengthSeconds": 1603,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 1_6"
@@ -2518,7 +2531,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -2529,6 +2542,7 @@
   "blueTeam": "T1",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 1700,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 1_6"
@@ -2712,7 +2726,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -2723,6 +2737,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "BRION",
   "winner": "blue",
+  "gameLengthSeconds": 1913,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 1_7"
@@ -2906,7 +2921,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -2917,6 +2932,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "BRION",
   "winner": "blue",
+  "gameLengthSeconds": 1506,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 1_7"
@@ -3100,7 +3116,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -3111,6 +3127,7 @@
   "blueTeam": "BRION",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 2187,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 1_7"
@@ -3294,7 +3311,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -3305,6 +3322,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Gen.G",
   "winner": "blue",
+  "gameLengthSeconds": 1872,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 1_8"
@@ -3488,7 +3506,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -3499,6 +3517,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 1682,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 1_8"
@@ -3682,7 +3701,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -3693,6 +3712,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1856,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 1_9"
@@ -3876,7 +3896,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -3887,6 +3907,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 2071,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 1_9"
@@ -4070,7 +4091,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -4081,6 +4102,7 @@
   "blueTeam": "T1",
   "redTeam": "DRX",
   "winner": "red",
+  "gameLengthSeconds": 1766,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 1_10"
@@ -4264,7 +4286,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -4275,6 +4297,7 @@
   "blueTeam": "T1",
   "redTeam": "DRX",
   "winner": "red",
+  "gameLengthSeconds": 1832,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 1_10"
@@ -4458,7 +4481,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -4469,6 +4492,7 @@
   "blueTeam": "DRX",
   "redTeam": "T1",
   "winner": "red",
+  "gameLengthSeconds": 2102,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 1_10"
@@ -4652,7 +4676,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -4663,6 +4687,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 2306,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 2_1"
@@ -4846,7 +4871,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -4857,6 +4882,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1436,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 2_1"
@@ -5040,7 +5066,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -5051,6 +5077,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 1626,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 2_1"
@@ -5234,7 +5261,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -5245,6 +5272,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1880,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 2_2"
@@ -5428,7 +5456,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -5439,6 +5467,7 @@
   "blueTeam": "DRX",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1943,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 2_2"
@@ -5622,7 +5651,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -5633,6 +5662,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "DRX",
   "winner": "blue",
+  "gameLengthSeconds": 2003,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 2_2"
@@ -5816,7 +5846,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -5827,6 +5857,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "BRION",
   "winner": "red",
+  "gameLengthSeconds": 2219,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 2_3"
@@ -6010,7 +6041,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -6021,6 +6052,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "BRION",
   "winner": "blue",
+  "gameLengthSeconds": 2088,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 2_3"
@@ -6204,7 +6236,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -6215,6 +6247,7 @@
   "blueTeam": "BRION",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1739,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 2_3"
@@ -6398,7 +6431,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -6409,6 +6442,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 2075,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 2_4"
@@ -6592,7 +6626,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -6603,6 +6637,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 1916,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 2_4"
@@ -6786,7 +6821,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -6797,6 +6832,7 @@
   "blueTeam": "T1",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 1849,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 2_5"
@@ -6980,7 +7016,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -6991,6 +7027,7 @@
   "blueTeam": "T1",
   "redTeam": "KT Rolster",
   "winner": "blue",
+  "gameLengthSeconds": 2796,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 2_5"
@@ -7174,7 +7211,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -7185,6 +7222,7 @@
   "blueTeam": "DRX",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 1806,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 2_6"
@@ -7368,7 +7406,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -7379,6 +7417,7 @@
   "blueTeam": "DRX",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 2054,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 2_6"
@@ -7562,7 +7601,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -7573,6 +7612,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "DRX",
   "winner": "blue",
+  "gameLengthSeconds": 2130,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 2_6"
@@ -7756,7 +7796,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -7767,6 +7807,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 2243,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 2_7"
@@ -7950,7 +7991,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -7961,6 +8002,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 2371,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 2_7"
@@ -8144,7 +8186,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -8155,6 +8197,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1748,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 2_7"
@@ -8338,7 +8381,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -8349,6 +8392,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Gen.G",
   "winner": "red",
+  "gameLengthSeconds": 2034,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 2_8"
@@ -8532,7 +8576,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -8543,6 +8587,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 1817,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 2_8"
@@ -8726,7 +8771,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -8737,6 +8782,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 2364,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 2_9"
@@ -8920,7 +8966,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -8931,6 +8977,7 @@
   "blueTeam": "T1",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 2580,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 2_9"
@@ -9114,7 +9161,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -9125,6 +9172,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 1820,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 2_9"
@@ -9308,7 +9356,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -9319,6 +9367,7 @@
   "blueTeam": "BRION",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 2279,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 2_10"
@@ -9502,7 +9551,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -9513,6 +9562,7 @@
   "blueTeam": "BRION",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 2735,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 2_10"
@@ -9696,7 +9746,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -9707,6 +9757,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "BRION",
   "winner": "red",
+  "gameLengthSeconds": 1801,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 2_10"
@@ -9890,7 +9941,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -9901,6 +9952,7 @@
   "blueTeam": "DRX",
   "redTeam": "BRION",
   "winner": "red",
+  "gameLengthSeconds": 2170,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 3_1"
@@ -10084,7 +10136,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -10095,6 +10147,7 @@
   "blueTeam": "DRX",
   "redTeam": "BRION",
   "winner": "red",
+  "gameLengthSeconds": 2106,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 3_1"
@@ -10278,7 +10331,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -10289,6 +10342,7 @@
   "blueTeam": "BRION",
   "redTeam": "DRX",
   "winner": "blue",
+  "gameLengthSeconds": 2046,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 3_1"
@@ -10472,7 +10526,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -10483,6 +10537,7 @@
   "blueTeam": "BRION",
   "redTeam": "DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1921,
   "series": {
    "gameNumber": 4,
    "matchId": "LCK/2026 Season/Cup_Week 3_1"
@@ -10666,7 +10721,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -10677,6 +10732,7 @@
   "blueTeam": "DRX",
   "redTeam": "BRION",
   "winner": "red",
+  "gameLengthSeconds": 2587,
   "series": {
    "gameNumber": 5,
    "matchId": "LCK/2026 Season/Cup_Week 3_1"
@@ -10860,7 +10916,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -10871,6 +10927,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 2114,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 3_2"
@@ -11054,7 +11111,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -11065,6 +11122,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1535,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 3_2"
@@ -11248,7 +11306,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -11259,6 +11317,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 2027,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 3_2"
@@ -11442,7 +11501,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -11453,6 +11512,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 2366,
   "series": {
    "gameNumber": 4,
    "matchId": "LCK/2026 Season/Cup_Week 3_2"
@@ -11636,7 +11696,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -11647,6 +11707,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1642,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 3_3"
@@ -11830,7 +11891,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -11841,6 +11902,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 2269,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 3_3"
@@ -12024,7 +12086,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -12035,6 +12097,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 1541,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 3_3"
@@ -12218,7 +12281,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -12229,6 +12292,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 2313,
   "series": {
    "gameNumber": 4,
    "matchId": "LCK/2026 Season/Cup_Week 3_3"
@@ -12412,7 +12476,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -12423,6 +12487,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1571,
   "series": {
    "gameNumber": 5,
    "matchId": "LCK/2026 Season/Cup_Week 3_3"
@@ -12606,7 +12671,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -12617,6 +12682,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 1992,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 3_4"
@@ -12800,7 +12866,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -12811,6 +12877,7 @@
   "blueTeam": "T1",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 1685,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 3_4"
@@ -12994,7 +13061,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -13005,6 +13072,7 @@
   "blueTeam": "T1",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2378,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 3_4"
@@ -13188,7 +13256,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -13199,6 +13267,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 2164,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Week 3_5"
@@ -13382,7 +13451,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -13393,6 +13462,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 2103,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Week 3_5"
@@ -13576,7 +13646,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -13587,6 +13657,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1952,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Week 3_5"
@@ -13770,7 +13841,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -13781,6 +13852,7 @@
   "blueTeam": "BRION",
   "redTeam": "DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1447,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 1_1"
@@ -13964,7 +14036,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -13975,6 +14047,7 @@
   "blueTeam": "DRX",
   "redTeam": "BRION",
   "winner": "red",
+  "gameLengthSeconds": 2071,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 1_1"
@@ -14158,7 +14231,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -14169,6 +14242,7 @@
   "blueTeam": "BRION",
   "redTeam": "DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1805,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 1_1"
@@ -14352,7 +14426,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -14363,6 +14437,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 2975,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 1_2"
@@ -14546,7 +14621,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -14557,6 +14632,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 1810,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 1_2"
@@ -14740,7 +14816,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -14751,6 +14827,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DRX",
   "winner": "red",
+  "gameLengthSeconds": 1536,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 2_1"
@@ -14934,7 +15011,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -14945,6 +15022,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DRX",
   "winner": "red",
+  "gameLengthSeconds": 1670,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 2_1"
@@ -15128,7 +15206,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -15139,6 +15217,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1820,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 2_2"
@@ -15322,7 +15401,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -15333,6 +15412,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 1919,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 2_2"
@@ -15516,7 +15596,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -15527,6 +15607,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 2731,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 2_2"
@@ -15710,7 +15791,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -15721,6 +15802,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1658,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 3_1"
@@ -15904,7 +15986,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -15915,6 +15997,7 @@
   "blueTeam": "DRX",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 1966,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 3_1"
@@ -16098,7 +16181,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -16109,6 +16192,7 @@
   "blueTeam": "DRX",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 1905,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Play-In Round 3_1"
@@ -16292,7 +16376,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -16303,6 +16387,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 1705,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_1"
@@ -16486,7 +16571,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -16497,6 +16582,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 2261,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_1"
@@ -16680,7 +16766,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -16691,6 +16777,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1523,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_1"
@@ -16874,7 +16961,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -16885,6 +16972,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 1802,
   "series": {
    "gameNumber": 4,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_1"
@@ -17068,7 +17156,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -17079,6 +17167,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 2239,
   "series": {
    "gameNumber": 5,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_1"
@@ -17262,7 +17351,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -17273,6 +17362,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DRX",
   "winner": "blue",
+  "gameLengthSeconds": 2024,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_2"
@@ -17456,7 +17546,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -17467,6 +17557,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DRX",
   "winner": "red",
+  "gameLengthSeconds": 2513,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_2"
@@ -17650,7 +17741,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -17661,6 +17752,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DRX",
   "winner": "blue",
+  "gameLengthSeconds": 2514,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_2"
@@ -17844,7 +17936,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -17855,6 +17947,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1621,
   "series": {
    "gameNumber": 4,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_2"
@@ -18038,7 +18131,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -18049,6 +18142,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DRX",
   "winner": "red",
+  "gameLengthSeconds": 1803,
   "series": {
    "gameNumber": 5,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_2"
@@ -18232,7 +18326,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -18243,6 +18337,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Gen.G",
   "winner": "blue",
+  "gameLengthSeconds": 1869,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 2_1"
@@ -18426,7 +18521,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -18437,6 +18532,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Gen.G",
   "winner": "blue",
+  "gameLengthSeconds": 2435,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 2_1"
@@ -18620,7 +18716,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -18631,6 +18727,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Gen.G",
   "winner": "blue",
+  "gameLengthSeconds": 1912,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 2_1"
@@ -18814,7 +18911,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -18825,6 +18922,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2691,
   "series": {
    "gameNumber": 4,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 2_1"
@@ -19008,7 +19106,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -19019,6 +19117,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "T1",
   "winner": "red",
+  "gameLengthSeconds": 1873,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 2_2"
@@ -19202,7 +19301,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -19213,6 +19312,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 2051,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 2_2"
@@ -19396,7 +19496,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -19407,6 +19507,7 @@
   "blueTeam": "T1",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 1645,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 2_2"
@@ -19590,7 +19691,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -19601,6 +19702,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 1669,
   "series": {
    "gameNumber": 4,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 2_2"
@@ -19784,7 +19886,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -19795,6 +19897,7 @@
   "blueTeam": "DRX",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 1800,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_3"
@@ -19978,7 +20081,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -19989,6 +20092,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "DRX",
   "winner": "red",
+  "gameLengthSeconds": 1714,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_3"
@@ -20172,7 +20276,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -20183,6 +20287,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "DRX",
   "winner": "red",
+  "gameLengthSeconds": 1659,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_3"
@@ -20366,7 +20471,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -20377,6 +20482,7 @@
   "blueTeam": "DRX",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 2191,
   "series": {
    "gameNumber": 4,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 1_3"
@@ -20560,7 +20666,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -20571,6 +20677,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2262,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 2_3"
@@ -20754,7 +20861,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -20765,6 +20872,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 2284,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 2_3"
@@ -20948,7 +21056,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -20959,6 +21067,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1971,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 2_3"
@@ -21142,7 +21251,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -21153,6 +21262,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 1792,
   "series": {
    "gameNumber": 4,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 2_3"
@@ -21336,7 +21446,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -21347,6 +21457,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 1906,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 4_1"
@@ -21530,7 +21641,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -21541,6 +21652,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 2014,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 4_1"
@@ -21724,7 +21836,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -21735,6 +21847,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 1717,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 4_1"
@@ -21918,7 +22031,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -21929,6 +22042,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 1395,
   "series": {
    "gameNumber": 4,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 4_1"
@@ -22112,7 +22226,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -22123,6 +22237,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 2097,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 3_1"
@@ -22306,7 +22421,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -22317,6 +22432,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 1744,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 3_1"
@@ -22500,7 +22616,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -22511,6 +22627,7 @@
   "blueTeam": "T1",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2351,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 3_1"
@@ -22694,7 +22811,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -22705,6 +22822,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "T1",
   "winner": "red",
+  "gameLengthSeconds": 2033,
   "series": {
    "gameNumber": 4,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 3_1"
@@ -22888,7 +23006,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -22899,6 +23017,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "T1",
   "winner": "red",
+  "gameLengthSeconds": 1893,
   "series": {
    "gameNumber": 5,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 3_1"
@@ -23082,7 +23201,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -23093,6 +23212,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 1734,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 4_2"
@@ -23276,7 +23396,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -23287,6 +23407,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2096,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 4_2"
@@ -23470,7 +23591,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -23481,6 +23602,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 1854,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Playoffs Round 4_2"
@@ -23664,7 +23786,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -23675,6 +23797,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 1673,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Cup_Finals_1"
@@ -23858,7 +23981,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -23869,6 +23992,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 1447,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Cup_Finals_1"
@@ -24052,7 +24176,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -24063,6 +24187,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 1854,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Cup_Finals_1"
@@ -24246,7 +24371,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -24257,6 +24382,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1927,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_1"
@@ -24440,7 +24566,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -24451,6 +24577,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 1774,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_1"
@@ -24634,7 +24761,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -24645,6 +24772,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "T1",
   "winner": "red",
+  "gameLengthSeconds": 1440,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_2"
@@ -24828,7 +24956,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -24839,6 +24967,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "T1",
   "winner": "red",
+  "gameLengthSeconds": 2434,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_2"
@@ -25022,7 +25151,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -25033,6 +25162,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 1979,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_3"
@@ -25216,7 +25346,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -25227,6 +25357,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 1406,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_3"
@@ -25410,7 +25541,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -25421,6 +25552,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1999,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_4"
@@ -25604,7 +25736,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -25615,6 +25747,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1795,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_4"
@@ -25798,7 +25931,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -25809,6 +25942,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Gen.G",
   "winner": "red",
+  "gameLengthSeconds": 1553,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_5"
@@ -25992,7 +26126,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -26003,6 +26137,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 1717,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_5"
@@ -26186,7 +26321,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -26197,6 +26332,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 1982,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_5"
@@ -26380,7 +26516,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -26391,6 +26527,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 2506,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_6"
@@ -26574,7 +26711,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -26585,6 +26722,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 1874,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_6"
@@ -26768,7 +26906,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -26779,6 +26917,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 2194,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_7"
@@ -26962,7 +27101,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -26973,6 +27112,7 @@
   "blueTeam": "T1",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 2073,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_7"
@@ -27156,7 +27296,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -27167,6 +27307,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Kiwoom DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1771,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_8"
@@ -27350,7 +27491,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -27361,6 +27502,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Kiwoom DRX",
   "winner": "blue",
+  "gameLengthSeconds": 2267,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_8"
@@ -27544,7 +27686,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -27555,6 +27697,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 1963,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_9"
@@ -27738,7 +27881,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -27749,6 +27892,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 1993,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_9"
@@ -27932,7 +28076,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -27943,6 +28087,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 1646,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_10"
@@ -28126,7 +28271,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -28137,6 +28282,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 1895,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 1_10"
@@ -28320,7 +28466,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -28331,6 +28477,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2222,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_1"
@@ -28514,7 +28661,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -28525,6 +28672,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 1605,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_1"
@@ -28708,7 +28856,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -28719,6 +28867,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "T1",
   "winner": "red",
+  "gameLengthSeconds": 1552,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_2"
@@ -28902,7 +29051,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -28913,6 +29062,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "T1",
   "winner": "red",
+  "gameLengthSeconds": 1746,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_2"
@@ -29096,7 +29246,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -29107,6 +29257,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "HANJIN BRION",
   "winner": "blue",
+  "gameLengthSeconds": 1836,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_3"
@@ -29290,7 +29441,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -29301,6 +29452,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "Kiwoom DRX",
   "winner": "blue",
+  "gameLengthSeconds": 2868,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_3"
@@ -29484,7 +29636,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -29495,6 +29647,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 1674,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_3"
@@ -29678,7 +29831,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -29689,6 +29842,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "KT Rolster",
   "winner": "blue",
+  "gameLengthSeconds": 2275,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_4"
@@ -29872,7 +30026,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -29883,6 +30037,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1728,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_4"
@@ -30066,7 +30221,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -30077,6 +30232,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 1760,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_5"
@@ -30260,7 +30416,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -30271,6 +30427,7 @@
   "blueTeam": "T1",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1450,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_5"
@@ -30454,7 +30611,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -30465,6 +30622,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1482,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_6"
@@ -30648,7 +30806,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -30659,6 +30817,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 1643,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_6"
@@ -30842,7 +31001,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -30853,6 +31012,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1425,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_6"
@@ -31036,7 +31196,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -31047,6 +31207,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 1964,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_7"
@@ -31230,7 +31391,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -31241,6 +31402,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 1701,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_7"
@@ -31424,7 +31586,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -31435,6 +31597,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Gen.G",
   "winner": "red",
+  "gameLengthSeconds": 1742,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_8"
@@ -31618,7 +31781,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -31629,6 +31792,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2253,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_8"
@@ -31812,7 +31976,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -31823,6 +31987,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 1816,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_9"
@@ -32006,7 +32171,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -32017,6 +32182,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1562,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_9"
@@ -32200,7 +32366,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -32211,6 +32377,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 1485,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_10"
@@ -32394,7 +32561,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -32405,6 +32572,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 2001,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 2_10"
@@ -32588,7 +32756,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -32599,6 +32767,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1597,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_1"
@@ -32782,7 +32951,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -32793,6 +32962,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1794,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_1"
@@ -32976,7 +33146,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -32987,6 +33157,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 1914,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_2"
@@ -33170,7 +33341,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -33181,6 +33352,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 2424,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_2"
@@ -33364,7 +33536,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -33375,6 +33547,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 2728,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_2"
@@ -33558,7 +33731,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -33569,6 +33742,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "Gen.G",
   "winner": "red",
+  "gameLengthSeconds": 1751,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_3"
@@ -33752,7 +33926,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -33763,6 +33937,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 1944,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_3"
@@ -33946,7 +34121,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -33957,6 +34132,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1366,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_4"
@@ -34140,7 +34316,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -34151,6 +34327,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1925,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_4"
@@ -34334,7 +34511,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -34345,6 +34522,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Kiwoom DRX",
   "winner": "red",
+  "gameLengthSeconds": 1461,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_5"
@@ -34528,7 +34706,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -34539,6 +34717,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Kiwoom DRX",
   "winner": "red",
+  "gameLengthSeconds": 2047,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_5"
@@ -34722,7 +34901,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -34733,6 +34912,7 @@
   "blueTeam": "T1",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2045,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_6"
@@ -34916,7 +35096,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -34927,6 +35107,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 1773,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_6"
@@ -35110,7 +35291,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -35121,6 +35302,7 @@
   "blueTeam": "T1",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2161,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_6"
@@ -35304,7 +35486,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -35315,6 +35497,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 1773,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_7"
@@ -35498,7 +35681,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -35509,6 +35692,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "Gen.G",
   "winner": "blue",
+  "gameLengthSeconds": 2009,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_7"
@@ -35692,7 +35876,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -35703,6 +35887,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "KT Rolster",
   "winner": "blue",
+  "gameLengthSeconds": 1688,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_8"
@@ -35886,7 +36071,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -35897,6 +36082,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1647,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_8"
@@ -36080,7 +36266,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -36091,6 +36277,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 2208,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_9"
@@ -36274,7 +36461,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -36285,6 +36472,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 2008,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_9"
@@ -36468,7 +36656,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -36479,6 +36667,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 2187,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_9"
@@ -36662,7 +36851,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -36673,6 +36862,7 @@
   "blueTeam": "T1",
   "redTeam": "Kiwoom DRX",
   "winner": "red",
+  "gameLengthSeconds": 1911,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_10"
@@ -36856,7 +37046,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -36867,6 +37057,7 @@
   "blueTeam": "T1",
   "redTeam": "Kiwoom DRX",
   "winner": "red",
+  "gameLengthSeconds": 2235,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 3_10"
@@ -37050,7 +37241,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -37061,6 +37252,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "KT Rolster",
   "winner": "blue",
+  "gameLengthSeconds": 2220,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_1"
@@ -37244,7 +37436,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -37255,6 +37447,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "KT Rolster",
   "winner": "blue",
+  "gameLengthSeconds": 1493,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_1"
@@ -37438,7 +37631,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -37449,6 +37642,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1729,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_2"
@@ -37632,7 +37826,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -37643,6 +37837,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 2168,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_2"
@@ -37826,7 +38021,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -37837,6 +38032,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 1849,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_2"
@@ -38020,7 +38216,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -38031,6 +38227,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2200,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_3"
@@ -38214,7 +38411,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -38225,6 +38422,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 1553,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_3"
@@ -38408,7 +38606,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -38419,6 +38617,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Gen.G",
   "winner": "red",
+  "gameLengthSeconds": 2277,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_4"
@@ -38602,7 +38801,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -38613,6 +38812,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1536,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_4"
@@ -38796,7 +38996,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -38807,6 +39007,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "KT Rolster",
   "winner": "blue",
+  "gameLengthSeconds": 2696,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_5"
@@ -38990,7 +39191,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -39001,6 +39202,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "KT Rolster",
   "winner": "blue",
+  "gameLengthSeconds": 1892,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_5"
@@ -39184,7 +39386,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -39195,6 +39397,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 1969,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_6"
@@ -39378,7 +39581,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -39389,6 +39592,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "Kiwoom DRX",
   "winner": "red",
+  "gameLengthSeconds": 1580,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_6"
@@ -39572,7 +39776,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -39583,6 +39787,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 2887,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_7"
@@ -39766,7 +39971,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -39777,6 +39982,7 @@
   "blueTeam": "T1",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 2632,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_7"
@@ -39960,7 +40166,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -39971,6 +40177,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1672,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_8"
@@ -40154,7 +40361,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -40165,6 +40372,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 2024,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_8"
@@ -40348,7 +40556,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -40359,6 +40567,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 1422,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_9"
@@ -40542,7 +40751,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -40553,6 +40762,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 2247,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_9"
@@ -40736,7 +40946,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -40747,6 +40957,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "Gen.G",
   "winner": "red",
+  "gameLengthSeconds": 1868,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_10"
@@ -40930,7 +41141,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -40941,6 +41152,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "Gen.G",
   "winner": "blue",
+  "gameLengthSeconds": 1573,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 4_10"
@@ -41124,7 +41336,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -41135,6 +41347,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 1789,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_1"
@@ -41318,7 +41531,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -41329,6 +41542,7 @@
   "blueTeam": "T1",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 1788,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_1"
@@ -41512,7 +41726,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -41523,6 +41737,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 1750,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_2"
@@ -41706,7 +41921,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -41717,6 +41932,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "KT Rolster",
   "winner": "blue",
+  "gameLengthSeconds": 1878,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_2"
@@ -41900,7 +42116,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -41911,6 +42127,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Kiwoom DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1573,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_3"
@@ -42094,7 +42311,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -42105,6 +42322,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "Gen.G",
   "winner": "blue",
+  "gameLengthSeconds": 1840,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_3"
@@ -42288,7 +42506,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -42299,6 +42517,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "Gen.G",
   "winner": "red",
+  "gameLengthSeconds": 2272,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_3"
@@ -42482,7 +42701,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -42493,6 +42712,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 1924,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_4"
@@ -42676,7 +42896,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -42687,6 +42907,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 1694,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_4"
@@ -42870,7 +43091,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -42881,6 +43102,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1853,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_5"
@@ -43064,7 +43286,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -43075,6 +43297,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 2139,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_5"
@@ -43258,7 +43481,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -43269,6 +43492,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "T1",
   "winner": "red",
+  "gameLengthSeconds": 2007,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_6"
@@ -43452,7 +43676,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -43463,6 +43687,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 2088,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_6"
@@ -43646,7 +43871,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -43657,6 +43882,7 @@
   "blueTeam": "T1",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1806,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_6"
@@ -43840,7 +44066,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -43851,6 +44077,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Gen.G",
   "winner": "red",
+  "gameLengthSeconds": 1635,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_7"
@@ -44034,7 +44261,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -44045,6 +44272,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 1888,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_7"
@@ -44228,7 +44456,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -44239,6 +44467,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Gen.G",
   "winner": "blue",
+  "gameLengthSeconds": 1629,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_7"
@@ -44422,7 +44651,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -44433,6 +44662,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1712,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_8"
@@ -44616,7 +44846,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -44627,6 +44857,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 2273,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_8"
@@ -44810,7 +45041,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -44821,6 +45052,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 2446,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_9"
@@ -45004,7 +45236,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -45015,6 +45247,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "KT Rolster",
   "winner": "blue",
+  "gameLengthSeconds": 1853,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_9"
@@ -45198,7 +45431,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -45209,6 +45442,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1635,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_10"
@@ -45392,7 +45626,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -45403,6 +45637,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1802,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 5_10"
@@ -45586,7 +45821,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -45597,6 +45832,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "Gen.G",
   "winner": "red",
+  "gameLengthSeconds": 2536,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_1"
@@ -45780,7 +46016,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -45791,6 +46027,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 2174,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_1"
@@ -45974,7 +46211,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -45985,6 +46222,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 1590,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_2"
@@ -46168,7 +46406,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -46179,6 +46417,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 2141,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_2"
@@ -46362,7 +46601,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -46373,6 +46612,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 1915,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_3"
@@ -46556,7 +46796,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -46567,6 +46807,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 2454,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_3"
@@ -46750,7 +46991,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -46761,6 +47002,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "HANJIN BRION",
   "winner": "blue",
+  "gameLengthSeconds": 1760,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_4"
@@ -46944,7 +47186,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -46955,6 +47197,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 2071,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_4"
@@ -47138,7 +47381,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -47149,6 +47392,7 @@
   "blueTeam": "T1",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 1530,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_5"
@@ -47332,7 +47576,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -47343,6 +47587,7 @@
   "blueTeam": "T1",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 1486,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_5"
@@ -47526,7 +47771,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -47537,6 +47782,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Kiwoom DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1679,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_6"
@@ -47720,7 +47966,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -47731,6 +47977,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Kiwoom DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1792,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_6"
@@ -47914,7 +48161,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -47925,6 +48172,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 1854,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_7"
@@ -48108,7 +48356,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -48119,6 +48367,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 1733,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_7"
@@ -48302,7 +48551,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -48313,6 +48562,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 2059,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_8"
@@ -48496,7 +48746,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -48507,6 +48757,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1817,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_8"
@@ -48690,7 +48941,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -48701,6 +48952,7 @@
   "blueTeam": "T1",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 1531,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_9"
@@ -48884,7 +49136,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -48895,6 +49147,7 @@
   "blueTeam": "T1",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 2138,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_9"
@@ -49078,7 +49331,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -49089,6 +49342,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1568,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_10"
@@ -49272,7 +49526,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -49283,6 +49537,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1483,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_10"
@@ -49466,7 +49721,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -49477,6 +49732,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "Kiwoom DRX",
   "winner": "red",
+  "gameLengthSeconds": 1532,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 6_10"
@@ -49660,7 +49916,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -49671,6 +49927,7 @@
   "blueTeam": "T1",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1450,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_1"
@@ -49854,7 +50111,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -49865,6 +50122,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 1876,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_1"
@@ -50048,7 +50306,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -50059,6 +50317,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 1548,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_2"
@@ -50242,7 +50501,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -50253,6 +50512,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "DN SOOPers",
   "winner": "blue",
+  "gameLengthSeconds": 1575,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_2"
@@ -50436,7 +50696,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -50447,6 +50707,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Gen.G",
   "winner": "blue",
+  "gameLengthSeconds": 1908,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_3"
@@ -50630,7 +50891,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -50641,6 +50902,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Gen.G",
   "winner": "red",
+  "gameLengthSeconds": 1771,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_3"
@@ -50824,7 +51086,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -50835,6 +51097,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "KT Rolster",
   "winner": "blue",
+  "gameLengthSeconds": 1446,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_4"
@@ -51018,7 +51281,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -51029,6 +51292,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Kiwoom DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1880,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_4"
@@ -51212,7 +51476,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -51223,6 +51487,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 2067,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_4"
@@ -51406,7 +51671,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -51417,6 +51682,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2255,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_5"
@@ -51600,7 +51866,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -51611,6 +51877,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 1510,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_5"
@@ -51794,7 +52061,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -51805,6 +52072,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1631,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_6"
@@ -51988,7 +52256,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -51999,6 +52267,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "HANJIN BRION",
   "winner": "blue",
+  "gameLengthSeconds": 1564,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_6"
@@ -52182,7 +52451,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -52193,6 +52462,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "T1",
   "winner": "red",
+  "gameLengthSeconds": 1634,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_7"
@@ -52376,7 +52646,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -52387,6 +52657,7 @@
   "blueTeam": "T1",
   "redTeam": "Gen.G",
   "winner": "red",
+  "gameLengthSeconds": 3018,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_7"
@@ -52570,7 +52841,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -52581,6 +52852,7 @@
   "blueTeam": "T1",
   "redTeam": "Gen.G",
   "winner": "blue",
+  "gameLengthSeconds": 2008,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_7"
@@ -52764,7 +53036,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -52775,6 +53047,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 1935,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_8"
@@ -52958,7 +53231,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -52969,6 +53242,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 2296,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_8"
@@ -53152,7 +53426,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -53163,6 +53437,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 1801,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_9"
@@ -53346,7 +53621,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -53357,6 +53632,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1589,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_9"
@@ -53540,7 +53816,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -53551,6 +53827,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1774,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_9"
@@ -53734,7 +54011,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -53745,6 +54022,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "Kiwoom DRX",
   "winner": "red",
+  "gameLengthSeconds": 2514,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_10"
@@ -53928,7 +54206,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -53939,6 +54217,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "Kiwoom DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1810,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_10"
@@ -54122,7 +54401,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -54133,6 +54412,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 2188,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 7_10"
@@ -54316,7 +54596,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -54327,6 +54607,7 @@
   "blueTeam": "T1",
   "redTeam": "Kiwoom DRX",
   "winner": "red",
+  "gameLengthSeconds": 1696,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_1"
@@ -54510,7 +54791,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -54521,6 +54802,7 @@
   "blueTeam": "T1",
   "redTeam": "Kiwoom DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1865,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_1"
@@ -54704,7 +54986,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -54715,6 +54997,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 1628,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_1"
@@ -54898,7 +55181,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -54909,6 +55192,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 1432,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_2"
@@ -55092,7 +55376,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -55103,6 +55387,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1834,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_2"
@@ -55286,7 +55571,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -55297,6 +55582,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 2031,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_2"
@@ -55480,7 +55766,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -55491,6 +55777,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 2177,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_3"
@@ -55674,7 +55961,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -55685,6 +55972,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 1811,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_3"
@@ -55868,7 +56156,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -55879,6 +56167,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 2466,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_4"
@@ -56062,7 +56351,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -56073,6 +56362,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2157,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_4"
@@ -56256,7 +56546,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -56267,6 +56557,7 @@
   "blueTeam": "HANJIN BRION",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 1808,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_4"
@@ -56450,7 +56741,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -56461,6 +56752,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Kiwoom DRX",
   "winner": "blue",
+  "gameLengthSeconds": 2015,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_5"
@@ -56644,7 +56936,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -56655,6 +56947,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1699,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_5"
@@ -56838,7 +57131,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -56849,6 +57142,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Gen.G",
   "winner": "blue",
+  "gameLengthSeconds": 1672,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_6"
@@ -57032,7 +57326,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -57043,6 +57337,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Gen.G",
   "winner": "red",
+  "gameLengthSeconds": 1989,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_6"
@@ -57226,7 +57521,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -57237,6 +57532,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "BNK FEARX",
   "winner": "red",
+  "gameLengthSeconds": 1906,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_7"
@@ -57420,7 +57716,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -57431,6 +57727,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 1948,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_7"
@@ -57614,7 +57911,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -57625,6 +57922,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 1801,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_7"
@@ -57808,7 +58106,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -57819,6 +58117,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1825,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_8"
@@ -58002,7 +58301,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -58013,6 +58312,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1786,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_8"
@@ -58196,7 +58496,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -58207,6 +58507,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 1637,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_8"
@@ -58390,7 +58691,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -58401,6 +58702,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1688,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_9"
@@ -58584,7 +58886,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -58595,6 +58897,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1693,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_9"
@@ -58778,7 +59081,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -58789,6 +59092,7 @@
   "blueTeam": "T1",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 1986,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_10"
@@ -58972,7 +59276,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -58983,6 +59287,7 @@
   "blueTeam": "T1",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 1727,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 8_10"
@@ -59166,7 +59471,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -59177,6 +59482,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Hanwha Life Esports",
   "winner": "blue",
+  "gameLengthSeconds": 2587,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_1"
@@ -59360,7 +59666,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -59371,6 +59677,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 1888,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_1"
@@ -59554,7 +59861,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -59565,6 +59872,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "Hanwha Life Esports",
   "winner": "red",
+  "gameLengthSeconds": 1584,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_1"
@@ -59748,7 +60056,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -59759,6 +60067,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Kiwoom DRX",
   "winner": "red",
+  "gameLengthSeconds": 2084,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_2"
@@ -59942,7 +60251,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -59953,6 +60262,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "Kiwoom DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1935,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_2"
@@ -60136,7 +60446,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -60147,6 +60457,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "BNK FEARX",
   "winner": "blue",
+  "gameLengthSeconds": 2571,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_2"
@@ -60330,7 +60641,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -60341,6 +60652,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 2143,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_3"
@@ -60524,7 +60836,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -60535,6 +60847,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1489,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_3"
@@ -60718,7 +61031,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -60729,6 +61042,7 @@
   "blueTeam": "DN SOOPers",
   "redTeam": "Nongshim RedForce",
   "winner": "blue",
+  "gameLengthSeconds": 1887,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_3"
@@ -60912,7 +61226,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -60923,6 +61237,7 @@
   "blueTeam": "T1",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 1727,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_4"
@@ -61106,7 +61421,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -61117,6 +61432,7 @@
   "blueTeam": "T1",
   "redTeam": "KT Rolster",
   "winner": "red",
+  "gameLengthSeconds": 2132,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_4"
@@ -61300,7 +61616,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -61311,6 +61627,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Kiwoom DRX",
   "winner": "red",
+  "gameLengthSeconds": 1695,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_5"
@@ -61494,7 +61811,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -61505,6 +61822,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Kiwoom DRX",
   "winner": "blue",
+  "gameLengthSeconds": 1684,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_5"
@@ -61688,7 +62006,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -61699,6 +62017,7 @@
   "blueTeam": "Kiwoom DRX",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 1856,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_5"
@@ -61882,7 +62201,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -61893,6 +62212,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 1759,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_6"
@@ -62076,7 +62396,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -62087,6 +62407,7 @@
   "blueTeam": "Gen.G",
   "redTeam": "HANJIN BRION",
   "winner": "blue",
+  "gameLengthSeconds": 1775,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_6"
@@ -62270,7 +62591,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -62281,6 +62602,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 1831,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_7"
@@ -62464,7 +62786,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -62475,6 +62797,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "DN SOOPers",
   "winner": "red",
+  "gameLengthSeconds": 2042,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_7"
@@ -62658,7 +62981,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -62669,6 +62992,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 2276,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_8"
@@ -62852,7 +63176,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -62863,6 +63187,7 @@
   "blueTeam": "BNK FEARX",
   "redTeam": "T1",
   "winner": "blue",
+  "gameLengthSeconds": 1787,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_8"
@@ -63046,7 +63371,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -63057,6 +63382,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 1998,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_9"
@@ -63240,7 +63566,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -63251,6 +63577,7 @@
   "blueTeam": "Hanwha Life Esports",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 1693,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_9"
@@ -63434,7 +63761,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -63445,6 +63772,7 @@
   "blueTeam": "Nongshim RedForce",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 1794,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_10"
@@ -63628,7 +63956,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -63639,6 +63967,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "Nongshim RedForce",
   "winner": "red",
+  "gameLengthSeconds": 1733,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Rounds 1-2_Week 9_10"
@@ -63822,7 +64151,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -63833,6 +64162,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 2063,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Road to MSI_Round 1_1"
@@ -64016,7 +64346,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -64027,6 +64357,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "HANJIN BRION",
   "winner": "blue",
+  "gameLengthSeconds": 1322,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Road to MSI_Round 1_1"
@@ -64210,7 +64541,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -64221,6 +64552,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "HANJIN BRION",
   "winner": "red",
+  "gameLengthSeconds": 1447,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Road to MSI_Round 1_1"
@@ -64404,7 +64736,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -64415,6 +64747,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 1424,
   "series": {
    "gameNumber": 1,
    "matchId": "LCK/2026 Season/Road to MSI_Round 2_1"
@@ -64598,7 +64931,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -64609,6 +64942,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Dplus Kia",
   "winner": "blue",
+  "gameLengthSeconds": 2070,
   "series": {
    "gameNumber": 2,
    "matchId": "LCK/2026 Season/Road to MSI_Round 2_1"
@@ -64792,7 +65126,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -64803,6 +65137,7 @@
   "blueTeam": "Dplus Kia",
   "redTeam": "KT Rolster",
   "winner": "blue",
+  "gameLengthSeconds": 2348,
   "series": {
    "gameNumber": 3,
    "matchId": "LCK/2026 Season/Road to MSI_Round 2_1"
@@ -64986,7 +65321,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -64997,6 +65332,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 2753,
   "series": {
    "gameNumber": 4,
    "matchId": "LCK/2026 Season/Road to MSI_Round 2_1"
@@ -65180,7 +65516,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  },
  {
@@ -65191,6 +65527,7 @@
   "blueTeam": "KT Rolster",
   "redTeam": "Dplus Kia",
   "winner": "red",
+  "gameLengthSeconds": 1982,
   "series": {
    "gameNumber": 5,
    "matchId": "LCK/2026 Season/Road to MSI_Round 2_1"
@@ -65374,7 +65711,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:14:03.366Z"
+   "fetchedAt": "2026-06-10T13:34:52.598Z"
   }
  }
 ]

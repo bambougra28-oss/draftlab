@@ -204,14 +204,15 @@ describe('runCorpusScorecard — markdown rendering', () => {
         expect(results.patch).toBe('26.99-test');
     });
 
-    it('publishes exactly the five metric rows, every one next to its baseline', () => {
-        expect(results.entries).toHaveLength(5);
+    it('publishes exactly the six metric rows, every one next to its baseline', () => {
+        expect(results.entries).toHaveLength(6);
         expect(results.entries.map((e) => e.metric)).toEqual([
             'log loss — issue de partie (side-only vs p=0,5)',
             'Brier — issue de partie (side-only vs p=0,5)',
             'accuracy — issue de partie (side-only vs p=0,5)',
             'pick-in-range@8 — tendances (vs fréquence brute)',
-            'ban-hit@5 — bans du train (vs présence)'
+            'ban-hit@5 — bans du train (vs présence)',
+            'ban-hit@5 par side — banEV complet (vs présence)'
         ]);
         for (const entry of results.entries) {
             expect(Number.isNaN(entry.baseline)).toBe(false);

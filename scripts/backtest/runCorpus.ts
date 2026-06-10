@@ -13,11 +13,12 @@
  *                   place allowed to read the clock)
  *   --patch         card label + file suffix (default: last corpus patch)
  *
- * Plain `node --experimental-strip-types` cannot resolve the SvelteKit-only
- * `$lib/...` alias used inside src/lib, so a synchronous module hook
- * (node:module `registerHooks`, Node ≥ 22.15) rewrites `$lib/*` to
- * `src/lib/*.ts` and retries extensionless relative imports with `.ts` —
- * registered BEFORE the library is (dynamically) imported.
+ * Runs under `node --experimental-transform-types` (the import graph reaches
+ * the Role enum and TS class fields once the banEV/range engines are in).
+ * Plain node cannot resolve the SvelteKit-only `$lib/...` alias used inside
+ * src/lib, so a synchronous module hook (node:module `registerHooks`,
+ * Node ≥ 22.15) rewrites `$lib/*`, retries extensionless/directory imports
+ * and serves JSON modules — registered BEFORE the library is imported.
  */
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { registerHooks } from 'node:module';
@@ -30,19 +31,37 @@ const libRootHref = pathToFileURL(resolve(repoRoot, 'src', 'lib')).href;
 
 registerHooks({
     resolve(specifier, context, nextResolve) {
-        const target = specifier.startsWith('$lib/')
-            ? `${libRootHref}/${specifier.slice('$lib/'.length)}.ts`
-            : specifier;
-        try {
-            return nextResolve(target, context);
-        } catch (error) {
-            // src/lib uses extensionless relative imports ('./metrics'):
-            // valid for bundlers, not for plain node — retry with '.ts'.
-            if (target.startsWith('./') || target.startsWith('../')) {
-                return nextResolve(`${target}.ts`, context);
+        // src/lib uses bundler-style specifiers: '$lib/x' aliases, extensionless
+        // relative imports ('./metrics') and directory modules ('$lib/types' →
+        // types/index.ts) — try each candidate in order.
+        const isLib = specifier.startsWith('$lib/');
+        const base = isLib ? `${libRootHref}/${specifier.slice('$lib/'.length)}` : specifier;
+        const candidates = isLib
+            ? [`${base}.ts`, `${base}/index.ts`]
+            : base.startsWith('./') || base.startsWith('../')
+              ? [base, `${base}.ts`, `${base}/index.ts`]
+              : [base];
+        let lastError: unknown;
+        for (const candidate of candidates) {
+            try {
+                return nextResolve(candidate, context);
+            } catch (error) {
+                lastError = error;
             }
-            throw error;
         }
+        throw lastError;
+    },
+    // Vite imports .json without attributes; plain node ESM requires
+    // `with { type: 'json' }` — serve JSON modules ourselves instead.
+    load(url, context, nextLoad) {
+        if (url.endsWith('.json')) {
+            return {
+                format: 'json',
+                source: readFileSync(fileURLToPath(url), 'utf8'),
+                shortCircuit: true
+            };
+        }
+        return nextLoad(url, context);
     }
 });
 

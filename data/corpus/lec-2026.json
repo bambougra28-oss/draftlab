@@ -7,6 +7,7 @@
   "blueTeam": "Fnatic",
   "redTeam": "Los Ratones",
   "winner": "blue",
+  "gameLengthSeconds": 1933,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_1"
@@ -190,7 +191,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -201,6 +202,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 2125,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_2"
@@ -384,7 +386,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -395,6 +397,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Natus Vincere",
   "winner": "red",
+  "gameLengthSeconds": 1954,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_3"
@@ -578,7 +581,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -589,6 +592,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Team Vitality",
   "winner": "red",
+  "gameLengthSeconds": 2024,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_4"
@@ -772,7 +776,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -783,6 +787,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Karmine Corp Blue",
   "winner": "blue",
+  "gameLengthSeconds": 2135,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_5"
@@ -966,7 +971,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -977,6 +982,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 1912,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_6"
@@ -1160,7 +1166,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -1171,6 +1177,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Shifters",
   "winner": "red",
+  "gameLengthSeconds": 2419,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_7"
@@ -1354,7 +1361,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -1365,6 +1372,7 @@
   "blueTeam": "Los Ratones",
   "redTeam": "Karmine Corp Blue",
   "winner": "red",
+  "gameLengthSeconds": 2242,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_8"
@@ -1548,7 +1556,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -1559,6 +1567,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Natus Vincere",
   "winner": "red",
+  "gameLengthSeconds": 1841,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_9"
@@ -1742,7 +1751,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -1753,6 +1762,7 @@
   "blueTeam": "Fnatic",
   "redTeam": "SK Gaming",
   "winner": "red",
+  "gameLengthSeconds": 1692,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_10"
@@ -1936,7 +1946,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -1947,6 +1957,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 2159,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_11"
@@ -2130,7 +2141,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -2141,6 +2152,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 1934,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_12"
@@ -2324,7 +2336,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -2335,6 +2347,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 2270,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_13"
@@ -2518,7 +2531,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -2529,6 +2542,7 @@
   "blueTeam": "Karmine Corp Blue",
   "redTeam": "Team Vitality",
   "winner": "blue",
+  "gameLengthSeconds": 2163,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_14"
@@ -2712,7 +2726,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -2723,6 +2737,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "GIANTX",
   "winner": "red",
+  "gameLengthSeconds": 2507,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_15"
@@ -2906,7 +2921,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -2917,6 +2932,7 @@
   "blueTeam": "Shifters",
   "redTeam": "Movistar KOI",
   "winner": "red",
+  "gameLengthSeconds": 1601,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_16"
@@ -3100,7 +3116,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -3111,6 +3127,7 @@
   "blueTeam": "Los Ratones",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 2241,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_17"
@@ -3294,7 +3311,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -3305,6 +3322,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "SK Gaming",
   "winner": "blue",
+  "gameLengthSeconds": 1532,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 1_18"
@@ -3488,7 +3506,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -3499,6 +3517,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Los Ratones",
   "winner": "red",
+  "gameLengthSeconds": 1471,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_1"
@@ -3682,7 +3701,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -3693,6 +3712,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Karmine Corp Blue",
   "winner": "red",
+  "gameLengthSeconds": 2275,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_2"
@@ -3876,7 +3896,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -3887,6 +3907,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Team Vitality",
   "winner": "red",
+  "gameLengthSeconds": 1947,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_3"
@@ -4070,7 +4091,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -4081,6 +4102,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 1769,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_4"
@@ -4264,7 +4286,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -4275,6 +4297,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 2240,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_5"
@@ -4458,7 +4481,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -4469,6 +4492,7 @@
   "blueTeam": "Fnatic",
   "redTeam": "Movistar KOI",
   "winner": "red",
+  "gameLengthSeconds": 1925,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_6"
@@ -4652,7 +4676,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -4663,6 +4687,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Shifters",
   "winner": "red",
+  "gameLengthSeconds": 1977,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_7"
@@ -4846,7 +4871,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -4857,6 +4882,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Natus Vincere",
   "winner": "red",
+  "gameLengthSeconds": 1843,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_8"
@@ -5040,7 +5066,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -5051,6 +5077,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Los Ratones",
   "winner": "red",
+  "gameLengthSeconds": 1969,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_9"
@@ -5234,7 +5261,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -5245,6 +5272,7 @@
   "blueTeam": "Karmine Corp Blue",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 1555,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_10"
@@ -5428,7 +5456,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -5439,6 +5467,7 @@
   "blueTeam": "Fnatic",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 1710,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_11"
@@ -5622,7 +5651,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -5633,6 +5662,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 2023,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_12"
@@ -5816,7 +5846,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -5827,6 +5857,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Karmine Corp Blue",
   "winner": "blue",
+  "gameLengthSeconds": 1517,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_13"
@@ -6010,7 +6041,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -6021,6 +6052,7 @@
   "blueTeam": "Shifters",
   "redTeam": "Los Ratones",
   "winner": "blue",
+  "gameLengthSeconds": 2245,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_14"
@@ -6204,7 +6236,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -6215,6 +6247,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 1782,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_15"
@@ -6398,7 +6431,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -6409,6 +6442,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Team Heretics",
   "winner": "blue",
+  "gameLengthSeconds": 1746,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_16"
@@ -6592,7 +6626,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -6603,6 +6637,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1848,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_17"
@@ -6786,7 +6821,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -6797,6 +6832,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "GIANTX",
   "winner": "red",
+  "gameLengthSeconds": 1961,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 2_18"
@@ -6980,7 +7016,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -6991,6 +7027,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "SK Gaming",
   "winner": "blue",
+  "gameLengthSeconds": 2365,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_1"
@@ -7174,7 +7211,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -7185,6 +7222,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Natus Vincere",
   "winner": "blue",
+  "gameLengthSeconds": 2044,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_2"
@@ -7368,7 +7406,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -7379,6 +7417,7 @@
   "blueTeam": "Fnatic",
   "redTeam": "Shifters",
   "winner": "red",
+  "gameLengthSeconds": 2000,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_3"
@@ -7562,7 +7601,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -7573,6 +7612,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp Blue",
   "winner": "blue",
+  "gameLengthSeconds": 2040,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_4"
@@ -7756,7 +7796,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -7767,6 +7807,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1978,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_5"
@@ -7950,7 +7991,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -7961,6 +8002,7 @@
   "blueTeam": "Los Ratones",
   "redTeam": "Movistar KOI",
   "winner": "red",
+  "gameLengthSeconds": 2397,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_6"
@@ -8144,7 +8186,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -8155,6 +8197,7 @@
   "blueTeam": "Shifters",
   "redTeam": "Natus Vincere",
   "winner": "blue",
+  "gameLengthSeconds": 2466,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_7"
@@ -8338,7 +8381,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -8349,6 +8392,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Karmine Corp Blue",
   "winner": "red",
+  "gameLengthSeconds": 2566,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_8"
@@ -8532,7 +8576,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -8543,6 +8587,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Team Vitality",
   "winner": "red",
+  "gameLengthSeconds": 2198,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_9"
@@ -8726,7 +8771,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -8737,6 +8782,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 2172,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_10"
@@ -8920,7 +8966,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -8931,6 +8977,7 @@
   "blueTeam": "Fnatic",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1818,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_11"
@@ -9114,7 +9161,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -9125,6 +9172,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Los Ratones",
   "winner": "red",
+  "gameLengthSeconds": 1892,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_12"
@@ -9308,7 +9356,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -9319,6 +9367,7 @@
   "blueTeam": "Karmine Corp Blue",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 2005,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_13"
@@ -9502,7 +9551,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -9513,6 +9562,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 2077,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_14"
@@ -9696,7 +9746,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -9707,6 +9757,7 @@
   "blueTeam": "Los Ratones",
   "redTeam": "Natus Vincere",
   "winner": "blue",
+  "gameLengthSeconds": 1849,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_15"
@@ -9890,7 +9941,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -9901,6 +9952,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Team Vitality",
   "winner": "blue",
+  "gameLengthSeconds": 2438,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_16"
@@ -10084,7 +10136,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -10095,6 +10147,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Movistar KOI",
   "winner": "red",
+  "gameLengthSeconds": 2269,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_17"
@@ -10278,7 +10331,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -10289,6 +10342,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 1876,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 3_18"
@@ -10472,7 +10526,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -10483,6 +10537,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 2105,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 4_1"
@@ -10666,7 +10721,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -10677,6 +10732,7 @@
   "blueTeam": "Karmine Corp Blue",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 2008,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 4_2"
@@ -10860,7 +10916,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -10871,6 +10927,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Los Ratones",
   "winner": "blue",
+  "gameLengthSeconds": 2098,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 4_3"
@@ -11054,7 +11111,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -11065,6 +11122,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Natus Vincere",
   "winner": "red",
+  "gameLengthSeconds": 1795,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 4_4"
@@ -11248,7 +11306,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -11259,6 +11317,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Team Vitality",
   "winner": "red",
+  "gameLengthSeconds": 2200,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 4_5"
@@ -11442,7 +11501,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -11453,6 +11512,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 1991,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 4_6"
@@ -11636,7 +11696,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -11647,6 +11707,7 @@
   "blueTeam": "Los Ratones",
   "redTeam": "Team Vitality",
   "winner": "blue",
+  "gameLengthSeconds": 2096,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 4_7"
@@ -11830,7 +11891,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -11841,6 +11902,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Karmine Corp Blue",
   "winner": "red",
+  "gameLengthSeconds": 1893,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 4_8"
@@ -12024,7 +12086,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -12035,6 +12097,7 @@
   "blueTeam": "Shifters",
   "redTeam": "SK Gaming",
   "winner": "red",
+  "gameLengthSeconds": 2300,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 4_9"
@@ -12218,7 +12281,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -12229,6 +12292,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Natus Vincere",
   "winner": "blue",
+  "gameLengthSeconds": 1738,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 4_10"
@@ -12412,7 +12476,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -12423,6 +12487,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 2043,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 4_11"
@@ -12606,7 +12671,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -12617,6 +12682,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 1677,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Season_Week 4_12"
@@ -12800,7 +12866,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -12811,6 +12877,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 1836,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_1"
@@ -12994,7 +13061,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -13005,6 +13072,7 @@
   "blueTeam": "Fnatic",
   "redTeam": "Natus Vincere",
   "winner": "blue",
+  "gameLengthSeconds": 1813,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_1"
@@ -13188,7 +13256,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -13199,6 +13267,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Team Vitality",
   "winner": "red",
+  "gameLengthSeconds": 3342,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_2"
@@ -13382,7 +13451,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -13393,6 +13462,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Team Vitality",
   "winner": "blue",
+  "gameLengthSeconds": 1875,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_2"
@@ -13576,7 +13646,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -13587,6 +13657,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "G2 Esports",
   "winner": "red",
+  "gameLengthSeconds": 1495,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_3"
@@ -13770,7 +13841,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -13781,6 +13852,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Team Heretics",
   "winner": "blue",
+  "gameLengthSeconds": 1466,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_3"
@@ -13964,7 +14036,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -13975,6 +14047,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 1954,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_4"
@@ -14158,7 +14231,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -14169,6 +14242,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 2049,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_4"
@@ -14352,7 +14426,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -14363,6 +14437,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Natus Vincere",
   "winner": "blue",
+  "gameLengthSeconds": 1923,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 2_1"
@@ -14546,7 +14621,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -14557,6 +14632,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Natus Vincere",
   "winner": "blue",
+  "gameLengthSeconds": 2270,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 2_1"
@@ -14740,7 +14816,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -14751,6 +14827,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1989,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 2_2"
@@ -14934,7 +15011,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -14945,6 +15022,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 2993,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 2_2"
@@ -15128,7 +15206,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -15139,6 +15217,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Team Heretics",
   "winner": "blue",
+  "gameLengthSeconds": 1847,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_5"
@@ -15322,7 +15401,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -15333,6 +15412,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Team Heretics",
   "winner": "red",
+  "gameLengthSeconds": 2285,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_5"
@@ -15516,7 +15596,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -15527,6 +15607,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Team Heretics",
   "winner": "red",
+  "gameLengthSeconds": 1788,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_5"
@@ -15710,7 +15791,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -15721,6 +15802,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 1984,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_6"
@@ -15904,7 +15986,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -15915,6 +15997,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 2180,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 1_6"
@@ -16098,7 +16181,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -16109,6 +16192,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 2143,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 2_3"
@@ -16292,7 +16376,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -16303,6 +16387,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 1799,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 2_3"
@@ -16486,7 +16571,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -16497,6 +16582,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Natus Vincere",
   "winner": "red",
+  "gameLengthSeconds": 2185,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 2_3"
@@ -16680,7 +16766,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -16691,6 +16777,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 2329,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 2_4"
@@ -16874,7 +16961,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -16885,6 +16972,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 2067,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 2_4"
@@ -17068,7 +17156,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -17079,6 +17167,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1539,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 2_4"
@@ -17262,7 +17351,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -17273,6 +17362,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 2033,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 4_1"
@@ -17456,7 +17546,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -17467,6 +17557,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Movistar KOI",
   "winner": "red",
+  "gameLengthSeconds": 1639,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 4_1"
@@ -17650,7 +17741,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -17661,6 +17752,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 2199,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 4_1"
@@ -17844,7 +17936,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -17855,6 +17947,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1974,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 3_1"
@@ -18038,7 +18131,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -18049,6 +18142,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1896,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 3_1"
@@ -18232,7 +18326,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -18243,6 +18337,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 2497,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 3_1"
@@ -18426,7 +18521,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -18437,6 +18532,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 2075,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 4_2"
@@ -18620,7 +18716,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -18631,6 +18727,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1546,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 4_2"
@@ -18814,7 +18911,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -18825,6 +18922,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1778,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 4_2"
@@ -19008,7 +19106,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -19019,6 +19117,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 2030,
   "series": {
    "gameNumber": 4,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 4_2"
@@ -19202,7 +19301,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -19213,6 +19312,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1513,
   "series": {
    "gameNumber": 5,
    "matchId": "LEC/2026 Season/Versus Playoffs_Round 4_2"
@@ -19396,7 +19496,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -19407,6 +19507,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 2056,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Versus Playoffs_Finals_1"
@@ -19590,7 +19691,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -19601,6 +19702,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1958,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Versus Playoffs_Finals_1"
@@ -19784,7 +19886,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -19795,6 +19897,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1937,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Versus Playoffs_Finals_1"
@@ -19978,7 +20081,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -19989,6 +20092,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 2166,
   "series": {
    "gameNumber": 4,
    "matchId": "LEC/2026 Season/Versus Playoffs_Finals_1"
@@ -20172,7 +20276,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -20183,6 +20287,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 2784,
   "series": {
    "gameNumber": 5,
    "matchId": "LEC/2026 Season/Versus Playoffs_Finals_1"
@@ -20366,7 +20471,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -20377,6 +20482,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 1562,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_1"
@@ -20560,7 +20666,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -20571,6 +20677,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 2017,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_1"
@@ -20754,7 +20861,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -20765,6 +20872,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 2118,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_1"
@@ -20948,7 +21056,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -20959,6 +21067,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1805,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_2"
@@ -21142,7 +21251,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -21153,6 +21262,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 3245,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_2"
@@ -21336,7 +21446,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -21347,6 +21457,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1965,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_2"
@@ -21530,7 +21641,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -21541,6 +21652,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Natus Vincere",
   "winner": "blue",
+  "gameLengthSeconds": 2042,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_3"
@@ -21724,7 +21836,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -21735,6 +21847,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Natus Vincere",
   "winner": "blue",
+  "gameLengthSeconds": 1736,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_3"
@@ -21918,7 +22031,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -21929,6 +22042,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Natus Vincere",
   "winner": "blue",
+  "gameLengthSeconds": 2181,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_3"
@@ -22112,7 +22226,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -22123,6 +22237,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "SK Gaming",
   "winner": "red",
+  "gameLengthSeconds": 2252,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_4"
@@ -22306,7 +22421,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -22317,6 +22432,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Team Heretics",
   "winner": "red",
+  "gameLengthSeconds": 1979,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_4"
@@ -22500,7 +22616,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -22511,6 +22627,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Team Heretics",
   "winner": "blue",
+  "gameLengthSeconds": 1854,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_4"
@@ -22694,7 +22811,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -22705,6 +22822,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 1908,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_5"
@@ -22888,7 +23006,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -22899,6 +23017,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 1971,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_5"
@@ -23082,7 +23201,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -23093,6 +23212,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Natus Vincere",
   "winner": "red",
+  "gameLengthSeconds": 2032,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_6"
@@ -23276,7 +23396,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -23287,6 +23407,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Natus Vincere",
   "winner": "red",
+  "gameLengthSeconds": 2577,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_6"
@@ -23470,7 +23591,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -23481,6 +23602,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Natus Vincere",
   "winner": "blue",
+  "gameLengthSeconds": 2445,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_6"
@@ -23664,7 +23786,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -23675,6 +23797,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Team Heretics",
   "winner": "blue",
+  "gameLengthSeconds": 2368,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_7"
@@ -23858,7 +23981,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -23869,6 +23992,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Team Heretics",
   "winner": "blue",
+  "gameLengthSeconds": 1765,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 1_7"
@@ -24052,7 +24176,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -24063,6 +24187,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 1504,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_1"
@@ -24246,7 +24371,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -24257,6 +24382,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 2592,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_1"
@@ -24440,7 +24566,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -24451,6 +24577,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Team Heretics",
   "winner": "blue",
+  "gameLengthSeconds": 2251,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_2"
@@ -24634,7 +24761,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -24645,6 +24772,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Team Heretics",
   "winner": "red",
+  "gameLengthSeconds": 1791,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_2"
@@ -24828,7 +24956,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -24839,6 +24967,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Natus Vincere",
   "winner": "red",
+  "gameLengthSeconds": 1892,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_3"
@@ -25022,7 +25151,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -25033,6 +25162,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Natus Vincere",
   "winner": "red",
+  "gameLengthSeconds": 3034,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_3"
@@ -25216,7 +25346,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -25227,6 +25357,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "SK Gaming",
   "winner": "blue",
+  "gameLengthSeconds": 2132,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_4"
@@ -25410,7 +25541,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -25421,6 +25552,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "SK Gaming",
   "winner": "blue",
+  "gameLengthSeconds": 2030,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_4"
@@ -25604,7 +25736,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -25615,6 +25747,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 1470,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_5"
@@ -25798,7 +25931,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -25809,6 +25942,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 1737,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_5"
@@ -25992,7 +26126,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -26003,6 +26137,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 1887,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_5"
@@ -26186,7 +26321,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -26197,6 +26332,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Team Heretics",
   "winner": "red",
+  "gameLengthSeconds": 1659,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_6"
@@ -26380,7 +26516,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -26391,6 +26527,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Team Heretics",
   "winner": "red",
+  "gameLengthSeconds": 2277,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_6"
@@ -26574,7 +26711,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -26585,6 +26722,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Team Heretics",
   "winner": "blue",
+  "gameLengthSeconds": 1762,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_6"
@@ -26768,7 +26906,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -26779,6 +26917,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Team Vitality",
   "winner": "blue",
+  "gameLengthSeconds": 1869,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_7"
@@ -26962,7 +27101,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -26973,6 +27112,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 1985,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_7"
@@ -27156,7 +27296,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -27167,6 +27307,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Team Vitality",
   "winner": "red",
+  "gameLengthSeconds": 2186,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 2_7"
@@ -27350,7 +27491,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -27361,6 +27502,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Team Heretics",
   "winner": "blue",
+  "gameLengthSeconds": 1865,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_1"
@@ -27544,7 +27686,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -27555,6 +27697,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Team Heretics",
   "winner": "red",
+  "gameLengthSeconds": 1830,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_1"
@@ -27738,7 +27881,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -27749,6 +27892,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "G2 Esports",
   "winner": "red",
+  "gameLengthSeconds": 3125,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_2"
@@ -27932,7 +28076,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -27943,6 +28087,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "G2 Esports",
   "winner": "red",
+  "gameLengthSeconds": 2088,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_2"
@@ -28126,7 +28271,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -28137,6 +28282,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Team Vitality",
   "winner": "blue",
+  "gameLengthSeconds": 1957,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_2"
@@ -28320,7 +28466,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -28331,6 +28477,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 2452,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_3"
@@ -28514,7 +28661,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -28525,6 +28672,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "SK Gaming",
   "winner": "blue",
+  "gameLengthSeconds": 2186,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_3"
@@ -28708,7 +28856,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -28719,6 +28867,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Shifters",
   "winner": "red",
+  "gameLengthSeconds": 2005,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_4"
@@ -28902,7 +29051,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -28913,6 +29062,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Shifters",
   "winner": "red",
+  "gameLengthSeconds": 1741,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_4"
@@ -29088,7 +29238,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -29099,6 +29249,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 1830,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_4"
@@ -29282,7 +29433,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -29293,6 +29444,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1418,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_5"
@@ -29476,7 +29628,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -29487,6 +29639,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1429,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_5"
@@ -29670,7 +29823,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -29681,6 +29834,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 3387,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_6"
@@ -29864,7 +30018,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -29875,6 +30029,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 2242,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_6"
@@ -30058,7 +30213,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -30069,6 +30224,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Shifters",
   "winner": "red",
+  "gameLengthSeconds": 2013,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_7"
@@ -30252,7 +30408,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -30263,6 +30419,7 @@
   "blueTeam": "Shifters",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 1881,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 3_7"
@@ -30446,7 +30603,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -30457,6 +30614,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "GIANTX",
   "winner": "red",
+  "gameLengthSeconds": 1902,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_1"
@@ -30640,7 +30798,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -30651,6 +30809,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 1668,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_1"
@@ -30834,7 +30993,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -30845,6 +31004,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "GIANTX",
   "winner": "red",
+  "gameLengthSeconds": 1848,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_1"
@@ -31028,7 +31188,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -31039,6 +31199,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "G2 Esports",
   "winner": "red",
+  "gameLengthSeconds": 2391,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_2"
@@ -31222,7 +31383,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -31233,6 +31394,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "SK Gaming",
   "winner": "blue",
+  "gameLengthSeconds": 2025,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_2"
@@ -31416,7 +31578,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -31427,6 +31589,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "GIANTX",
   "winner": "red",
+  "gameLengthSeconds": 2015,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_3"
@@ -31610,7 +31773,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -31621,6 +31784,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 1559,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_3"
@@ -31804,7 +31968,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -31815,6 +31979,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Team Heretics",
   "winner": "blue",
+  "gameLengthSeconds": 1951,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_4"
@@ -31998,7 +32163,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -32009,6 +32174,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Team Heretics",
   "winner": "blue",
+  "gameLengthSeconds": 1804,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_4"
@@ -32192,7 +32358,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -32203,6 +32369,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 2308,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_5"
@@ -32386,7 +32553,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -32397,6 +32564,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 2334,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_5"
@@ -32580,7 +32748,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -32591,6 +32759,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1470,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_6"
@@ -32774,7 +32943,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -32785,6 +32954,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1787,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 4_6"
@@ -32968,7 +33138,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -32979,6 +33149,7 @@
   "blueTeam": "Shifters",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 2238,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_1"
@@ -33162,7 +33333,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -33173,6 +33344,7 @@
   "blueTeam": "Shifters",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 2062,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_1"
@@ -33356,7 +33528,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -33367,6 +33539,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 2365,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_2"
@@ -33550,7 +33723,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -33561,6 +33734,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1780,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_2"
@@ -33744,7 +33918,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -33755,6 +33929,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 2277,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_3"
@@ -33938,7 +34113,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -33949,6 +34124,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 2353,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_3"
@@ -34132,7 +34308,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -34143,6 +34319,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 2763,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_3"
@@ -34326,7 +34503,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -34337,6 +34514,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 1749,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_4"
@@ -34520,7 +34698,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -34531,6 +34709,7 @@
   "blueTeam": "Shifters",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 2432,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_4"
@@ -34714,7 +34893,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -34725,6 +34904,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 2195,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_4"
@@ -34908,7 +35088,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -34919,6 +35099,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 2667,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_5"
@@ -35102,7 +35283,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -35113,6 +35294,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Shifters",
   "winner": "red",
+  "gameLengthSeconds": 1877,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_5"
@@ -35296,7 +35478,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -35307,6 +35489,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 2202,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_5"
@@ -35490,7 +35673,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -35501,6 +35684,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 1874,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_6"
@@ -35684,7 +35868,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -35695,6 +35879,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 2327,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_6"
@@ -35878,7 +36063,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -35889,6 +36074,7 @@
   "blueTeam": "Fnatic",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1962,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 5_6"
@@ -36072,7 +36258,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -36083,6 +36269,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 1792,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_1"
@@ -36266,7 +36453,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -36277,6 +36464,7 @@
   "blueTeam": "Fnatic",
   "redTeam": "Team Heretics",
   "winner": "blue",
+  "gameLengthSeconds": 2249,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_1"
@@ -36460,7 +36648,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -36471,6 +36659,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Team Vitality",
   "winner": "red",
+  "gameLengthSeconds": 1891,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_2"
@@ -36654,7 +36843,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -36665,6 +36854,7 @@
   "blueTeam": "SK Gaming",
   "redTeam": "Team Vitality",
   "winner": "red",
+  "gameLengthSeconds": 1518,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_2"
@@ -36848,7 +37038,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -36859,6 +37049,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "SK Gaming",
   "winner": "red",
+  "gameLengthSeconds": 2024,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_2"
@@ -37042,7 +37233,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -37053,6 +37244,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 2608,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_3"
@@ -37236,7 +37428,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -37247,6 +37439,7 @@
   "blueTeam": "Team Heretics",
   "redTeam": "Shifters",
   "winner": "red",
+  "gameLengthSeconds": 1799,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_3"
@@ -37430,7 +37623,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -37441,6 +37634,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "G2 Esports",
   "winner": "red",
+  "gameLengthSeconds": 1773,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_4"
@@ -37624,7 +37818,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -37635,6 +37829,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Natus Vincere",
   "winner": "blue",
+  "gameLengthSeconds": 2117,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_4"
@@ -37818,7 +38013,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -37829,6 +38024,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Fnatic",
   "winner": "red",
+  "gameLengthSeconds": 2060,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_5"
@@ -38012,7 +38208,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -38023,6 +38219,7 @@
   "blueTeam": "Fnatic",
   "redTeam": "Team Vitality",
   "winner": "red",
+  "gameLengthSeconds": 2321,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_5"
@@ -38206,7 +38403,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -38217,6 +38414,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "Fnatic",
   "winner": "blue",
+  "gameLengthSeconds": 1959,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_5"
@@ -38400,7 +38598,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -38411,6 +38609,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Shifters",
   "winner": "red",
+  "gameLengthSeconds": 2188,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_6"
@@ -38594,7 +38793,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -38605,6 +38804,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Shifters",
   "winner": "red",
+  "gameLengthSeconds": 2018,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_6"
@@ -38788,7 +38988,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -38799,6 +38999,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Shifters",
   "winner": "blue",
+  "gameLengthSeconds": 1909,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 6_6"
@@ -38982,7 +39183,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -38993,6 +39194,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1709,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_1"
@@ -39176,7 +39378,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -39187,6 +39389,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1838,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_1"
@@ -39370,7 +39573,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -39381,6 +39584,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 2013,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_2"
@@ -39564,7 +39768,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -39575,6 +39779,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 1596,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_2"
@@ -39758,7 +39963,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -39769,6 +39974,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "G2 Esports",
   "winner": "red",
+  "gameLengthSeconds": 1785,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_3"
@@ -39952,7 +40158,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -39963,6 +40169,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 1953,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_3"
@@ -40146,7 +40353,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -40157,6 +40364,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 2555,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_4"
@@ -40340,7 +40548,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -40351,6 +40559,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Movistar KOI",
   "winner": "red",
+  "gameLengthSeconds": 1545,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_4"
@@ -40534,7 +40743,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -40545,6 +40754,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 2077,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_4"
@@ -40728,7 +40938,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -40739,6 +40949,7 @@
   "blueTeam": "GIANTX",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1930,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_5"
@@ -40922,7 +41133,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -40933,6 +41144,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "GIANTX",
   "winner": "red",
+  "gameLengthSeconds": 2477,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_5"
@@ -41116,7 +41328,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -41127,6 +41339,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 1927,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_5"
@@ -41310,7 +41523,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -41321,6 +41534,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Movistar KOI",
   "winner": "red",
+  "gameLengthSeconds": 1778,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_6"
@@ -41504,7 +41718,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -41515,6 +41729,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "G2 Esports",
   "winner": "red",
+  "gameLengthSeconds": 1972,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_6"
@@ -41698,7 +41913,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -41709,6 +41924,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Movistar KOI",
   "winner": "red",
+  "gameLengthSeconds": 2575,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Season_Week 7_6"
@@ -41892,7 +42108,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -41903,6 +42119,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 2655,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_1"
@@ -42086,7 +42303,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -42097,6 +42314,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1648,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_1"
@@ -42280,7 +42498,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -42291,6 +42509,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1848,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_1"
@@ -42474,7 +42693,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -42485,6 +42704,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1566,
   "series": {
    "gameNumber": 4,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_1"
@@ -42668,7 +42888,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -42679,6 +42899,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Team Vitality",
   "winner": "blue",
+  "gameLengthSeconds": 2222,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_2"
@@ -42862,7 +43083,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -42873,6 +43094,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Team Vitality",
   "winner": "blue",
+  "gameLengthSeconds": 1853,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_2"
@@ -43056,7 +43278,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -43067,6 +43289,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "Team Vitality",
   "winner": "blue",
+  "gameLengthSeconds": 1558,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_2"
@@ -43250,7 +43473,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -43261,6 +43484,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "G2 Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1898,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 3_1"
@@ -43444,7 +43668,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -43455,6 +43679,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "G2 Esports",
   "winner": "blue",
+  "gameLengthSeconds": 1964,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 3_1"
@@ -43638,7 +43863,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -43649,6 +43874,7 @@
   "blueTeam": "Movistar KOI",
   "redTeam": "G2 Esports",
   "winner": "red",
+  "gameLengthSeconds": 1498,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 3_1"
@@ -43832,7 +44058,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -43843,6 +44069,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Movistar KOI",
   "winner": "red",
+  "gameLengthSeconds": 1938,
   "series": {
    "gameNumber": 4,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 3_1"
@@ -44026,7 +44253,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -44037,6 +44264,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 2277,
   "series": {
    "gameNumber": 5,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 3_1"
@@ -44220,7 +44448,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -44231,6 +44459,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1760,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_3"
@@ -44414,7 +44643,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -44425,6 +44654,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Natus Vincere",
   "winner": "red",
+  "gameLengthSeconds": 1873,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_3"
@@ -44608,7 +44838,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -44619,6 +44849,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Natus Vincere",
   "winner": "red",
+  "gameLengthSeconds": 2305,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_3"
@@ -44802,7 +45033,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -44813,6 +45044,7 @@
   "blueTeam": "Natus Vincere",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1594,
   "series": {
    "gameNumber": 4,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_3"
@@ -44996,7 +45228,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -45007,6 +45239,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "GIANTX",
   "winner": "red",
+  "gameLengthSeconds": 2404,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_4"
@@ -45190,7 +45423,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -45201,6 +45434,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 2515,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_4"
@@ -45384,7 +45618,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -45395,6 +45629,7 @@
   "blueTeam": "Team Vitality",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 2849,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 1_4"
@@ -45578,7 +45813,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -45589,6 +45824,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "GIANTX",
   "winner": "red",
+  "gameLengthSeconds": 2036,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 2_1"
@@ -45772,7 +46008,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -45783,6 +46019,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 1784,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 2_1"
@@ -45966,7 +46203,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -45977,6 +46214,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "GIANTX",
   "winner": "blue",
+  "gameLengthSeconds": 1674,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 2_1"
@@ -46160,7 +46398,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -46171,6 +46409,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 2525,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 3_2"
@@ -46354,7 +46593,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -46365,6 +46604,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 2142,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 3_2"
@@ -46548,7 +46788,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -46559,6 +46799,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "Movistar KOI",
   "winner": "blue",
+  "gameLengthSeconds": 2223,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Playoffs_Round 3_2"
@@ -46742,7 +46983,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -46753,6 +46994,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "blue",
+  "gameLengthSeconds": 1942,
   "series": {
    "gameNumber": 1,
    "matchId": "LEC/2026 Season/Spring Playoffs_Finals_1"
@@ -46936,7 +47178,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -46947,6 +47189,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "G2 Esports",
   "winner": "red",
+  "gameLengthSeconds": 1368,
   "series": {
    "gameNumber": 2,
    "matchId": "LEC/2026 Season/Spring Playoffs_Finals_1"
@@ -47130,7 +47373,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -47141,6 +47384,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 2133,
   "series": {
    "gameNumber": 3,
    "matchId": "LEC/2026 Season/Spring Playoffs_Finals_1"
@@ -47324,7 +47568,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -47335,6 +47579,7 @@
   "blueTeam": "Karmine Corp",
   "redTeam": "G2 Esports",
   "winner": "red",
+  "gameLengthSeconds": 1788,
   "series": {
    "gameNumber": 4,
    "matchId": "LEC/2026 Season/Spring Playoffs_Finals_1"
@@ -47518,7 +47763,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  },
  {
@@ -47529,6 +47774,7 @@
   "blueTeam": "G2 Esports",
   "redTeam": "Karmine Corp",
   "winner": "red",
+  "gameLengthSeconds": 1578,
   "series": {
    "gameNumber": 5,
    "matchId": "LEC/2026 Season/Spring Playoffs_Finals_1"
@@ -47712,7 +47958,7 @@
   ],
   "provenance": {
    "source": "leaguepedia",
-   "fetchedAt": "2026-06-10T13:18:10.279Z"
+   "fetchedAt": "2026-06-10T13:34:55.357Z"
   }
  }
 ]

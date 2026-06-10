@@ -57,7 +57,8 @@ const FIELD_ALIASES: Record<string, string> = {
     'SG.DateTime_UTC': 'dt',
     'SG.Patch': 'patch',
     'SG.Tournament': 'tournament',
-    'SG.OverviewPage': 'ovp'
+    'SG.OverviewPage': 'ovp',
+    'SG.Gamelength_Number': 'glen'
 };
 for (let i = 1; i <= 5; i++) {
     FIELD_ALIASES[`PB.Team1Ban${i}`] = `t1b${i}`;
@@ -161,6 +162,12 @@ export function rowToDraftRecord(row: CargoRow, fetchedAt: string): DraftRecord 
 
     const gameNumber = Number.parseInt(row.gn ?? '', 10);
 
+    // Gamelength_Number is decimal minutes ("28.5"); store whole seconds.
+    const lengthMinutes = Number.parseFloat(row.glen ?? '');
+    const gameLengthSeconds = Number.isFinite(lengthMinutes)
+        ? Math.round(lengthMinutes * 60)
+        : undefined;
+
     return {
         gameId: row.gid ?? '',
         tournament: row.tournament || row.ovp || undefined,
@@ -169,6 +176,7 @@ export function rowToDraftRecord(row: CargoRow, fetchedAt: string): DraftRecord 
         blueTeam: row.team1 ?? '',
         redTeam: row.team2 ?? '',
         winner,
+        ...(gameLengthSeconds !== undefined ? { gameLengthSeconds } : {}),
         series: Number.isFinite(gameNumber)
             ? { gameNumber, matchId: row.mid || undefined }
             : undefined,

@@ -72,6 +72,8 @@ export interface DraftRecord {
     blueTeam: string;
     redTeam: string;
     winner?: DraftSide;
+    /** Game duration in seconds, when the source exposes it (postdiction G1). */
+    gameLengthSeconds?: number;
     series?: DraftSeriesInfo;
     firstSelection?: FirstSelectionInfo;
     /** Which side made the first pick (drives the action template). */
