@@ -9,7 +9,7 @@
  * from the tag file show up here first).
  *
  * Run: node --experimental-strip-types --no-warnings scripts/data/pullCorpus.ts \
- *        --like "LCK/2026%" [--like "LFL/2026%"] --out data/corpus/lck-2026.json
+ *        --like "LCK/2026%" [--like "LFL/2026%"] --out static/corpus/lck-2026.json
  *
  * Same $lib module hook as scripts/backtest/runCorpus.ts (Node >= 22.15).
  * Data: Leaguepedia (lol.fandom.com), CC BY-SA 3.0 — keep the attribution
@@ -73,7 +73,7 @@ for (let i = 0; i < argv.length; i++) {
     else if (argv[i] === '--out') outPath = argv[++i];
 }
 if (likes.length === 0 || outPath === undefined) {
-    console.error('Usage: pnpm corpus -- --like "LCK/2026%" [--like ...] --out data/corpus/<name>.json');
+    console.error('Usage: pnpm corpus -- --like "LCK/2026%" [--like ...] --out static/corpus/<name>.json');
     process.exit(1);
 }
 
@@ -154,4 +154,40 @@ const absOut = resolve(repoRoot, outPath);
 mkdirSync(dirname(absOut), { recursive: true });
 writeFileSync(absOut, JSON.stringify(corpus, null, 1), 'utf8');
 console.log(`\nÉcrit : ${absOut}`);
+
+// Maintain the app-facing manifest (static/corpus/index.json) so the browser
+// import card (corpusStore) sees fresh counts/dates without a rebuild step.
+const manifestPath = resolve(dirname(absOut), 'index.json');
+interface ManifestEntry {
+    file: string;
+    league: string;
+    records: number;
+    from: string | null;
+    to: string | null;
+    pulledAt: string | null;
+}
+let manifest: { attribution: string; files: ManifestEntry[] } = {
+    attribution: LEAGUEPEDIA_ATTRIBUTION,
+    files: []
+};
+try {
+    manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+} catch {
+    // first corpus in this directory — start a fresh manifest
+}
+const fileName = absOut.split(/[\\/]/).pop()!;
+const dates = corpus.map((r) => r.date ?? '').filter(Boolean).sort();
+const entry: ManifestEntry = {
+    file: fileName,
+    league: fileName.split('-')[0],
+    records: corpus.length,
+    from: dates[0]?.slice(0, 10) ?? null,
+    to: dates[dates.length - 1]?.slice(0, 10) ?? null,
+    pulledAt: corpus[0]?.provenance.fetchedAt ?? null
+};
+manifest.files = [...manifest.files.filter((f) => f.file !== fileName), entry].sort((a, b) =>
+    a.file.localeCompare(b.file)
+);
+writeFileSync(manifestPath, JSON.stringify(manifest, null, 1), 'utf8');
+console.log(`Manifeste mis à jour : ${manifestPath}`);
 console.log(LEAGUEPEDIA_ATTRIBUTION);

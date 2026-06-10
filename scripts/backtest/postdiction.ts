@@ -15,7 +15,7 @@
  * goes back to the config bench (DA-V2-6), it does not ship as a claim.
  *
  * Run: node --experimental-transform-types --no-warnings scripts/backtest/postdiction.ts \
- *        data/corpus/lck-2026.json data/corpus/lfl-2026.json data/corpus/lec-2026.json \
+ *        static/corpus/lck-2026.json static/corpus/lfl-2026.json static/corpus/lec-2026.json \
  *        [--generated-at ISO] [--out docs/calibration/postdiction-2026.md]
  */
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';

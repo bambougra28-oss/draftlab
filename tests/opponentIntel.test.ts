@@ -365,3 +365,106 @@ describe('seriesStateFromSeries', () => {
         expect(() => seriesStateFromSeries(seriesOf({ format: 'bo1' }), pools)).toThrow(RangeError);
     });
 });
+
+// ---- corpus merge (Leaguepedia both-sided ∪ gol.gg fresh) ---------------------
+
+describe('buildOpponentIntel — corpusTeamRecords merge', () => {
+    /** One both-sided corpus record: same day + same team picks as a golgg
+     *  duplicate would produce; opponent plays 412 (Thresh) — the marker that
+     *  must NOT leak into the team's presence. Team name spelled differently
+     *  (canonical-equal) to exercise the rename. */
+    const corpusRecord = (gameId: string, day: string, teamPicks: string[]): DraftRecord => ({
+        gameId,
+        blueTeam: 'MERGE  Esport', // canonical-equal to 'Merge Esport'
+        redTeam: 'Les Adversaires',
+        date: `${day}T17:00:00Z`,
+        winner: 'blue',
+        firstPickSide: 'blue',
+        orderConfidence: 'assumed-blue-first',
+        actions: [
+            ...teamPicks.map((championKey, i) => ({
+                seq: [7, 10, 11][i],
+                type: 'pick' as const,
+                phase: 'pick1' as DraftPhase,
+                side: 'blue' as DraftSide,
+                championKey,
+                championName: championKey
+            })),
+            {
+                seq: 8,
+                type: 'pick' as const,
+                phase: 'pick1' as DraftPhase,
+                side: 'red' as DraftSide,
+                championKey: '412',
+                championName: '412'
+            }
+        ],
+        warnings: [],
+        provenance: { source: 'leaguepedia', fetchedAt: '2026-06-09T00:00:00Z' }
+    });
+
+    const mergeTeam: ProTeam = {
+        id: '999',
+        name: 'Merge Esport',
+        league: 'lfl',
+        players: [],
+        sideStats: { blue: { wins: 0, games: 0 }, red: { wins: 0, games: 0 } },
+        recentDrafts: [
+            {
+                gameId: 'golgg-dup',
+                side: 'blue',
+                result: 'W',
+                opponent: 'ADV',
+                playedAt: '2026-06-01T00:00:00.000Z',
+                picks: [{ championKey: '68' }, { championKey: '13' }, { championKey: '103' }],
+                bans: []
+            },
+            {
+                gameId: 'golgg-fresh',
+                side: 'blue',
+                result: 'L',
+                opponent: 'ADV',
+                playedAt: '2026-06-08T00:00:00.000Z',
+                picks: [{ championKey: '145' }, { championKey: '18' }, { championKey: '60' }],
+                bans: []
+            }
+        ],
+        warnings: []
+    };
+
+    const intel = buildOpponentIntel(mergeTeam, {
+        now: NOW,
+        corpusTeamRecords: [
+            corpusRecord('lp-dup', '2026-06-01', ['68', '13', '103']), // duplicate of golgg-dup
+            corpusRecord('lp-old', '2026-05-20', ['54', '54', '54'])
+        ]
+    });
+
+    it('dedupes by (day + team pick set): corpus wins, fresh golgg survives', () => {
+        expect(intel.records).toHaveLength(3);
+        const ids = intel.records.map((r) => r.gameId);
+        expect(ids).toContain('lp-dup');
+        expect(ids).toContain('lp-old');
+        expect(ids).toContain('golgg-fresh');
+        expect(ids).not.toContain('golgg-dup');
+        // Sorted most recent first.
+        expect(ids[0]).toBe('golgg-fresh');
+    });
+
+    it('rewrites corpus team names to the gol.gg spelling (one team string)', () => {
+        const lp = intel.records.find((r) => r.gameId === 'lp-dup');
+        expect(lp?.blueTeam).toBe('Merge Esport');
+        expect(lp?.redTeam).toBe('Les Adversaires');
+    });
+
+    it('keeps the opponent actions OUT of the team presence (team-side view)', () => {
+        expect(intel.presence.has('412')).toBe(false); // corpus opponent pick
+        expect(intel.presence.get('68')?.picks).toBe(1); // deduped, counted once
+        expect(intel.presence.get('54')?.picks).toBe(3); // corpus-only game
+    });
+
+    it('says so in the warnings, in plain French', () => {
+        expect(intel.warnings.some((w) => w.includes('Corpus Leaguepedia fusionné : 2 games complets'))).toBe(true);
+        expect(intel.warnings.some((w) => w.includes('+ 1 récents gol.gg'))).toBe(true);
+    });
+});

@@ -37,6 +37,7 @@ import {
     type SlotGroup,
     type TendencyTable
 } from '$lib/aggregates/tendency';
+import { canonicalTeamName, isoDay } from '$lib/data/normalize';
 import type { DraftRecord, DraftSide } from '$lib/data/types';
 import { recentDraftsToDraftRecords } from '$lib/pro/golggBridge';
 import type { ChampionPoolEntry, ProTeam } from '$lib/pro/types';
@@ -67,6 +68,12 @@ export interface OpponentIntelConfig {
 export interface OpponentIntelOptions {
     /** League corpus: tendency prior + meta term of the ranges. */
     leagueRecords?: DraftRecord[];
+    /**
+     * Both-sided corpus records of THIS team (Leaguepedia import): merged
+     * with the gol.gg bridge records — corpus wins on duplicates (exact
+     * order/roles, both sides), gol.gg keeps anything newer than the pull.
+     */
+    corpusTeamRecords?: DraftRecord[];
     /** Injected clock (ISO) — recency weights and record provenance. */
     now: string;
     /** Presence patch filter (degrades to unfiltered with a warning). */
@@ -145,19 +152,61 @@ export function buildOpponentIntel(team: ProTeam, opts: OpponentIntelOptions): O
     const banTendencyTopK = cfg.banTendencyTopK ?? 3;
     const warnings: string[] = [];
 
-    // 1. Records (R1 bridge) — provenance stamped with the injected clock.
-    const records = recentDraftsToDraftRecords(team, { fetchedAt: opts.now });
+    // 1. Records: gol.gg bridge (fresh, one-sided) merged with the team's
+    // both-sided corpus records when provided. Dedup keys on (day + the
+    // team's own sorted pick set) — cross-source game ids and the opponent
+    // names gol.gg abbreviates never align, the team's picks do. Corpus wins
+    // on duplicates (exact roles, both sides); gol.gg keeps anything newer
+    // than the corpus pull. Corpus team names are rewritten to the gol.gg
+    // spelling so the team-filtered tendency cells see ONE team string.
+    const canonical = canonicalTeamName(team.name);
+    const dedupeKey = (record: DraftRecord): string => {
+        const side: DraftSide | undefined =
+            canonicalTeamName(record.blueTeam) === canonical
+                ? 'blue'
+                : canonicalTeamName(record.redTeam) === canonical
+                  ? 'red'
+                  : undefined;
+        const picks =
+            side === undefined
+                ? '?'
+                : record.actions
+                      .filter((a) => a.type === 'pick' && a.side === side && a.championKey !== '')
+                      .map((a) => a.championKey)
+                      .sort()
+                      .join(',');
+        return `${isoDay(record.date) ?? '?'}|${picks}`;
+    };
+
+    const golggRecords = recentDraftsToDraftRecords(team, { fetchedAt: opts.now });
+    const corpusTeam = (opts.corpusTeamRecords ?? []).map((record) => {
+        const renamed = { ...record };
+        if (canonicalTeamName(record.blueTeam) === canonical) renamed.blueTeam = team.name;
+        if (canonicalTeamName(record.redTeam) === canonical) renamed.redTeam = team.name;
+        return renamed;
+    });
+    const seenGames = new Set(corpusTeam.map(dedupeKey));
+    const golggFresh = golggRecords.filter((record) => !seenGames.has(dedupeKey(record)));
+    const records = [...corpusTeam, ...golggFresh].sort((a, b) =>
+        (b.date ?? '').localeCompare(a.date ?? '')
+    );
+
     if (records.length === 0) {
         warnings.push(`Aucune draft récente gol.gg pour ${team.name} — intel adverse vide.`);
+    } else if (corpusTeam.length > 0) {
+        warnings.push(
+            `Corpus Leaguepedia fusionné : ${corpusTeam.length} games complets (les deux camps, ordre exact)` +
+                (golggFresh.length > 0 ? ` + ${golggFresh.length} récents gol.gg.` : '.')
+        );
     } else {
         warnings.push(
             `Records gol.gg one-sided : seules les actions de ${team.name} sont connues ` +
                 '(suffisant pour ses tendances ; la présence reflète ses propres picks/bans).'
         );
-        const undated = records.filter((r) => r.date === undefined).length;
-        if (undated > 0) {
-            warnings.push(`${undated} record(s) sans date — poids de récence 1 (aucune décote).`);
-        }
+    }
+    const undated = records.filter((r) => r.date === undefined).length;
+    if (records.length > 0 && undated > 0) {
+        warnings.push(`${undated} record(s) sans date — poids de récence 1 (aucune décote).`);
     }
 
     // 2. Tendency table — team-filtered, league prior when a corpus exists.
@@ -172,11 +221,22 @@ export function buildOpponentIntel(team: ProTeam, opts: OpponentIntelOptions): O
         ...(cfg.lambdaPerWeek !== undefined ? { lambdaPerWeek: cfg.lambdaPerWeek } : {})
     });
 
-    // 3. Aggregates. The patch filter only applies when it matches something:
-    // gol.gg records carry no patch, so it would silently empty the read.
+    // 3. Aggregates — on the TEAM-SIDE projection: merged records are
+    // both-sided, and the team's presence/flex/pairs must not absorb its
+    // opponents' actions (the tendency table above filters by team itself).
+    const teamView = records.map((record) => {
+        const side: DraftSide | undefined =
+            record.blueTeam === team.name ? 'blue' : record.redTeam === team.name ? 'red' : undefined;
+        return side === undefined
+            ? record
+            : { ...record, actions: record.actions.filter((a) => a.side === side) };
+    });
+
+    // The patch filter only applies when it matches something: gol.gg records
+    // carry no patch, so it would silently empty the read.
     let presenceFilter = {};
     if (opts.patch !== undefined) {
-        const matching = records.filter((r) => recordMatchesFilter(r, { patch: opts.patch })).length;
+        const matching = teamView.filter((r) => recordMatchesFilter(r, { patch: opts.patch })).length;
         if (matching > 0) {
             presenceFilter = { patch: opts.patch };
         } else if (records.length > 0) {
@@ -186,10 +246,10 @@ export function buildOpponentIntel(team: ProTeam, opts: OpponentIntelOptions): O
             );
         }
     }
-    const presence = computePresence(records, presenceFilter);
-    const flex = flexMap(records);
+    const presence = computePresence(teamView, presenceFilter);
+    const flex = flexMap(teamView);
     const combinations = mineCombinations(
-        records,
+        teamView,
         cfg.combinationMinGames !== undefined ? { minGames: cfg.combinationMinGames } : {}
     );
 

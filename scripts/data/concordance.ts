@@ -12,7 +12,7 @@
  * color compare globally. Anything else would be a false divergence.
  *
  * Run: node --experimental-transform-types --no-warnings scripts/data/concordance.ts \
- *        --team 2924 --league lfl --corpus data/corpus/lfl-2026.json --name "ZYB Esport"
+ *        --team 2924 --league lfl --corpus static/corpus/lfl-2026.json --name "ZYB Esport"
  */
 import { readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
@@ -68,7 +68,7 @@ const { canonicalTeamName, isoDay } = (await import(`${libRootHref}/data/normali
 
 let teamId = '2924';
 let league = 'lfl';
-let corpusPath = 'data/corpus/lfl-2026.json';
+let corpusPath = 'static/corpus/lfl-2026.json';
 let teamName = 'ZYB Esport';
 const argv = process.argv.slice(2);
 for (let i = 0; i < argv.length; i++) {

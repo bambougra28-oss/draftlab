@@ -59,6 +59,18 @@
     import ChampionIcon from '$lib/components/ChampionIcon.svelte';
     import { analyzeWinConditions } from '$lib/strategic/winConditionGraph';
     import { buildOpponentIntel } from '$lib/intel/opponentIntel';
+    import {
+        corpusStatus,
+        importBundledCorpora,
+        loadCorpusRecords,
+        type CorpusLeagueStatus
+    } from '$lib/intel/corpusStore';
+    import { draftStateFromRoleEntry, recommendNext } from '$lib/intel/liveDraft';
+    import { makeAnalyzeDraftEvaluator } from '$lib/strategic/draftNavigator';
+    import { computePresence } from '$lib/aggregates/presence';
+    import { canonicalTeamName } from '$lib/data/normalize';
+    import type { DraftRecord } from '$lib/data/types';
+    import CoachPanel from '$lib/components/CoachPanel.svelte';
     import { classifyPoolTier } from '$lib/strategic/poolTierClassifier';
     import { championNameByKey } from '$lib/dataDragon/version';
     import {
@@ -400,11 +412,99 @@
         );
     });
 
+    // ---- corpus pro (bundled Leaguepedia snapshots → IndexedDB) ----
+    let corpusStatuses = $state<CorpusLeagueStatus[]>([]);
+    let corpusBusy = $state(false);
+    let corpusWarnings = $state<string[]>([]);
+    let leagueRecords = $state<DraftRecord[] | null>(null);
+
+    async function refreshCorpus(): Promise<void> {
+        corpusBusy = true;
+        try {
+            const report = await importBundledCorpora();
+            corpusWarnings = report.warnings;
+            corpusStatuses = await corpusStatus();
+            leagueRecords = await loadCorpusRecords(leagueId);
+        } catch (error) {
+            corpusWarnings = [error instanceof Error ? error.message : String(error)];
+        } finally {
+            corpusBusy = false;
+        }
+    }
+
+    onMount(() => {
+        void refreshCorpus();
+    });
+
+    // Follow the league selector: the intel prior/meta is league-scoped.
+    $effect(() => {
+        const league = leagueId;
+        void loadCorpusRecords(league).then((records) => {
+            if (leagueId === league) leagueRecords = records;
+        });
+    });
+
+    /** Team B's both-sided corpus games (canonical name match). */
+    const corpusTeamB = $derived.by((): DraftRecord[] => {
+        if (teamB === null || leagueRecords === null) return [];
+        const canonical = canonicalTeamName(teamB.name);
+        return leagueRecords.filter(
+            (r) => canonicalTeamName(r.blueTeam) === canonical || canonicalTeamName(r.redTeam) === canonical
+        );
+    });
+
     // ---- C1: opponent intel (team B) ----
     /** Recomputed on sync only (teamB / nowTick) — the clock is injected. */
     const intel = $derived.by(() => {
         if (teamB === null) return null;
-        return buildOpponentIntel(teamB, { now: new Date(nowTick).toISOString() });
+        return buildOpponentIntel(teamB, {
+            now: new Date(nowTick).toISOString(),
+            ...(leagueRecords !== null ? { leagueRecords } : {}),
+            ...(corpusTeamB.length > 0 ? { corpusTeamRecords: corpusTeamB } : {})
+        });
+    });
+
+    // ---- Coach en direct (liveDraft + navigator) ----
+    /** Engine evaluator — plain config: the coach compares DRAFT deltas. */
+    const coachEvaluate = $derived.by(() => {
+        if (datasets === null) return null;
+        return makeAnalyzeDraftEvaluator(
+            { dataset: datasets.dataset, fullDataset: datasets.fullDataset },
+            { ignoreChampionWinrates: false, riskLevel: 'medium', minGames: 0 }
+        );
+    });
+
+    /** League-presence fallback candidates when no roster is synced. */
+    const coachFallback = $derived.by((): string[] => {
+        if (leagueRecords === null) return [];
+        return [...computePresence(leagueRecords).entries()]
+            .sort((a, b) => b[1].presence - a[1].presence || (a[0] < b[0] ? -1 : 1))
+            .slice(0, 15)
+            .map(([key]) => key);
+    });
+
+    const coachAdvice = $derived.by(() => {
+        const evaluate = coachEvaluate;
+        if (evaluate === null) return null;
+        const state = draftStateFromRoleEntry({
+            allyPicks,
+            enemyPicks,
+            allyBans: [null, null, null, null, null],
+            enemyBans: [null, null, null, null, null],
+            allySide
+        });
+        return recommendNext(state, {
+            ourSide: allySide,
+            evaluate,
+            ...(intel !== null ? { table: intel.table } : {}),
+            ...(contextActive && teamA !== null ? { allyPlayers: teamA.players } : {}),
+            fallbackCandidates: coachFallback,
+            ...(datasets !== null ? { dataset: datasets.fullDataset } : {}),
+            picksOnly: true,
+            depth: 2,
+            topK: 4,
+            candidateCount: 6
+        });
     });
 
     const intelTendencyBlocks = $derived(intel === null ? [] : tendencyBlocksOf(intel.table));
@@ -751,6 +851,54 @@
                     </div>
                 {/if}
             </div>
+        </div>
+
+        <!-- Coach en direct : recommandations expliquées sur la draft en cours -->
+        <CoachPanel
+            advice={coachAdvice}
+            unavailableReason={datasetLoading
+                ? 'Le coach attend la fin du téléchargement du dataset…'
+                : (datasetError ?? 'Coach indisponible.')}
+            noteFr="Phase de picks (cette vue ne saisit pas les bans) — ordre reconstruit sur le template, saisie par rôle.{teamB ===
+            null
+                ? ' Synchronisez l’équipe adverse pour des ranges réelles.'
+                : ''}"
+        />
+
+        <!-- Corpus pro embarqué (Leaguepedia → IndexedDB) -->
+        <div class="rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-xs text-slate-400">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="font-semibold uppercase tracking-wide text-slate-300">Corpus pro</span>
+                {#if corpusStatuses.length > 0}
+                    {#each corpusStatuses as status (status.league)}
+                        <span class="rounded bg-slate-800 px-1.5 py-0.5">
+                            {status.league.toUpperCase()} · {status.records} drafts
+                        </span>
+                    {/each}
+                {:else if corpusBusy}
+                    <span>Import du corpus en cours…</span>
+                {:else}
+                    <span>Aucun corpus importé.</span>
+                {/if}
+                <button
+                    class="ml-auto rounded border border-slate-700 px-2 py-1 text-slate-300 hover:bg-slate-800 disabled:opacity-50"
+                    onclick={() => void refreshCorpus()}
+                    disabled={corpusBusy}
+                >
+                    {corpusBusy ? 'Import…' : 'Rafraîchir'}
+                </button>
+            </div>
+            <p class="mt-1 text-[10px] text-slate-600">
+                Les deux camps, ordre exact, rôles et patchs — alimente tendances, ranges et le coach.
+                Data from Leaguepedia (lol.fandom.com), CC BY-SA 3.0.
+            </p>
+            {#if corpusWarnings.length > 0}
+                <ul class="mt-1 space-y-0.5 text-[10px] text-amber-400/90">
+                    {#each corpusWarnings as warning (warning)}
+                        <li>• {warning}</li>
+                    {/each}
+                </ul>
+            {/if}
         </div>
 
         <!-- C1: win conditions on the current draft -->

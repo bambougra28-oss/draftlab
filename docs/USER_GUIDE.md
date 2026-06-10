@@ -211,9 +211,28 @@ coach qui arbitre.
 | Revue annotée (I5) | Notes ?!/?/?? en points de win %, « mieux était X », rapport de fuites — route `/review` | Livré ; **expérimental** (porte G5 : l'oracle est le navigator non calibré). |
 | Patch Oracle (I6) | Courbes de réponse aux buffs estimées sur l'historique, watchlist du patch, consigne d'inflation d'incertitude des priors | Livré côté lib ; **expérimental** (porte G6). La saisie des changements de patch est structurée (champion/type/ampleur) — le parsing automatique des patch notes Riot est un travail futur. |
 | Exports (prep pack, re-plan, CSV) | Markdown A4 imprimable, feuille de re-plan entre les games, CSV tendances/pools — barres d'export sur `/` et `/series/[id]` | Livré ; imprime le badge « non calibré » sur les sections concernées. |
+| **Coach en direct** | Sur `/` : à chaque pick, les 3 meilleurs coups (navigator, profondeur 2) avec « win estimé après », l'écart vs le suivant, les **raisons en français** (axes M5.5 qui s'appliquent vraiment), la suite probable et l'attendu adverse (ranges) | Livré ; **expérimental** — l'oracle est l'analyseur SoloQ+confort. Phase de picks uniquement sur cette vue (pas de saisie de bans) ; ordre reconstruit sur le template. |
+| **Corpus pro embarqué** | Les drafts Leaguepedia 2026 (LCK/LEC/LFL — les deux camps, ordre exact, rôles, patchs) importés en un clic dans le navigateur (carte « Corpus pro » sur `/`) ; ils nourrissent le prior des tendances, la méta des ranges, les candidats du coach et les games complètes de l'équipe adverse | Livré ; données factuelles (CC BY-SA Leaguepedia). `pnpm corpus` les rafraîchit, l'app les réimporte automatiquement. |
 
-Les moteurs « livré côté lib » (ban EV, fog & reveal, patch oracle) sont déjà
+Les moteurs « livré côté lib » (fog & reveal, patch oracle) sont déjà
 testés (suite Vitest complète) ; leur exposition UI suit la roadmap R4-R8.
+
+### Lire le panneau Coach (pour apprendre, pas juste exécuter)
+
+- **« Win estimé après »** : la probabilité de victoire si vous jouez ce
+  champion puis que chaque camp joue sa meilleure suite explorée. C'est un
+  chiffre *indicatif* (moteur SoloQ + confort, non calibré pro) — servez-vous
+  de l'ÉCART entre candidats plus que de la valeur absolue.
+- **« Immédiat / Anticipation »** : ce que le pick vaut tout seul vs ce que la
+  suite ajoute ou reprend. Une anticipation négative = leur meilleure réponse
+  efface une partie du gain — le coup est bon mais demande de connaître la
+  suite.
+- **Les raisons** ne sont jamais décoratives : « Comble : outil d'engage »
+  n'apparaît que si votre compo n'en a aucun. C'est le panneau qui vous
+  apprend le *pourquoi* des picks pros.
+- **« Attendu côté adverse »** : leur range à ce slot, tirée de leurs games
+  réelles. Si le pick adverse sort de cette liste, c'est une information en
+  soi (surprise — pocket pick ou changement de plan).
 
 ## Backtest et scorecards
 

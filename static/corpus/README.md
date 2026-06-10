@@ -14,8 +14,8 @@ Tirés de l'API Cargo de **Leaguepedia** (lol.fandom.com) via
 | `lfl-2026.json` | 191 | Invitational, Spring (+Playoffs), Promotion |
 | `lec-2026.json` | 246 | Versus (+Playoffs), Spring (+Playoffs) |
 
-Rafraîchir : `pnpm corpus -- --like "LCK/2026%" --out data/corpus/lck-2026.json`.
-Scorecard : `pnpm backtest -- data/corpus/lck-2026.json --seed 42`.
+Rafraîchir : `pnpm corpus -- --like "LCK/2026%" --out static/corpus/lck-2026.json`.
+Scorecard : `pnpm backtest -- static/corpus/lck-2026.json --seed 42`.
 Concordance gol.gg : `node --experimental-transform-types --no-warnings scripts/data/concordance.ts`
 (réseau résidentiel uniquement — gol.gg bloque les IP datacenter).
 

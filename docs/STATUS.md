@@ -23,7 +23,7 @@ tendances, harnais de backtest et runner de scorecards.
 ## Acceptation R1 — VALIDÉE SUR DONNÉES LIVE (2026-06-10)
 
 - ✅ **Bot Leaguepedia opérationnel** (le piège email-non-confirmé a été vécu et documenté).
-- ✅ **774 drafts 2026 tirés et normalisés** (`data/corpus/` : LCK 337, LFL 191, LEC 246), 100 % de résolution des champions, ordre + patch + gameNumber sur chaque record.
+- ✅ **774 drafts 2026 tirés et normalisés** (`static/corpus/` : LCK 337, LFL 191, LEC 246), 100 % de résolution des champions, ordre + patch + gameNumber sur chaque record.
 - ✅ **Concordance gol.gg ⇄ Leaguepedia : 95,2 % critique** (20/21 ; side, vainqueur, bans à 100 % — l'unique écart est un trou de données amont chez gol.gg, détecté par le parser à la capture).
 - ✅ **Premier scorecard réel** (`docs/calibration/scorecard-26.11.md`, walk-forward 337 drafts) : le modèle de tendances **bat la baseline** en pick-in-range@8 (0,318 vs 0,271) ; ban-hit@5 à égalité avec la présence (le banEV complet n'est pas encore branché dans le runner) ; side-only ≈ pile-ou-face sur LCK 2026.
 

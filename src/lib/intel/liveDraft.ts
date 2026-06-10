@@ -1,0 +1,314 @@
+/**
+ * Coach en direct — turns the Draft page's role-keyed entry into a navigator
+ * state and produces ranked, EXPLAINED recommendations for the next action.
+ *
+ * The page stores picks per role and bans per index (no true global order);
+ * the state is rebuilt on the blue-first template like /review does — an
+ * approximation that is explicitly labelled in the UI. The navigator then
+ * explores depth-limited expectimax lines (our nodes = max, enemy nodes =
+ * expectation over the tendency-derived distribution) and each candidate is
+ * enriched with plain-French reasons: the M5.5 pick axes (plan alignment,
+ * gap-fill, counter, redundancy) for picks, the banEV components for bans,
+ * and the expected continuation line. The audience is NOT a professional
+ * coach — every output here must be readable without draft jargon.
+ *
+ * Pure module: datasets/evaluator/tendency table/pools are injected; no
+ * fetch, no storage, no system clock.
+ */
+import { banRotationOf, rotationOf } from '$lib/aggregates/rotations';
+import { predict, type TendencyTable } from '$lib/aggregates/tendency';
+import { buildDraftActions, DRAFT_TEMPLATE } from '$lib/data/draftRecord';
+import type { DraftSide } from '$lib/data/types';
+import { classifyGamePlan } from '$lib/strategic/gamePlanClassifier';
+import {
+    navigate,
+    nextSlotOf,
+    type DraftEvaluator,
+    type DraftState,
+    type NavigatorSlot
+} from '$lib/strategic/draftNavigator';
+import { suggestPicks } from '$lib/strategic/pickSuggester';
+import { classifyPoolTier } from '$lib/strategic/poolTierClassifier';
+import { loadDefaultTags } from '$lib/tags';
+import type { ChampionTagsFile } from '$lib/tags/types';
+import type { ProPlayer } from '$lib/pro/types';
+import type { Dataset } from '$lib/types';
+
+export interface RoleEntryDraft {
+    /** Role-indexed champion keys (0=Top … 4=Support), null = empty slot. */
+    allyPicks: (string | null)[];
+    enemyPicks: (string | null)[];
+    allyBans: (string | null)[];
+    enemyBans: (string | null)[];
+    allySide: DraftSide;
+    /** Fearless lockouts and any other unavailable champions. */
+    excludedKeys?: string[];
+}
+
+/**
+ * Rebuild a navigator DraftState from role-keyed entry. Order approximation:
+ * each side's known picks/bans fill that side's template slots in role order
+ * (the real pick order is unknown in manual entry — documented in the UI).
+ */
+export function draftStateFromRoleEntry(entry: RoleEntryDraft, tagsFile: ChampionTagsFile = loadDefaultTags()): DraftState {
+    const compact = (slots: (string | null)[]): string[] =>
+        slots.filter((key): key is string => key !== null && key !== '');
+    const allyColumns = { picks: compact(entry.allyPicks), bans: compact(entry.allyBans) };
+    const enemyColumns = { picks: compact(entry.enemyPicks), bans: compact(entry.enemyBans) };
+    const blue = entry.allySide === 'blue' ? allyColumns : enemyColumns;
+    const red = entry.allySide === 'blue' ? enemyColumns : allyColumns;
+
+    const { actions } = buildDraftActions({
+        blue,
+        red,
+        firstPickSide: 'blue',
+        resolveKey: (key) => key // entry already stores resolved champion keys
+    });
+
+    const used = new Set<string>(actions.map((a) => a.championKey));
+    for (const key of entry.excludedKeys ?? []) used.add(key);
+    const available = new Set<string>(Object.keys(tagsFile.champions).filter((key) => !used.has(key)));
+
+    return { actions, firstPickSide: 'blue', available };
+}
+
+export interface CoachReason {
+    textFr: string;
+}
+
+export interface CoachCandidate {
+    championKey: string;
+    actionType: 'pick' | 'ban';
+    /** Estimated win probability of OUR side after this action (0..1). */
+    winAfter: number;
+    /** Gap to the next-best candidate, in win-percentage points. */
+    edgeVsNextPp: number;
+    /** Expected continuation (champion keys, navigator principal line). */
+    line: string[];
+    /** Plain-French reasons — axes that actually fired, never invented. */
+    reasonsFr: string[];
+    components: { immediatePp: number; lookaheadPp: number };
+}
+
+export interface CoachAdvice {
+    /** The slot to play now; null = draft complete. */
+    turn: (NavigatorSlot & { isOurs: boolean }) | null;
+    /** Ranked candidates when it is OUR turn (empty on enemy turn). */
+    candidates: CoachCandidate[];
+    /** What the enemy most likely does now (their turn, or our lookahead). */
+    enemyExpectation: { championKey: string; p: number }[];
+    /** One-sentence FR header for the panel. */
+    headlineFr: string;
+    evaluatedNodes: number;
+    experimental: true;
+}
+
+export interface CoachContext {
+    ourSide: DraftSide;
+    evaluate: DraftEvaluator;
+    /** Opponent tendency table (corpus+golgg merged) — enemy distribution. */
+    table?: TendencyTable;
+    /** Our synced roster — candidate pool, strongest tiers first. */
+    allyPlayers?: ProPlayer[];
+    /** Fallback candidate ranking when no roster (e.g. league presence). */
+    fallbackCandidates?: string[];
+    tagsFile?: ChampionTagsFile;
+    dataset?: Dataset;
+    depth?: number;
+    topK?: number;
+    /** Our candidates considered at the root (and our tree nodes). */
+    candidateCount?: number;
+    /**
+     * Pick-phase coaching: ban slots are treated as forfeited (the analyzer
+     * view has no ban entry) — the turn is the first unfilled PICK slot and
+     * the lookahead skips ban nodes (empty providers → navigator skip).
+     */
+    picksOnly?: boolean;
+}
+
+const SIDE_FR: Record<DraftSide, string> = { blue: 'bleu', red: 'rouge' };
+
+/** Our candidate ranking: pool tiers first (strongest → learning), then fallback. */
+function rankOurCandidates(ctx: CoachContext, state: DraftState, count: number): string[] {
+    const taken = new Set(state.actions.map((a) => a.championKey));
+    const out: string[] = [];
+    const push = (key: string): void => {
+        if (!taken.has(key) && state.available.has(key) && !out.includes(key)) out.push(key);
+    };
+
+    if (ctx.allyPlayers !== undefined) {
+        const tierRank = { strongest: 0, 'match-ready': 1, 'scrim-ready': 2, learning: 3 } as const;
+        const entries = ctx.allyPlayers
+            .flatMap((player) => player.pool)
+            .map((entry) => ({ key: entry.championKey, games: entry.games, tier: classifyPoolTier(entry) }))
+            .sort((a, b) => tierRank[a.tier] - tierRank[b.tier] || b.games - a.games || (a.key < b.key ? -1 : 1));
+        for (const entry of entries) push(entry.key);
+    }
+    for (const key of ctx.fallbackCandidates ?? []) push(key);
+    return out.slice(0, count);
+}
+
+/** Enemy distribution for a slot from the tendency table (empty = skip). */
+function enemyDistributionOf(
+    ctx: CoachContext,
+    state: DraftState,
+    slot: NavigatorSlot
+): { championKey: string; p: number }[] {
+    if (ctx.table === undefined) return [];
+    const slotGroup = slot.type === 'pick' ? rotationOf(slot.seq) : banRotationOf(slot.seq);
+    if (slotGroup === undefined) return [];
+    const exclude = new Set<string>(state.actions.map((a) => a.championKey));
+    return predict(ctx.table, { slotGroup, side: slot.side, exclude })
+        .filter((p) => state.available.has(p.championKey))
+        .map((p) => ({ championKey: p.championKey, p: p.p }));
+}
+
+/** Role-ordered comp of one side from the state (gaps = ''). */
+function compOf(state: DraftState, side: DraftSide): string[] {
+    const picks = state.actions.filter((a) => a.type === 'pick' && a.side === side).map((a) => a.championKey);
+    // Role attribution is unknown here — the comp is positional for the
+    // tag-based readers (classifyGamePlan/suggestPicks tolerate that).
+    return picks;
+}
+
+/**
+ * Compute the coach advice for the current state. Cost is bounded by
+ * depth/topK/candidateCount — the defaults stay interactive (<1 s with the
+ * real evaluator) so the panel can refresh on every entry change.
+ */
+export function recommendNext(state: DraftState, ctx: CoachContext): CoachAdvice {
+    const tagsFile = ctx.tagsFile ?? loadDefaultTags();
+    if (ctx.picksOnly === true) {
+        // Pick-phase coaching: the analyzer view has no ban entry. nextSlotOf
+        // assumes a contiguous prefix, so forfeited-ban sentinels are added
+        // only UP TO the first unfilled pick slot (the turn); ban slots met
+        // later in the lookahead are skipped via empty providers below.
+        const filled = new Set(state.actions.map((a) => a.seq));
+        const sentinels: typeof state.actions = [];
+        for (const s of DRAFT_TEMPLATE) {
+            if (filled.has(s.seq)) continue;
+            if (s.type === 'pick') break; // this is the turn — stop forfeiting
+            sentinels.push({
+                seq: s.seq,
+                type: 'ban',
+                phase: s.phase,
+                side: s.first === (state.firstPickSide === 'blue') ? 'blue' : 'red',
+                championKey: '',
+                championName: ''
+            });
+        }
+        state = {
+            ...state,
+            actions: [...state.actions, ...sentinels].sort((a, b) => a.seq - b.seq)
+        };
+    }
+    const slot = nextSlotOf(state);
+    if (slot === null) {
+        return {
+            turn: null,
+            candidates: [],
+            enemyExpectation: [],
+            headlineFr: 'Draft complète — passez à la lecture stratégique ou à la revue.',
+            evaluatedNodes: 0,
+            experimental: true
+        };
+    }
+
+    const isOurs = slot.side === ctx.ourSide;
+    const enemyNow = enemyDistributionOf(ctx, state, slot).slice(0, 5);
+
+    if (!isOurs) {
+        const top = enemyNow[0];
+        return {
+            turn: { ...slot, isOurs },
+            candidates: [],
+            enemyExpectation: enemyNow,
+            headlineFr:
+                top !== undefined
+                    ? `Tour adverse (${slot.type === 'pick' ? 'pick' : 'ban'}, côté ${SIDE_FR[slot.side]}) — attendu en tête de range : ${Math.round(top.p * 100)} %.`
+                    : `Tour adverse (${slot.type === 'pick' ? 'pick' : 'ban'}, côté ${SIDE_FR[slot.side]}) — pas de tendance connue, surveillez la surprise.`,
+            evaluatedNodes: 0,
+            experimental: true
+        };
+    }
+
+    const candidateCount = ctx.candidateCount ?? 6;
+    const ourCandidates = rankOurCandidates(ctx, state, candidateCount);
+    const picksOnly = ctx.picksOnly === true;
+    const result = navigate(state, {
+        ourSide: ctx.ourSide,
+        // picksOnly lookahead: ban nodes met deeper in the tree yield no
+        // options → the navigator skips them without burning depth.
+        ourCandidates: (s) => {
+            if (picksOnly) {
+                const next = nextSlotOf(s);
+                if (next !== null && next.type === 'ban') return [];
+            }
+            return ourCandidates;
+        },
+        enemyDistribution: (s, enemySlot) =>
+            picksOnly && enemySlot.type === 'ban' ? [] : enemyDistributionOf(ctx, s, enemySlot),
+        evaluate: ctx.evaluate,
+        depth: ctx.depth ?? 2,
+        topK: ctx.topK ?? 5
+    });
+
+    // Plain-French reasons: M5.5 axes for picks, take-probability for bans.
+    const allyComp = compOf(state, ctx.ourSide);
+    const enemySide: DraftSide = ctx.ourSide === 'blue' ? 'red' : 'blue';
+    const enemyComp = compOf(state, enemySide);
+    // classifyGamePlan tolerates an empty comp (uniform + ambiguous): the
+    // gap-fill reasons (engage, frontline, damage mix) must fire from pick 1.
+    const targetPlan = classifyGamePlan(allyComp, tagsFile).primary;
+
+    const candidates: CoachCandidate[] = result.candidates.map((candidate, index) => {
+        const next = result.candidates[index + 1] ?? result.candidates[index];
+        const reasonsFr: string[] = [];
+        if (candidate.actionType === 'pick') {
+            const [suggestion] = suggestPicks({
+                allyComp,
+                enemyComp,
+                targetPlan,
+                candidates: [candidate.championKey],
+                ...(ctx.dataset !== undefined ? { dataset: ctx.dataset } : {}),
+                tagsFile
+            });
+            if (suggestion !== undefined) reasonsFr.push(...suggestion.rationale);
+        } else {
+            const threat = enemyNow.find((e) => e.championKey === candidate.championKey);
+            if (threat !== undefined) {
+                reasonsFr.push(`Dans leur range immédiate (${Math.round(threat.p * 100)} % à ce slot).`);
+            }
+        }
+        if (candidate.components.lookaheadDelta > 0.002) {
+            reasonsFr.push('Garde de bonnes suites : la valeur vient aussi des coups suivants.');
+        } else if (candidate.components.lookaheadDelta < -0.002) {
+            reasonsFr.push('Attention à la suite : leur meilleure réponse reprend une partie du gain.');
+        }
+        return {
+            championKey: candidate.championKey,
+            actionType: candidate.actionType,
+            winAfter: candidate.value,
+            edgeVsNextPp: Math.max(0, (candidate.value - next.value) * 100),
+            line: candidate.line,
+            reasonsFr,
+            components: {
+                immediatePp: candidate.components.immediateValue * 100,
+                lookaheadPp: candidate.components.lookaheadDelta * 100
+            }
+        };
+    });
+
+    const actionFr = slot.type === 'pick' ? 'pick' : 'ban';
+    return {
+        turn: { ...slot, isOurs },
+        candidates,
+        enemyExpectation: enemyNow,
+        headlineFr:
+            candidates.length > 0
+                ? `À vous de ${actionFr} (côté ${SIDE_FR[slot.side]}) — ${result.evaluatedNodes} positions explorées.`
+                : `À vous de ${actionFr}, mais aucun candidat disponible — vérifiez pools et exclusions.`,
+        evaluatedNodes: result.evaluatedNodes,
+        experimental: true
+    };
+}
