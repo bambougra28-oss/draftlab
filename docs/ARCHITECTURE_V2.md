@@ -1,12 +1,15 @@
-# DraftLab — Architecture V2 : le niveau professionnel
+# DraftLab — Architecture V2.1 « Sommet » : le niveau professionnel, puis l'inédit
 
-> Statut : **proposé** — rédigé le 2026-06-10 par l'architecte (session Claude), sur la base
-> (a) d'une étude complète du code et des specs survivantes, (b) de trois rapports de
-> recherche web frais (concurrence, données, méthodologie — voir `docs/research/`),
-> (c) des verdicts empiriques M3.3-M3.5. Succède à `ARCHITECTURE_V1.md` (perdu dans la
-> réinstallation Windows ; son scope M5→V1.0 est aujourd'hui reconstruit et vert).
+> Statut : **proposé** — V2 rédigée le 2026-06-10 par l'architecte (session Claude) ;
+> **révision V2.1 « Sommet » le même jour** sur directive d'Alain (« on vise l'inédit »),
+> ajoutant la couche des moteurs inédits (§6 bis) et élevant la roadmap (R0…R9).
+> Base : (a) étude complète du code et des specs survivantes, (b) quatre rapports de
+> recherche web frais (concurrence, données, méthodologie, formalismes/prior-art —
+> voir `docs/research/`), (c) verdicts empiriques M3.3-M3.5. Succède à
+> `ARCHITECTURE_V1.md` (perdu dans la réinstallation Windows ; son scope M5→V1.0 est
+> aujourd'hui reconstruit et vert).
 >
-> Convention : les décisions sont numérotées **DA-V2-n** et les jalons **R0…R7**.
+> Convention : les décisions sont numérotées **DA-V2-n** et les jalons **R0…R9**.
 > Tout changement de comportement passe par `docs/STEP_UP.md` (sign-off Alain).
 
 ---
@@ -14,19 +17,26 @@
 ## 0. TL;DR
 
 DraftLab a survécu à la perte de son code : toute la logique M1-M7 est reconstruite et
-verte (210 tests). Ce qui manque pour être *réellement* compétitif au niveau pro n'est
-pas un algorithme magique — c'est : **(1)** une colonne vertébrale de données pro
-multi-sources avec l'ordre de draft, des snapshots datés et de la provenance ;
-**(2)** l'UI (perdue) reconstruite en deux modes Prep/Match ; **(3)** un harnais de
-validation permanent qui calibre chaque heuristique au lieu de la deviner ;
-**(4)** trois features que personne n'a : le **planificateur de series-pool Fearless**,
-les **tendances adverses par rotation** productisées, et l'**export prep pack**
-(Slides/Sheets/PDF). Le tout en restant local-first — qui est un différenciateur de
-confiance, pas une contrainte.
+verte (210 tests). Le chemin vers le sommet a deux étages.
 
-Les trois paris assumés : la donnée avant les modèles ; l'incertitude affichée comme
-feature de confiance ; Fearless/First Selection comme terrain de jeu principal
-(2026 le confirme : format permanent, « First Selection » nouvelle règle de janvier).
+**Étage 1 — le niveau pro (R1-R3)** : une colonne vertébrale de données multi-sources
+avec l'ordre de draft, des snapshots datés et de la provenance ; l'UI reconstruite en
+deux modes Prep/Match ; un harnais de validation permanent qui calibre chaque
+heuristique au lieu de la deviner.
+
+**Étage 2 — l'inédit (R4-R9)**, six moteurs qu'aucun outil au monde ne livre (§6 bis) :
+le **modèle de ranges adverses** (lire l'adversaire comme un solver de poker lit une
+main — y compris l'information négative de ce qu'il n'a PAS pris) ; le **jeu
+d'information** (l'ambiguïté des flex quantifiée comme une ressource — fog value,
+coût de révélation, registre de baits) ; le **graphe de win conditions bilatéral**
+(des conditions de victoire relationnelles et falsifiables, pas des étiquettes) ; le
+**solveur de série Fearless** (budget de champions, inventaire de combinaisons, prix
+du déni, stratégie de must-win — la guerre de ressources que les coachs disent mener
+« de tête ») ; le **sparring + la revue annotée** (le moteur d'échecs du draft :
+« ?! −1,8 %, meilleure était Rell ») ; le **Patch Oracle** (courbes de réponse aux
+buffs estimées sur 12 ans d'historique). Le tout local-first, incertitude affichée,
+et un **Summit Gate** : des scorecards publics rejouant les drafts tier-1 réelles —
+on ne se déclare jamais « au sommet » à l'intuition, on le mesure.
 
 ---
 
@@ -47,6 +57,7 @@ GRID — sur données publiques, workflow d'un coach top-niveau, du lundi de pre
 | S4 | Chaque nombre affiché est défendable | Posterior + intervalle + taille d'échantillon + couche de provenance (« league prior / team / H2H ») visibles |
 | S5 | Chaque heuristique a un score de backtest versionné | Harnais walk-forward par patch, métriques par module (ex. « top-5 bans : 2,9/5 retrouvés, baseline 1,8 ») |
 | S6 | Fearless : l'outil planifie, ne tracke pas seulement | Simulation de déplétion Bo5, valeur de rétention/déni par pick, what-if multi-games |
+| S7 | **Summit Gate** : la prétention au sommet est mesurée, publiquement | Scorecard par patch (R9) rejouant les drafts tier-1 réelles : ban-hit@5, pick-in-range@8, postdiction des win conditions, corrélation de rétention — chaque métrique bat sa baseline naïve avec IC bootstrap |
 
 ---
 
@@ -239,6 +250,235 @@ dans le rapport).
 
 ---
 
+## 6 bis. Les moteurs inédits — la couche sommet (V2.1)
+
+> Directive d'Alain (2026-06-10) : « on vise l'inédit ». Six moteurs, chacun avec sa
+> formalisation, ses données requises, sa surface UI et **sa métrique de validation**
+> (un moteur sans métrique ne ship pas — DA-V2-11).
+> Principe transversal hérité du marché : **des composantes affichées séparément,
+> jamais un méga-score opaque** — le coach décide, l'outil instrumente.
+
+**Statut d'inédit — vérifié par prior-art check** (~30 recherches, détail et sources
+dans `docs/research/2026-06_formalismes_prior_art.md`) :
+
+| Moteur | Verdict | La tranche revendicable |
+|---|---|---|
+| I1 Ranges adverses | **PARTIEL** | la prédiction de picks existe (AIIDE 2016, DraftRec) ; **première présentation en ranges façon poker + premier updating par information négative** (restricted choice) |
+| I2 Jeu d'information | **NOVEL (B2)** / PARTIEL (B1) | la valuation équité+dissimulation−révélation n'existe nulle part ; la fog value = **première quantification** d'un concept que tout le monde n'évoque que qualitativement |
+| I3 Win conditions bilatéral | **NOVEL** | tout l'existant est unilatéral (archétypes) ; la dérivation relationnelle + postdiction n'existent pas |
+| I4 Series Solver hard-fearless | **NOVEL** | JueWuDraft = lockout par équipe seulement, **sans bans ni déni** (cité texto) ; aucun solveur hard-fearless publié à mi-2026 |
+| I5 Revue annotée | PARTIEL | concept publié par iTero (jamais shippé, pas d'annotation par décision) ; le pattern est commodity aux échecs/poker — **premier ship MOBA** |
+| I6 Patch Oracle | PARTIEL | iTero a shippé des tier-forecasts ; **les courbes de réponse aux buffs utilisées prospectivement sont introuvables** |
+
+Règle de communication : I2/I3/I4 se revendiquent comme *systèmes* inédits (pas comme
+idées) ; I1/I5/I6 se revendiquent par leur tranche précise, en créditant l'existant.
+
+### I1 — Modèle de ranges adverses (« Range Drafting »)
+
+**L'idée.** Les solvers de poker ont remplacé « quelle main a-t-il ? » par « quelle
+est sa *range* ? ». Transfert : à chaque slot de draft adverse non résolu, maintenir
+une distribution de probabilité sur (champion, rôle), mise à jour bayésienne après
+chaque action — y compris l'**information négative** : un champion laissé ouvert
+pendant deux rotations par une équipe qui le first-picke d'habitude, c'est un signal
+(pas dans le pool ce soir, ou un piège).
+
+**Formalisation.** Pour un slot adverse au state `s` :
+```
+P(c, r | s) ∝ exp[ w_t·log T(c | slot, side, phase, gameN)   // tendances (R4, Dirichlet)
+                 + w_p·log Pool(c | joueur_r)                 // tiers + profondeur
+                 + w_m·log Meta(c | patch)                    // presence patch
+                 + w_s·Syn(c | leur comp partielle)           // cohérence de plan
+                 + w_n·Neg(c | s) ]                           // décote hazard si « passé sur c »
+```
+Poids `w` calibrés par le harnais (log loss du prochain pick réel). `Neg` est la
+nouveauté : une décote multiplicative apprise sur corpus (« quand une équipe passe
+sur son champion de priorité P au slot t, la probabilité qu'elle le prenne plus tard
+chute de x % »). Formalisme importé : **capped ranges** (poker — une ligne qui
+contourne une action disponible exclut logiquement les holdings forts) et **principe
+de restricted choice** (bridge — l'absence d'une alternative attractive déplace le
+posterior, facteur d'update en odds-form Bayes) ; précédent algorithmique :
+Richards & Amir (IJCAI 2007) infèrent le rack adverse au Scrabble en conditionnant
+sur les coups *non joués*. Convention UX importée des solvers : **le blanc pour les
+choix proches, la couleur pour les préférences nettes** — jamais de fausse précision.
+
+**Sortie UI.** Ranges top-k par slot avec les comptes d'évidence (« Rell : 31 % —
+first-pickée 4/6 séries côté rouge ») ; **alarme de surprise** en live quand le pick
+réel sort de la range (signal de re-lecture).
+
+**Validation.** `pick-in-range@k` et log loss du prochain pick vs baseline fréquence
+brute, walk-forward. **Dépend de** : R1 (ordre), R4 (tendances).
+
+### I2 — Le jeu d'information (« Fog & Reveal »)
+
+**L'idée.** L'étage le plus profond du draft pro : les flex picks cachent
+l'assignation des rôles, le séquencement cache les intentions, certains bans/non-bans
+sont des appâts. Personne ne *quantifie* ça. Nous : l'ambiguïté devient une ressource
+mesurable.
+
+**Formalisation.** Soit `H(A)` l'ensemble des hypothèses d'assignation rôle→champion
+de MA comp partielle, vu par l'adversaire (priors de rôle par champion × pools de mes
+joueurs), avec `P(h)`. La **fog value** d'un candidat `x` :
+```
+Φ(x) = E[ équité de leur meilleure réponse | assignation connue ]
+     − E_h~P(·|A+x)[ équité de leur meilleure réponse | incertitude h ]
+```
+les « meilleures réponses » étant les top-k de leur range (I1) évaluées par
+l'évaluateur (§6.2). S'y ajoutent le **coût de révélation** (perte d'entropie de
+`H` + équité des counter-picks que `x` débloque pour eux) et le **registre de baits** :
+`EV(laisser c ouvert) = P(ils le prennent)·[équité de notre réponse préparée − équité de leur c] + P(non)·valeur d'option conservée`.
+
+**Cadre théorique & implémentation.** Le cadre formel est le trade-off de révélation
+d'**Aumann–Maschler** (jeux répétés à information incomplète : la valeur est la
+concavification Cav(u) sur les croyances — l'optimal révèle parfois délibérément) :
+c'est aussi LE cadre de « quand brûler sa prep de poche dans un Bo5 » (lien I4).
+Implémentation : **déterminisation sur les assignations de rôles** (échantillonner
+des role-maps depuis les priors plutôt que résoudre un jeu à information imparfaite
+— verdict du rapport : CFR est overkill, le draft a ses 20 actions publiques) ; le
+cas du last-pick à assignation simultanée se résout en **petit jeu matriciel (LP)**.
+Profondeur de contre-raisonnement plafonnée à k≈1-2 (cognitive hierarchy : les
+adversaires réels raisonnent ~1,5 niveaux — inutile de creuser plus).
+
+**Sortie UI.** Quatre composantes séparées par candidat — équité | brouillard |
+déni | révélation — plus « ambiguïté restante : 2,3 bits ; leurs counters perdent
+~1,1 % d'équité tant que top/mid restent permutables ». Badge **expérimental**
+jusqu'à validation.
+
+**Validation.** Corrélation rétrospective fog × counter-picks effectivement subis ;
+revue qualitative sur des drafts tier-1 célèbres pour lecture de plausibilité
+(ex. les drafts à double flex de G2). **Dépend de** : I1 mûr.
+
+### I3 — Graphe de win conditions bilatéral
+
+**L'idée.** Au sommet, l'identité d'une comp est *relative* : « on gagne le
+front-to-back si on survit à leur dive ; eux gagnent s'ils snowballent notre weak
+side ». Remplacer l'étiquette 5-archétypes (qui reste la vue pédagogique) par un
+calcul de **collision de plans**.
+
+**Formalisation.** ~8 axes de conflit mesurables depuis tags + data :
+engage↔disengage, dive↔peel, poke↔sustain/engage, split↔cross-map, différentiel de
+scaling par fenêtre, vecteurs de snowball par lane (exposition weak-side), profil
+d'objectifs, menace de pick↔sécurité groupée. Chaque axe : `score_k(A,B) ∈ ℝ` avec
+intervalle (posteriors §6.1). `plan(A)` = axes dominants ; la **collision**
+(plan A × plan B) sélectionne un narratif + des triggers + les risk markers
+pertinents (les 12 existants sont mappés sur les cellules de collision).
+
+**Sortie UI.** « Votre condition primaire : forcer le 5v5 avant 25 min (edge engage
++2,3 ±0,9 ; scaling −1,8). La leur : side pressure par la top (split +2,1). Collision :
+course au tempo — fenêtres de fight pendant leurs side-pushes. » Statements datés,
+falsifiables.
+
+**Validation (postdiction).** Les statements sont testables sur données réelles
+(durée de game, objectifs — colonnes OE/Leaguepedia déjà prévues en R1) : les games
+« fenêtre early prédite » gagnées le sont-elles effectivement plus court ? Brier sur
+les statements. **Dépend de** : tags (présents), R1 ; s'améliore avec R4.
+
+### I4 — Solveur de série Fearless (« Series Solver »)
+
+**L'idée.** Le hard Fearless est une guerre de ressources sur 5 games que les coachs
+mènent « de tête » (kkOma : improvisation dès la G4 ; Goldenglue : denial drafting).
+Formaliser la totalité : budget, combinaisons, déni, must-win.
+
+**Formalisation.** État de série `σ = (game#, score, détenteur FS, pools restants par
+joueur, consommés)`. Valeur `V(σ)` par récursion : le draft de la game courante est
+résolu par le navigator (expectimax §6.6, ranges I1) → probabilité `p` ;
+`V = p·V(σ⁺) + (1−p)·V(σ⁻)`. Trois objets neufs :
+- **Inventaire de combinaisons** : les assets d'une équipe ne sont pas des champions
+  mais des *combinaisons prouvées* (duo bot, paire mid-jungle, package top-side)
+  minées de l'historique (+ scrims saisis). Consommer un champion endommage chaque
+  asset qui le contient → **dommage structurel** d'un pick, des deux côtés.
+- **Intégrité de pool** : % de comps complètes cohérentes restantes (Monte-Carlo sur
+  pools × seuil de synergie), par équipe, projetée par game — la jauge de « qui
+  s'essouffle en G5 ».
+- **Prix du déni** (hard fearless) : `valeur(c) += Σ_{games futures} P(ils voudraient c)
+  × (équité de c − équité de leur remplacement)` — P depuis I1, remplacement depuis
+  la courbe de profondeur du pool du joueur.
+Plus la **stratégie de must-win** (mené 1-2 : dépenser ou garder ? — arbitrage
+quantifié) et **First Selection par game** (le perdant obtient FS → choix side/pick
+intégré à l'arbre).
+
+Formalismes importés : le critère du déni vient de **Benoît & Krishna** (enchères
+séquentielles à budget contraint, REStud 2001) — épuiser stratégiquement la capacité
+future du rival est profitable **exactement quand le coût de remplacement de l'actif
+est plus élevé pour lui** (notre formule du prix du déni en est l'instanciation) ;
+les mixes de bans/picks d'ouverture peuvent s'appuyer sur des **équilibres de Nash
+de matrices de matchup** (théorie du counter-pick des jeux de combat — petits LPs),
+avec l'avertissement documenté : le Nash brut sur-élague sans termes de skill
+par joueur → toujours pondéré par le confort (ce que DraftLab encode déjà).
+Précision du créneau : JueWuDraft (l'unique précédent multi-game) verrouille les
+héros *par équipe seulement* et déclare texto ne pas modéliser les bans — le
+hard-fearless à déni croisé est vierge.
+
+**Sortie UI.** War room de série : jauges d'intégrité des deux pools par game
+projetée, arbitrages dépense/rétention chiffrés (« jouer Azir G2 : +1,9 % cette game,
+−1,1 % d'option G4-G5, déni +0,8 % → net +1,6 % »), what-if interactif.
+
+**Validation.** Rejeu des Bo5 fearless 2025-2026 réels : corrélation entre nos
+valeurs de rétention et les champions effectivement gardés pour G4/G5 par les
+équipes gagnantes ; la jauge d'intégrité prédit-elle quelle équipe « craque » en
+fin de série ? **Dépend de** : I1, évaluateur, R1.
+
+### I5 — Sparring & revue annotée (« le moteur d'échecs du draft »)
+
+**L'idée.** Ce que Stockfish a fait à la préparation d'échecs : l'adversaire
+simulé + l'analyse annotée a posteriori. iTero en a publié le concept (blog) ;
+personne ne l'a shippé.
+
+**Formalisation.** (a) **Sparring** : bot adverse = échantillonneur du range model
+(température réglable : strictement fidèle aux tendances ↔ adaptatif). Le coach
+drafte N fois contre l'adversaire modélisé ; rapport de fuites agrégé (« vous
+perdez systématiquement la fenêtre counter bot quand ils flexent en R2 »).
+(b) **Revue annotée** d'une draft réelle : par décision, perte d'équité vs la
+meilleure ligne du navigator + commentaire informationnel (révélation prématurée,
+ban gaspillé sur un champion consommé...). Conventions importées des références du
+genre (Lichess, GTO Wizard Hand History Analyzer) : **noter en espace de probabilité
+de victoire, pas en éval brute** ; seuils larges type ?!/?/?? (≈ −1/−2/−3 pp, à
+calibrer) ; **suppression des remarques quand plusieurs choix sont quasi égaux**
+(notre évaluateur est un oracle bruité, pas un Stockfish — les bandes de confiance
+sont la condition d'honnêteté) ; « meilleure était Rell : votre range l'annonçait à
+31 % » seulement quand l'écart franchit le seuil de confiance ; agrégation en
+rapports de fuites triés par coût.
+
+**Sortie UI.** Mode sparring chronométré 27 s/décision ; rapport de revue
+imprimable ; report card de tendances par équipe (auto-scouting : tournez-le sur
+vous-même pour découvrir VOS fuites avant l'adversaire).
+
+**Validation.** Taux d'accord du navigator avec les choix des équipes gagnantes,
+stratifié par force d'équipe (les meilleures équipes devraient « blunder » moins
+selon notre échelle — sinon c'est notre échelle qui blunder) ; test utilisateur.
+
+### I6 — Patch Oracle (anticipation de méta)
+
+**L'idée.** Un outil purement statistique est structurellement en retard d'un patch.
+Les équipes draftent sur des *lectures*. Assister la lecture, quantitativement.
+
+**Formalisation.** Diff des patch notes (CDragon) → champions touchés + magnitude
+classifiée → (a) inflation d'incertitude des priors concernés (state-space) ;
+(b) nudge directionnel par **courbes de réponse aux buffs estimées sur l'historique
+OE 2014-2026** (« après un buff de classe X sur un champion de tag Y, la presence
+pro monte en moyenne de Z pp sous 2 patchs ») — estimables dès le backfill R1 ;
+(c) croisement soloq des pros (comptes mappés, clé Riot perso) → watchlist pocket
+picks (élévation du M5.4 existant avec de vraies données).
+
+**Sortie UI.** Briefing de patch : « à surveiller », avec raisonnement et historique
+de courbes. Cadré honnêtement : *briefing assisté*, pas prédiction. Précédent à
+créditer : iTero a shippé des tier-forecasts par patch (2022, validés) — notre
+tranche inédite est l'estimation et l'usage prospectif des **courbes de réponse**
+historiques, pas l'idée de prévoir le patch.
+
+**Validation.** Backtest des courbes de réponse (walk-forward sur les patchs passés) ;
+hit rate de la watchlist (champions flaggés qui apparaissent effectivement sur scène
+sous 2 patchs vs base rate).
+
+### Décisions ajoutées
+
+| # | Décision | Justification |
+|---|---|---|
+| DA-V2-11 | **Un moteur sans métrique de validation ne ship pas** ; tout moteur expérimental porte un badge UI jusqu'à sa porte de validation | anti-« plausible mais faux » ; crédibilité sommet |
+| DA-V2-12 | Les valuations multi-composantes (équité/brouillard/déni/révélation) sont **affichées séparément**, jamais collapsées en un score unique | les poids relatifs ne sont pas calibrables proprement à notre échelle ; le coach arbitre |
+| DA-V2-13 | Le 5-archétypes devient une *vue* pédagogique au-dessus du graphe de win conditions (I3), pas le modèle de vérité | profondeur relationnelle requise au sommet |
+
+---
+
 ## 7. Architecture cible
 
 ### 7.1 Couches
@@ -250,17 +490,21 @@ dans le rapport).
 │   Mode Match : vue 27s, triggers de plan, notes                      │
 │   Exports : prep pack MD/PDF/Sheets                                  │
 ├──────────────────────────────────────────────────────────────────────┤
-│ PLANNERS                                                             │
-│   seriesPlanner (Fearless budget/déni/what-if) · draftNavigator      │
-│   (expectimax) · banEV (best-response) · plan triggers               │
+│ PLANNERS & MOTEURS SOMMET (§6 bis)                                   │
+│   seriesSolver I4 (budget/combinaisons/déni/must-win) ·              │
+│   draftNavigator (expectimax + ranges) · fogReveal I2 (info game) ·  │
+│   banEV (best-response) · sparring/annotator I5 · patchOracle I6 ·   │
+│   plan triggers / arbre de répertoire                                │
 ├──────────────────────────────────────────────────────────────────────┤
 │ STRATEGIC (existant, à recalibrer en R3)                             │
-│   gamePlanClassifier · adversaryPlanDetector · riskMarkers ·         │
-│   poolTier · pocketPick · pickSuggester · banPriority                │
+│   winConditionGraph I3 (⊃ gamePlanClassifier en vue simplifiée) ·    │
+│   adversaryPlanDetector · riskMarkers · poolTier · pocketPick ·      │
+│   pickSuggester · banPriority                                        │
 ├──────────────────────────────────────────────────────────────────────┤
 │ ESTIMATORS (nouveau, central)                                        │
 │   EB shrinkage + cascade hiérarchique · tagPairPriors ·              │
-│   tendencyTables (Dirichlet) · calibration (Platt) · provenance      │
+│   tendencyTables (Dirichlet) · rangeModel I1 (+ info négative) ·     │
+│   calibration (Platt) · provenance                                   │
 ├──────────────────────────────────────────────────────────────────────┤
 │ EVALUATOR (M1 conservé)                                              │
 │   additive log-odds : champions + duos + matchups + comfort + side   │
@@ -298,10 +542,12 @@ dans le rapport).
 
 ---
 
-## 8. Roadmap R0 → R7
+## 8. Roadmap R0 → R9 — l'ascension
 
-Chaque jalon = livrable testable + critères d'acceptation + commit/tag. Estimations en
-sessions de travail (≈ une demi-journée équivalent).
+Deux étages : **R0-R3 construisent le niveau pro** (données, UI, harnais — rien
+d'inédit ne tient sans eux), **R4-R9 construisent l'inédit** (un moteur §6 bis par
+jalon, chacun gardé par sa métrique). Chaque jalon = livrable testable + critères
+d'acceptation + commit/tag. Estimations en sessions de travail (≈ une demi-journée).
 
 ### R0 — Filets de sécurité (immédiat, ~1 session, dont actions Alain)
 - Push GitHub privé + CI active (`gh repo create draftlab --private --source=. --push`) — **le projet n'a toujours aucun backup externe**.
@@ -322,35 +568,52 @@ sessions de travail (≈ une demi-journée équivalent).
 - First Selection dans la création de série/game ; badges échantillon/provenance partout (DA-V2-4).
 - **Acceptation** : workflow S1 cliquable de bout en bout ; `pnpm build` Cloudflare vert ; déploiement Pages (secrets = action Alain).
 
-### R3 — Harnais de validation + recalibrage (3-4 sessions)
+### R3 — Harnais de validation + recalibrage + Win-Condition Graph v1 (4-5 sessions)
 - `scripts/backtest/` : rejeu walk-forward par patch sur snapshots ; métriques par module ; rapports versionnés `docs/calibration/`.
 - Corpus M3 reconstruit + étendu avec l'ordre (Leaguepedia) ; corpus de drafts annotées game-plan (~100, annotation assistée — action Alain ~2h) pour scorer M4.2/M5.1.
 - Recalibrage : seuils pool tier (STEP_UP #9), vote table M4.2, poids ban/pick suggesters → configs data-driven (DA-V2-6) ; priors N₀ pro (10-50) ; Platt par phase.
-- **Acceptation** : chaque module stratégique a un score versionné vs baseline ; les configs calibrées remplacent les valeurs devinées avec delta documenté.
+- **I3 — Win-Condition Graph v1** : les 8 axes de conflit + collision de plans, mappés sur les 12 risk markers ; le 5-archétypes devient une vue (DA-V2-13). Postdiction durée/objectifs branchée sur le harnais dès le premier jour.
+- **Acceptation (porte G1)** : chaque module stratégique a un score versionné vs baseline ; les configs calibrées remplacent les valeurs devinées avec delta documenté ; ≥ 60 % des statements de win condition postdictés mieux que le hasard (Brier, bootstrap).
 
-### R4 — Moteur de tendances & rotations (3-4 sessions)
-- Agrégats par équipe/joueur : presence, priorité par rotation, flex map, blind/counter, par side et patch-window.
+### R4 — Tendances, rotations & Range Model v1 (4-5 sessions)
+- Agrégats par équipe/joueur : presence, priorité par rotation, flex map, blind/counter, par side, par ordre de pick et patch-window. Extraction de l'**inventaire de combinaisons** (paires/triples prouvés — préparation I4).
 - `tendencyTables` Dirichlet (§6.5) ; intégration ban priority v2 (ban EV best-response) et adversary detector v2 (priors par séquence).
-- UI : panneau « tendances adverses » avec comptes et exemples cliquables (gameIds).
-- **Acceptation** : backtest « le top-5 bans suggéré retrouve ≥ X bans réels » au-dessus de la baseline fréquence brute ; fiche tendances exportable.
+- **I1 — Range Model v1** : le log-linéaire complet (tendances × pool × meta × cohérence × **information négative**), calibré au harnais ; alarme de surprise.
+- UI : panneau « tendances adverses » avec comptes et exemples cliquables (gameIds) ; ranges par slot.
+- **Acceptation (porte G2)** : top-5 bans suggérés retrouvent significativement plus de bans réels que la baseline fréquence brute (bootstrap) ; `pick-in-range@8` et log loss du prochain pick publiés, meilleurs que la baseline ; fiche tendances exportable.
 
-### R5 — Fearless War Room (3-4 sessions)
-- `seriesPlanner` : valeur de rétention/déni par pick (§6.7), simulation de déplétion des pools des deux équipes sur la série, what-if (« si on dépense Azir G2, que reste-t-il pour G4-G5 ? »), profondeur adverse par rôle projetée.
-- `draftNavigator` expectimax (§6.6) branché sur les tendances R4, mode série.
-- **Acceptation** : démo Bo5 hard-fearless complète ; le planner propose des arbitrages dépense/rétention chiffrés avec incertitude ; perf < 200 ms par évaluation de nœud.
+### R5 — Series Solver Fearless (5-6 sessions)
+- **I4 complet** : récursion de valeur de série `V(σ)` avec First Selection par game, **prix du déni** hard-fearless, **dommage structurel** sur l'inventaire de combinaisons, **jauge d'intégrité de pool** (Monte-Carlo), **stratégie de must-win** (arbitrage dépense/rétention selon le score).
+- `draftNavigator` expectimax (§6.6) branché sur les ranges I1, mode série (feuilles = équité game + γ·valeur de série).
+- UI War Room : jauges d'intégrité projetées par game, arbitrages chiffrés, what-if interactif (« si on dépense Azir G2… »).
+- **Acceptation (porte G3)** : rejeu de Bo5 fearless 2025-2026 réels — corrélation positive documentée entre nos valeurs de rétention et les champions effectivement gardés G4/G5 par les vainqueurs ; la jauge d'intégrité identifie l'équipe qui « craque » mieux que le hasard ; < 200 ms par évaluation de nœud.
 
-### R6 — Livrables & Mode Match final (2-3 sessions)
-- Export prep pack : markdown/PDF **optimisé impression** (plans A/B/C, pages bans par rotation, grilles de pool, feuille de champion-budget, tendances) — les coachs n'ont pas le droit aux appareils sur scène : le livrable qui survit au contact de la scène est imprimable/mémorisable. Export Sheets (CSV structuré d'abord).
-- **Mode « re-plan entre les games »** (la fenêtre inter-games est LE moment analyste critique en Fearless) : en 45-90 s, re-ranker les pools restants, recalculer plans et bans pour la game suivante.
-- Mode Match 27 s : raccourcis clavier, triggers de plan (arbre A/B/C de M6.3), notes par pick (M8.2).
+### R6 — Le jeu d'information (4-5 sessions)
+- **I2 complet** : hypothèses d'assignation `H(A)`, **fog value**, coût de révélation, **registre de baits** (EV de laisser un champion ouvert), affichage en composantes séparées (DA-V2-12), badge expérimental (DA-V2-11).
+- Navigator final : équité + brouillard + déni + révélation par candidat, en série.
+- **Arbre de répertoire conditionnel** (l'évolution sommet de M6.3 Plan A/B/C) : lignes préparées par état (side/FS/leurs ouvertures), compilables pour impression — l'analogue du répertoire d'ouvertures aux échecs (template : le ChessBase Opening Report — arbre adverse par side/slot scoré résultat/récence, branches minces = cibles de prep, tracking de nouveautés vs le corpus de référence).
+- **Acceptation (porte G4)** : étude rétrospective fog × counter-picks subis sur corpus (corrélation dans le bon sens, IC bootstrap) ; lecture de plausibilité sur 10 drafts tier-1 célèbres à double flex documentée ; le répertoire imprimé d'un vrai match tient sur 2 pages A4.
+
+### R7 — Livrables, Mode Match & le moteur d'échecs du draft (4-5 sessions)
+- Export prep pack : markdown/PDF **optimisé impression** (plans/répertoire, pages bans par rotation, grilles de pool, feuille de champion-budget, tendances, ranges) — les coachs n'ont pas droit aux appareils sur scène. Export Sheets (CSV structuré d'abord).
+- **Mode « re-plan entre les games »** (LE moment analyste critique en Fearless) : en 45-90 s, re-ranker les pools restants, recalculer plans/bans/ranges pour la game suivante.
+- Mode Match 27 s : raccourcis clavier, triggers de plan, notes par pick (M8.2).
+- **I5 — Sparring + revue annotée** : bot adverse (sampler de ranges, température), revue façon moteur d'échecs (« R3 Azir ?! −1,8 % — meilleure était Rell »), rapport de fuites par équipe (à tourner sur soi-même d'abord).
 - i18n EN.
-- **Acceptation** : un prep pack généré sur un vrai match récent est montrable à un staff ; re-plan complet d'une game N+1 < 90 s ; saisie d'un pick < 3 s au clavier.
+- **Acceptation (porte G5)** : prep pack + revue annotée d'un vrai Bo5 récent montrables à un staff ; re-plan < 90 s ; saisie d'un pick < 3 s ; taux d'accord navigator/équipes gagnantes stratifié publié.
 
-### R7 — Durcissement & opérations (continu)
-- Contract-tests scraping planifiés (CI hebdo), playbook patch-day (re-tag nouveaux champions, refresh datasets, MAJ configs), monitoring des sources, revue des 154 tags confidence:medium (action Alain, étalée).
+### R8 — Patch Oracle & opérations (2-3 sessions, puis continu)
+- **I6** : diff de patch → inflation d'incertitude + nudge par **courbes de réponse aux buffs** (estimées sur le backfill OE 2014-2026) ; watchlist pocket picks croisée soloq pros (clé Riot perso).
+- Durcissement : contract-tests scraping planifiés (CI hebdo), playbook patch-day (re-tag, refresh, MAJ configs), monitoring des sources, revue des 154 tags confidence:medium (action Alain, étalée).
+- **Acceptation (porte G6)** : courbes de réponse backtestées (walk-forward sur patchs passés) ; hit rate de watchlist > base rate.
 
-**Dépendances** : R1 → R3 → R4 → R5 ; R2 parallélisable après R1 ; R6 après R2+R4 ; R0 immédiat.
-**Total estimé : ~20-27 sessions** (cohérent avec le rythme historique du projet : V1 ≈ 18-20 sprints réalisés en autonome).
+### R9 — Summit Gate (continu, démarre dès G2)
+- **Scorecard public versionné par patch** (`docs/calibration/scorecard-<patch>.md`) : ban-hit@5, pick-in-range@8, postdiction win conditions, corrélation de rétention, accord navigator stratifié — chaque fois vs baselines naïves avec IC bootstrap.
+- Cibles chiffrées fixées **après la première mesure** (pas de chiffres inventés avant d'avoir les baselines) ; ensuite chaque patch doit tenir ou expliquer.
+- C'est la définition opérationnelle du sommet : **le jour où le scorecard rejoue les drafts tier-1 mieux que toute baseline publique, on y est — et on peut le prouver.**
+
+**Dépendances** : R1 → R3 → R4 → {R5, R6} ; R2 parallélisable après R1 ; R7 après R2+R4 (I5 après R6) ; R8 après R1 ; R9 dès G2 ; R0 immédiat.
+**Total estimé : ~30-38 sessions.** C'est le prix du sommet — le rythme historique du projet (V1 ≈ 18-20 sprints autonomes tenus) le rend crédible ; chaque porte G1-G6 est un point d'arrêt légitime avec un produit cohérent.
 
 ---
 
@@ -372,6 +635,17 @@ sessions de travail (≈ une demi-journée équivalent).
 6. **Heuristiques reconstruites non validées** : tant que R3 n'est pas livré, les
    sorties stratégiques sont des opinions structurées, pas des mesures. Les présenter
    comme telles dans l'UI (« non calibré » badge) jusqu'à R3.
+7. **Risques propres à la couche inédit (§6 bis)** : (a) *complexity creep* — un
+   moteur élégant qui ne change pas une décision de coach est un coût, pas une
+   feature ; garde-fou : DA-V2-11 (pas de ship sans métrique) + chaque moteur doit
+   apparaître dans le prep pack imprimé, sinon il n'existe pas ; (b) les poids
+   inter-composantes (équité/brouillard/déni) ne sont pas calibrables à notre échelle
+   — assumé par DA-V2-12 (affichage séparé, le coach arbitre) ; (c) le fog/bait
+   modélise un adversaire *rationnel et informé* — contre une équipe erratique, la
+   valeur d'information chute ; afficher la confiance du range model comme préalable ;
+   (d) sur-ajustement aux tendances : une équipe qui sait qu'on la modélise peut
+   jouer contre le modèle (niveau méta) — c'est un problème de riche, mais le badge
+   « tendance cassée » (alarme de surprise I1) en est la première défense.
 
 ---
 
@@ -392,4 +666,5 @@ sessions de travail (≈ une demi-journée équivalent).
 - `docs/research/2026-06_paysage_concurrentiel.md` — 28 recherches, ~60 sources : qui fait quoi en 2026, white space, leçons, pièges.
 - `docs/research/2026-06_ecosysteme_donnees.md` — sources de données pro (accès, schémas exacts, sondes live), workflow analyste, règles Fearless/First Selection 2026.
 - `docs/research/2026-06_methodologie_draft.md` — état de l'art méthodologique + Top-10 d'investissements, formules incluses.
+- `docs/research/2026-06_formalismes_prior_art.md` — formalismes des jeux à information cachée (poker solvers, IS-MCTS, signaling, prep d'échecs, sideboarding) + **vérification du caractère inédit** des moteurs I1-I6.
 - `draftlab-frameworks-research.md` (racine, non versionné) — dossier fondateur : frameworks coachs LCK/LPL/EU, les 8 modules, le positionnement d'origine.

@@ -1,5 +1,10 @@
 # Backlog
 
+> **2026-06-10 :** la planification vivante a déménagé dans
+> `docs/ARCHITECTURE_V2.md` (roadmap R0-R9) et `docs/STEP_UP.md`. Ce fichier
+> reste l'historique des items M1-M3 ; la plupart sont absorbés par R1 (pipeline
+> données), R3 (calibration) et R8 (ops) — vérifier là-bas avant d'en reprendre un.
+
 Things that surfaced while building M1 but explicitly belong to a later
 milestone. Do not pull these into M1 — the point of M1 is a working
 DraftGap-equivalent base, not a feature-rich one.
