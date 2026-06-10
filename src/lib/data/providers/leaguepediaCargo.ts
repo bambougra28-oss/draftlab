@@ -202,6 +202,52 @@ export interface FetchDraftsOptions {
 
 const defaultSleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
+/** Free-form cargoquery (any tables/fields) — enrichment scripts' seam. */
+export interface GenericCargoQuery {
+    /** e.g. 'ScoreboardPlayers=SP'. */
+    tables: string;
+    /** Raw aliased field list, e.g. 'SP.GameId=gid,SP.Link=link'. */
+    fields: string;
+    where: string;
+    joinOn?: string;
+    orderBy?: string;
+}
+
+/**
+ * Run a full paginated cargoquery on arbitrary tables and return the raw
+ * rows. Same transport/paging/ratelimit semantics as `fetchDraftRecords`.
+ */
+export async function fetchCargoRows(
+    query: GenericCargoQuery,
+    options: FetchDraftsOptions = {}
+): Promise<CargoRow[]> {
+    const transport = options.transport ?? defaultTransport;
+    const sleep = options.sleep ?? defaultSleep;
+    const delay = options.pageDelayMs ?? 2000;
+    const maxPages = options.maxPages ?? 40;
+
+    const rows: CargoRow[] = [];
+    for (let page = 0; page < maxPages; page++) {
+        const params = new URLSearchParams({
+            action: 'cargoquery',
+            format: 'json',
+            origin: '*',
+            tables: query.tables,
+            fields: query.fields,
+            where: query.where,
+            limit: String(CARGO_PAGE_LIMIT),
+            offset: String(page * CARGO_PAGE_LIMIT)
+        });
+        if (query.joinOn) params.set('join_on', query.joinOn);
+        if (query.orderBy) params.set('order_by', query.orderBy);
+        const pageRows = unwrapResponse(await transport(`${LEAGUEPEDIA_API}?${params.toString()}`));
+        rows.push(...pageRows);
+        if (pageRows.length < CARGO_PAGE_LIMIT) break;
+        if (delay > 0) await sleep(delay);
+    }
+    return rows;
+}
+
 /** Run a full paginated PB ⋈ SG query and normalize every row. */
 export async function fetchDraftRecords(
     query: Omit<CargoQueryOptions, 'offset' | 'limit'>,
