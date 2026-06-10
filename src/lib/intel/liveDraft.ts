@@ -19,6 +19,7 @@ import { banRotationOf, rotationOf } from '$lib/aggregates/rotations';
 import { predict, type TendencyTable } from '$lib/aggregates/tendency';
 import { buildDraftActions, DRAFT_TEMPLATE } from '$lib/data/draftRecord';
 import type { DraftSide } from '$lib/data/types';
+import { pairPrior, type TagPairFit } from '$lib/estimators/tagPairs';
 import { classifyGamePlan } from '$lib/strategic/gamePlanClassifier';
 import {
     navigate,
@@ -88,11 +89,16 @@ export interface CoachCandidate {
     /** Plain-French reasons — axes that actually fired, never invented. */
     reasonsFr: string[];
     components: { immediatePp: number; lookaheadPp: number };
+    /**
+     * Strongest historical tag-pair signal with an already-picked ally
+     * (corpus cells, §6.3) — positive or negative; absent below the floor.
+     */
+    pairWith?: { championKey: string; championName: string; residualPp: number; evidence: number };
 }
 
 export interface CoachAdvice {
     /** The slot to play now; null = draft complete. */
-    turn: (NavigatorSlot & { isOurs: boolean }) | null;
+    turn: (NavigatorSlot & { isOurs: boolean; doubleSlot: boolean }) | null;
     /** Ranked candidates when it is OUR turn (empty on enemy turn). */
     candidates: CoachCandidate[];
     /** What the enemy most likely does now (their turn, or our lookahead). */
@@ -119,6 +125,13 @@ export interface CoachContext {
     /** Our candidates considered at the root (and our tree nodes). */
     candidateCount?: number;
     /**
+     * Fitted same-team tag-pair cells (corpus) — adds the pair axis to pick
+     * reasons. Draft science 2026-06 §B: pros package duos at the double
+     * slots (46 %/43 % vs 21 % baseline), so the pairing read matters most
+     * exactly where the coach speaks.
+     */
+    pairFit?: TagPairFit;
+    /**
      * Pick-phase coaching: ban slots are treated as forfeited (the analyzer
      * view has no ban entry) — the turn is the first unfilled PICK slot and
      * the lookahead skips ban nodes (empty providers → navigator skip).
@@ -127,6 +140,45 @@ export interface CoachContext {
 }
 
 const SIDE_FR: Record<DraftSide, string> = { blue: 'bleu', red: 'rouge' };
+
+/**
+ * Template seqs that OPEN a back-to-back double pick (8-9, 10-11, 18-19) —
+ * structural, valid for either first-pick side. The §B finding lives here:
+ * the second pick of the double is safe from interception, so the pair
+ * should be THOUGHT at the first one.
+ */
+export const DOUBLE_SLOT_FIRST_SEQS: ReadonlySet<number> = new Set([8, 10, 18]);
+
+/** Minimum |residual| (win-rate points, 0..1 scale) before the pair axis speaks. */
+export const PAIR_REASON_FLOOR = 0.01;
+
+/** Best pair signal of a candidate against the already-picked ally comp. */
+function bestPairSignal(
+    championKey: string,
+    allyComp: string[],
+    fit: TagPairFit,
+    tagsFile: ChampionTagsFile
+): CoachCandidate['pairWith'] {
+    const candidateTag = tagsFile.champions[championKey];
+    if (candidateTag === undefined || fit.pairObservations === 0) return undefined;
+    let best: { championKey: string; residual: number; evidence: number } | undefined;
+    for (const allyKey of allyComp) {
+        const allyTag = tagsFile.champions[allyKey];
+        if (allyTag === undefined) continue;
+        const prior = pairPrior(candidateTag, allyTag, fit);
+        if (prior.evidence === 0) continue;
+        if (best === undefined || Math.abs(prior.residual) > Math.abs(best.residual)) {
+            best = { championKey: allyKey, residual: prior.residual, evidence: prior.evidence };
+        }
+    }
+    if (best === undefined || Math.abs(best.residual) < PAIR_REASON_FLOOR) return undefined;
+    return {
+        championKey: best.championKey,
+        championName: tagsFile.champions[best.championKey]?.name ?? best.championKey,
+        residualPp: best.residual * 100,
+        evidence: best.evidence
+    };
+}
 
 /** Our candidate ranking: pool tiers first (strongest → learning), then fallback. */
 function rankOurCandidates(ctx: CoachContext, state: DraftState, count: number): string[] {
@@ -215,18 +267,22 @@ export function recommendNext(state: DraftState, ctx: CoachContext): CoachAdvice
     }
 
     const isOurs = slot.side === ctx.ourSide;
+    const doubleSlot = slot.type === 'pick' && DOUBLE_SLOT_FIRST_SEQS.has(slot.seq);
     const enemyNow = enemyDistributionOf(ctx, state, slot).slice(0, 5);
 
     if (!isOurs) {
         const top = enemyNow[0];
+        const base =
+            top !== undefined
+                ? `Tour adverse (${slot.type === 'pick' ? 'pick' : 'ban'}, côté ${SIDE_FR[slot.side]}) — attendu en tête de range : ${Math.round(top.p * 100)} %.`
+                : `Tour adverse (${slot.type === 'pick' ? 'pick' : 'ban'}, côté ${SIDE_FR[slot.side]}) — pas de tendance connue, surveillez la surprise.`;
         return {
-            turn: { ...slot, isOurs },
+            turn: { ...slot, isOurs, doubleSlot },
             candidates: [],
             enemyExpectation: enemyNow,
-            headlineFr:
-                top !== undefined
-                    ? `Tour adverse (${slot.type === 'pick' ? 'pick' : 'ban'}, côté ${SIDE_FR[slot.side]}) — attendu en tête de range : ${Math.round(top.p * 100)} %.`
-                    : `Tour adverse (${slot.type === 'pick' ? 'pick' : 'ban'}, côté ${SIDE_FR[slot.side]}) — pas de tendance connue, surveillez la surprise.`,
+            headlineFr: doubleSlot
+                ? `${base} Ils enchaînent deux picks : attendez-vous à une paire préparée.`
+                : base,
             evaluatedNodes: 0,
             experimental: true
         };
@@ -264,6 +320,7 @@ export function recommendNext(state: DraftState, ctx: CoachContext): CoachAdvice
     const candidates: CoachCandidate[] = result.candidates.map((candidate, index) => {
         const next = result.candidates[index + 1] ?? result.candidates[index];
         const reasonsFr: string[] = [];
+        let pairWith: CoachCandidate['pairWith'];
         if (candidate.actionType === 'pick') {
             const [suggestion] = suggestPicks({
                 allyComp,
@@ -274,6 +331,16 @@ export function recommendNext(state: DraftState, ctx: CoachContext): CoachAdvice
                 tagsFile
             });
             if (suggestion !== undefined) reasonsFr.push(...suggestion.rationale);
+            if (ctx.pairFit !== undefined) {
+                pairWith = bestPairSignal(candidate.championKey, allyComp, ctx.pairFit, tagsFile);
+                if (pairWith !== undefined) {
+                    reasonsFr.push(
+                        pairWith.residualPp > 0
+                            ? `Paire de profils éprouvée avec ${pairWith.championName} : +${pairWith.residualPp.toFixed(1)} pp sur les duos pros de même profil.`
+                            : `Profils qui cohabitent mal avec ${pairWith.championName} : ${pairWith.residualPp.toFixed(1)} pp sur les duos pros de même profil.`
+                    );
+                }
+            }
         } else {
             const threat = enemyNow.find((e) => e.championKey === candidate.championKey);
             if (threat !== undefined) {
@@ -295,19 +362,24 @@ export function recommendNext(state: DraftState, ctx: CoachContext): CoachAdvice
             components: {
                 immediatePp: candidate.components.immediateValue * 100,
                 lookaheadPp: candidate.components.lookaheadDelta * 100
-            }
+            },
+            ...(pairWith !== undefined ? { pairWith } : {})
         };
     });
 
     const actionFr = slot.type === 'pick' ? 'pick' : 'ban';
+    const headlineBase =
+        candidates.length > 0
+            ? `À vous de ${actionFr} (côté ${SIDE_FR[slot.side]}) — ${result.evaluatedNodes} positions explorées.`
+            : `À vous de ${actionFr}, mais aucun candidat disponible — vérifiez pools et exclusions.`;
     return {
-        turn: { ...slot, isOurs },
+        turn: { ...slot, isOurs, doubleSlot },
         candidates,
         enemyExpectation: enemyNow,
         headlineFr:
-            candidates.length > 0
-                ? `À vous de ${actionFr} (côté ${SIDE_FR[slot.side]}) — ${result.evaluatedNodes} positions explorées.`
-                : `À vous de ${actionFr}, mais aucun candidat disponible — vérifiez pools et exclusions.`,
+            doubleSlot && candidates.length > 0
+                ? `${headlineBase} Slot double : votre 2ᵉ pick suit immédiatement — pensez la paire dès maintenant.`
+                : headlineBase,
         evaluatedNodes: result.evaluatedNodes,
         experimental: true
     };

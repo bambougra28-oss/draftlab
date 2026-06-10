@@ -141,3 +141,18 @@ export async function loadCorpusRecords(league: string): Promise<DraftRecord[] |
     });
     return snapshot?.payload ?? null;
 }
+
+/**
+ * Every imported league corpus merged — the fitting set for cross-league
+ * estimators (tag-pair cells). Leagues are disjoint by construction (one
+ * snapshot per league id), so no dedup is needed.
+ */
+export async function loadAllCorpusRecords(): Promise<DraftRecord[]> {
+    const statuses = await corpusStatus();
+    const all: DraftRecord[] = [];
+    for (const status of statuses) {
+        const records = await loadCorpusRecords(status.league);
+        if (records !== null) all.push(...records);
+    }
+    return all;
+}

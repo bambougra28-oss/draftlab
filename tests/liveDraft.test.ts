@@ -9,7 +9,8 @@ import { describe, it, expect } from 'vitest';
 import { draftStateFromRoleEntry, recommendNext, type RoleEntryDraft } from '$lib/intel/liveDraft';
 import { buildTendencyTable } from '$lib/aggregates/tendency';
 import { buildDraftActions } from '$lib/data/draftRecord';
-import type { DraftRecord } from '$lib/data/types';
+import { fitTagPairCells } from '$lib/estimators/tagPairs';
+import type { DraftRecord, DraftSide } from '$lib/data/types';
 
 const emptyEntry = (): RoleEntryDraft => ({
     allyPicks: [null, null, null, null, null],
@@ -79,6 +80,32 @@ function enemyRecord(gameId: string): DraftRecord {
         provenance: { source: 'test', fetchedAt: '2026-06-01T00:00:00Z' }
     };
 }
+
+/** Decided game for the pair fit: blue 54+18 (Malphite+Tristana) vs red 13+412. */
+function pairRecord(gameId: string, winner: DraftSide): DraftRecord {
+    const { actions } = buildDraftActions({
+        blue: { bans: [], picks: ['54', '18'] },
+        red: { bans: [], picks: ['13', '412'] },
+        firstPickSide: 'blue',
+        resolveKey: (k) => k
+    });
+    return {
+        gameId,
+        blueTeam: 'NOUS',
+        redTeam: 'EUX',
+        winner,
+        firstPickSide: 'blue',
+        orderConfidence: 'assumed-blue-first',
+        actions,
+        warnings: [],
+        provenance: { source: 'test', fetchedAt: '2026-06-01T00:00:00Z' }
+    };
+}
+
+/** 54+18 wins 8/10 → with priorN 10 their shared cells sit at residual +0.15. */
+const pairCorpus: DraftRecord[] = Array.from({ length: 10 }, (_, i) =>
+    pairRecord(`p${i}`, i < 8 ? 'blue' : 'red')
+);
 
 describe('recommendNext', () => {
     it('our ban turn: ranks fallback candidates by navigator value, FIFO of the template', () => {
@@ -189,6 +216,94 @@ describe('recommendNext', () => {
         // Lookahead crossed the skipped ban slots without burning depth:
         // the line contains real picks, never sentinel bans.
         expect(advice.candidates[0].line.every((key) => key !== '')).toBe(true);
+    });
+
+    it('pair axis: a candidate pairing with a picked ally gains pairWith + a FR reason', () => {
+        // Ally already has Malphite (54); candidate Tristana (18) shares the
+        // engineered duo's cells → residual +0.15 ≥ the 0.01 floor.
+        const entry = emptyEntry();
+        entry.allyBans = ['86', '23', '36', null, null];
+        entry.enemyBans = ['75', '77', '106', null, null];
+        entry.allyPicks = ['54', null, null, null, null];
+        entry.enemyPicks = ['145', '68', null, null, null];
+        const state = draftStateFromRoleEntry(entry);
+
+        const advice = recommendNext(state, {
+            ourSide: 'blue',
+            evaluate,
+            fallbackCandidates: ['18'],
+            pairFit: fitTagPairCells(pairCorpus, { priorN: 10 }),
+            depth: 1,
+            topK: 1
+        });
+        const [candidate] = advice.candidates;
+        expect(candidate.championKey).toBe('18');
+        expect(candidate.pairWith).toBeDefined();
+        expect(candidate.pairWith).toMatchObject({ championKey: '54', championName: 'Malphite' });
+        expect(candidate.pairWith!.residualPp).toBeGreaterThan(1);
+        expect(candidate.reasonsFr.some((r) => r.includes('Paire de profils éprouvée avec Malphite'))).toBe(true);
+    });
+
+    it('pair axis stays silent under the floor (default shrink keeps 10 games quiet)', () => {
+        // Same corpus, default priorN 400: shrink(8,10,.5,400) ≈ .5073 →
+        // residual ≈ +0.73 pp < the 1 pp floor → no pairWith, no reason.
+        const entry = emptyEntry();
+        entry.allyBans = ['86', '23', '36', null, null];
+        entry.enemyBans = ['75', '77', '106', null, null];
+        entry.allyPicks = ['54', null, null, null, null];
+        entry.enemyPicks = ['145', '68', null, null, null];
+        const state = draftStateFromRoleEntry(entry);
+
+        const advice = recommendNext(state, {
+            ourSide: 'blue',
+            evaluate,
+            fallbackCandidates: ['18'],
+            pairFit: fitTagPairCells(pairCorpus),
+            depth: 1,
+            topK: 1
+        });
+        expect(advice.candidates[0].pairWith).toBeUndefined();
+        expect(advice.candidates[0].reasonsFr.some((r) => r.includes('Paire'))).toBe(false);
+    });
+
+    it('double slot (ours, seq 10): turn flagged and the headline says to think in pairs', () => {
+        // Bans done, B1 = 54, R1-R2 = 145/68 → next is seq 10, first of B2-B3.
+        const entry = emptyEntry();
+        entry.allyBans = ['86', '23', '36', null, null];
+        entry.enemyBans = ['75', '77', '106', null, null];
+        entry.allyPicks = ['54', null, null, null, null];
+        entry.enemyPicks = ['145', '68', null, null, null];
+        const state = draftStateFromRoleEntry(entry);
+
+        const advice = recommendNext(state, {
+            ourSide: 'blue',
+            evaluate,
+            fallbackCandidates: ['103', '13'],
+            depth: 1,
+            topK: 2
+        });
+        expect(advice.turn).toMatchObject({ seq: 10, side: 'blue', isOurs: true, doubleSlot: true });
+        expect(advice.headlineFr).toContain('Slot double');
+    });
+
+    it('double slot (theirs, seq 8): the headline warns about a prepared pair', () => {
+        // Bans done, B1 = 54 → next is seq 8, first of R1-R2 (enemy for blue).
+        const entry = emptyEntry();
+        entry.allyBans = ['86', '23', '36', null, null];
+        entry.enemyBans = ['75', '77', '106', null, null];
+        entry.allyPicks = ['54', null, null, null, null];
+        const state = draftStateFromRoleEntry(entry);
+
+        const advice = recommendNext(state, { ourSide: 'blue', evaluate });
+        expect(advice.turn).toMatchObject({ seq: 8, side: 'red', isOurs: false, doubleSlot: true });
+        expect(advice.headlineFr).toContain('Ils enchaînent deux picks');
+        // The single pick before it (seq 7) is NOT a double slot.
+        const single = recommendNext(draftStateFromRoleEntry({ ...emptyEntry(), allyBans: ['86', '23', '36', null, null], enemyBans: ['75', '77', '106', null, null] }), {
+            ourSide: 'blue',
+            evaluate,
+            fallbackCandidates: ['54']
+        });
+        expect(single.turn).toMatchObject({ seq: 7, doubleSlot: false });
     });
 
     it('complete draft: turn null and an explicit FR headline', () => {

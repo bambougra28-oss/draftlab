@@ -65,6 +65,17 @@
                                             {pp(candidate.edgeVsNextPp)} vs le suivant
                                         </span>
                                     {/if}
+                                    {#if candidate.pairWith !== undefined}
+                                        <span
+                                            class={candidate.pairWith.residualPp > 0
+                                                ? 'rounded bg-emerald-900/50 px-1.5 py-0.5 text-[10px] text-emerald-300'
+                                                : 'rounded bg-rose-900/50 px-1.5 py-0.5 text-[10px] text-rose-300'}
+                                        >
+                                            paire {candidate.pairWith.residualPp > 0 ? '+' : '−'} avec {nameOf(
+                                                candidate.pairWith.championKey
+                                            )}
+                                        </span>
+                                    {/if}
                                 </div>
                                 {#if candidate.reasonsFr.length > 0}
                                     <ul class="mt-1 space-y-0.5 text-xs text-slate-400">
@@ -121,6 +132,12 @@
                     équipe joue habituellement à ce moment de la draft, d'après ses games réelles (corpus
                     Leaguepedia + gol.gg). Les raisons listées sous chaque candidat ne sont jamais inventées :
                     seuls les axes qui s'appliquent vraiment apparaissent.
+                </p>
+                <p>
+                    <strong class="text-slate-300">Paire</strong> : le signal des duos pros partageant les
+                    mêmes profils (engage + hyper-carry, etc.) dans le corpus. Les pros posent leurs duos aux
+                    doubles slots — deux picks d'affilée, le 2ᵉ est insaisissable — d'où le rappel « pensez la
+                    paire » quand vous ouvrez un double slot.
                 </p>
             </div>
         </details>

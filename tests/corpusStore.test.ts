@@ -4,6 +4,7 @@ import {
     corpusStatus,
     fetchCorpusManifest,
     importBundledCorpora,
+    loadAllCorpusRecords,
     loadCorpusRecords
 } from '$lib/intel/corpusStore';
 import { idbClear } from '$lib/storage/idb';
@@ -130,5 +131,15 @@ describe('loadCorpusRecords', () => {
         const records = await loadCorpusRecords('lck');
         expect(records?.map((r) => r.gameId)).toEqual(['lck-1', 'lck-2']);
         expect(await loadCorpusRecords('lec')).toBeNull();
+    });
+});
+
+describe('loadAllCorpusRecords', () => {
+    it('merges every imported league (empty array when nothing imported)', async () => {
+        expect(await loadAllCorpusRecords()).toEqual([]);
+        const { fetchImpl } = stubFetch();
+        await importBundledCorpora({ fetchImpl });
+        const all = await loadAllCorpusRecords();
+        expect(all.map((r) => r.gameId).sort()).toEqual(['lck-1', 'lck-2', 'lfl-1']);
     });
 });

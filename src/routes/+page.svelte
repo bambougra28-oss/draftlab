@@ -62,9 +62,11 @@
     import {
         corpusStatus,
         importBundledCorpora,
+        loadAllCorpusRecords,
         loadCorpusRecords,
         type CorpusLeagueStatus
     } from '$lib/intel/corpusStore';
+    import { fitTagPairCells, type TagPairFit } from '$lib/estimators/tagPairs';
     import { draftStateFromRoleEntry, recommendNext } from '$lib/intel/liveDraft';
     import { makeAnalyzeDraftEvaluator } from '$lib/strategic/draftNavigator';
     import { computePresence } from '$lib/aggregates/presence';
@@ -417,6 +419,8 @@
     let corpusBusy = $state(false);
     let corpusWarnings = $state<string[]>([]);
     let leagueRecords = $state<DraftRecord[] | null>(null);
+    /** Tag-pair cells fitted on the FULL corpus (cross-league) — coach pair axis. */
+    let pairFit = $state<TagPairFit | null>(null);
 
     async function refreshCorpus(): Promise<void> {
         corpusBusy = true;
@@ -425,6 +429,8 @@
             corpusWarnings = report.warnings;
             corpusStatuses = await corpusStatus();
             leagueRecords = await loadCorpusRecords(leagueId);
+            const allRecords = await loadAllCorpusRecords();
+            pairFit = allRecords.length > 0 ? fitTagPairCells(allRecords) : null;
         } catch (error) {
             corpusWarnings = [error instanceof Error ? error.message : String(error)];
         } finally {
@@ -500,6 +506,7 @@
             ...(contextActive && teamA !== null ? { allyPlayers: teamA.players } : {}),
             fallbackCandidates: coachFallback,
             ...(datasets !== null ? { dataset: datasets.fullDataset } : {}),
+            ...(pairFit !== null ? { pairFit } : {}),
             picksOnly: true,
             depth: 2,
             topK: 4,
