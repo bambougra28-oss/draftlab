@@ -5,6 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import {
     assignRole,
+    bannedKeys,
     emptySequence,
     lastFilledSeq,
     nextOpenSeq,
@@ -13,6 +14,7 @@ import {
     replaceAt,
     roleEntryView,
     SEQUENCE_SLOTS,
+    SOLOQ_SLOTS,
     toDraftActions,
     usedKeys
 } from '$lib/draft/sequence';
@@ -143,6 +145,55 @@ describe('projections', () => {
         expect(view.enemyPicks[Role.Top]).toBe('266');
         expect(view.allyPicks).toEqual([null, null, null, null, null]);
         expect(view.allyBans).toEqual(['b2', 'b4', 'b6', null, null]);
+    });
+
+    it('soloq slots: 10 simultaneous bans (blue block, red block) then the same snake', () => {
+        expect(SOLOQ_SLOTS).toHaveLength(20);
+        expect(SOLOQ_SLOTS.slice(0, 10).every((s) => s.type === 'ban')).toBe(true);
+        expect(SOLOQ_SLOTS.slice(0, 5).every((s) => s.side === 'blue')).toBe(true);
+        expect(SOLOQ_SLOTS.slice(5, 10).every((s) => s.side === 'red')).toBe(true);
+        // Picks reuse the template pick seqs — engine projection is direct.
+        expect(SOLOQ_SLOTS.slice(10).map((s) => s.seq)).toEqual([7, 8, 9, 10, 11, 12, 17, 18, 19, 20]);
+    });
+
+    it('soloq: cross-team duplicate ban legal, same-team refused, ban×pick refused', () => {
+        let s = emptySequence();
+        s = placeChampion(s, '266', undefined, 'soloq'); // blue ban 1
+        const sameTeam = placeChampion(s, '266', undefined, 'soloq'); // blue ban 2 — refused
+        expect(sameTeam).toBe(s);
+        for (const key of ['1', '2', '3', '4']) s = placeChampion(s, key, undefined, 'soloq');
+        // Red's first ban CAN duplicate blue's 266.
+        s = placeChampion(s, '266', undefined, 'soloq');
+        expect(s.entries.size).toBe(6);
+        expect([...bannedKeys(s, 'soloq')].sort()).toEqual(['1', '2', '266', '3', '4']);
+        for (const key of ['5', '6', '7', '8']) s = placeChampion(s, key, undefined, 'soloq');
+        expect(nextOpenSeq(s, 'soloq')).toBe(7); // first pick of the snake
+        // Picking a banned champion is refused.
+        const pickBanned = placeChampion(s, '266', undefined, 'soloq');
+        expect(pickBanned).toBe(s);
+        s = placeChampion(s, '103', undefined, 'soloq');
+        expect(s.entries.get(7)?.championKey).toBe('103');
+    });
+
+    it('soloq toDraftActions emits PICKS ONLY (bans are exclusions, not actions)', () => {
+        let s = emptySequence();
+        for (const key of ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']) {
+            s = placeChampion(s, key, undefined, 'soloq');
+        }
+        s = placeChampion(s, '103', undefined, 'soloq');
+        const actions = toDraftActions(s, 'soloq');
+        expect(actions).toHaveLength(1);
+        expect(actions[0]).toMatchObject({ seq: 7, type: 'pick', side: 'blue', championKey: '103' });
+    });
+
+    it('soloq roleEntryView fills both ban columns from the simultaneous phase', () => {
+        let s = emptySequence();
+        for (const key of ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']) {
+            s = placeChampion(s, key, undefined, 'soloq');
+        }
+        const view = roleEntryView(s, 'blue', undefined, 'soloq');
+        expect(view.allyBans).toEqual(['1', '2', '3', '4', '5']);
+        expect(view.enemyBans).toEqual(['6', '7', '8', '9', '10']);
     });
 
     it('a resolver returning an occupied role falls back to a free one', () => {

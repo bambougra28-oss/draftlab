@@ -72,13 +72,20 @@ axes paire + contre-compo expliqués en français · prep pack/CSV exports.
 6. **Onboarding apprenant** — le « Comment lire ? » existe par panneau ; il
    manque un parcours guidé première-draft.
 
-## E. Questions ouvertes pour Alain (bloquent la calibration produit)
+## E. Questions ouvertes pour Alain
 
-1. **Où draftes-tu ?** Clash / ranked flex / customs / scrims amateurs ?
-   → décide la cible de calibration (pro = proxy, ton contexte = vérité).
-2. **Bo1 ou séries Fearless ?** → priorité du chantier I4/G3.
+1. ~~Où draftes-tu ?~~ **RÉPONDU (2026-06-11) : draft SoloQ + draft format
+   pro 2026, en Bo1/Bo3/Bo5, avec et sans Fearless.** → Les DEUX formats
+   sont des cibles produit de premier rang (faits le jour même : mode
+   séquence pro + SoloQ, sélecteur Bo1/3/5, lockouts Fearless inline).
+   Conséquence calibration : le corpus pro reste la vérité d'entraînement ;
+   la SoloQ est un contexte d'USAGE (bans simultanés = exclusions, coach
+   picksOnly) — pas de données SoloQ-drafts à collecter pour l'instant.
+2. ~~Bo1 ou séries Fearless ?~~ **RÉPONDU : les deux** → G3 (rejeu Bo5) et
+   la valeur série long-terme (JueWuDraft hard-fearless) montent d'un cran
+   dans les priorités de la run #2.
 3. **Session d'annotation ~2 h** (~100 drafts game-plan) → vérité terrain du
-   classifieur M4.2 et des plans.
+   classifieur M4.2 et des plans. (toujours ouverte)
 
 ## F. Cibles proposées pour la run #2 (priorisées)
 

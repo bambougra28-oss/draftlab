@@ -76,6 +76,7 @@
     } from '$lib/intel/liveDraft';
     import {
         assignRole,
+        bannedKeys,
         emptySequence,
         lastFilledSeq,
         nextOpenSeq,
@@ -84,9 +85,18 @@
         roleEntryView,
         slotOf,
         toDraftActions,
-        usedKeys
+        usedKeys,
+        type DraftFormat
     } from '$lib/draft/sequence';
-    import DraftSequenceBoard, { BOARD_SLOTS } from '$lib/components/DraftSequenceBoard.svelte';
+    import DraftSequenceBoard, { boardSlotsFor } from '$lib/components/DraftSequenceBoard.svelte';
+    import {
+        consumedChampions,
+        createSeries,
+        saveSeries,
+        upsertGame,
+        type Series,
+        type SeriesFormat
+    } from '$lib/storage/series';
     import { makeAnalyzeDraftEvaluator } from '$lib/strategic/draftNavigator';
     import { computePresence } from '$lib/aggregates/presence';
     import { canonicalTeamName } from '$lib/data/normalize';
@@ -130,9 +140,61 @@
     let allySide = $state<'blue' | 'red'>('blue');
     let pickerSlot = $state<{ team: 'ally' | 'enemy'; role: Role } | { seq: number } | null>(null);
 
-    // ---- sequence entry mode (exact tournament order + flex picks) ----
+    // ---- sequence entry mode (exact formats + flex picks) ----
     let entryMode = $state<'roles' | 'sequence'>('roles');
     let draftSeq = $state(emptySequence());
+    /** Alain's two real formats: tournament 2026 or SoloQ ranked draft. */
+    let draftFormat = $state<DraftFormat>('pro');
+
+    // ---- series context (Bo1/Bo3/Bo5, ± Fearless — shared store with /series) ----
+    let seriesFormatChoice = $state<SeriesFormat>('bo3');
+    let fearlessChoice = $state(true);
+    let activeSeries = $state<Series | null>(null);
+    const SERIES_MAX_GAMES: Record<SeriesFormat, number> = { bo1: 1, bo3: 3, bo5: 5 };
+    const currentGameNumber = $derived(activeSeries === null ? 1 : activeSeries.games.length + 1);
+    const seriesOver = $derived(
+        activeSeries !== null && activeSeries.games.length >= SERIES_MAX_GAMES[activeSeries.format]
+    );
+    /** Hard Fearless 2026: champions PICKED by either side are gone for both. */
+    const fearlessLocked = $derived(
+        activeSeries !== null && activeSeries.mode === 'fearless' ? consumedChampions(activeSeries).all : []
+    );
+
+    function startSeries(): void {
+        const series = createSeries({
+            name: `${teamA?.name ?? 'Nous'} vs ${teamB?.name ?? 'Eux'} — ${new Date().toLocaleDateString('fr-FR')}`,
+            format: seriesFormatChoice,
+            mode: fearlessChoice && seriesFormatChoice !== 'bo1' ? 'fearless' : 'standard',
+            allyTeam: teamA?.name ?? 'Nous',
+            enemyTeam: teamB?.name ?? 'Eux'
+        });
+        activeSeries = series;
+        void saveSeries(series);
+    }
+
+    /** Close the current game with its result, lock its picks, reset the board. */
+    function closeGame(result: 'ally' | 'enemy'): void {
+        if (activeSeries === null || seriesOver) return;
+        const view = roleEntryView(draftSeq, allySide, seqRoleResolver, draftFormat);
+        const compact = (keys: (string | null)[]): string[] => keys.filter((k): k is string => k !== null);
+        const updated = upsertGame(activeSeries, {
+            gameNumber: currentGameNumber,
+            allySide,
+            allyPicks: compact(view.allyPicks),
+            enemyPicks: compact(view.enemyPicks),
+            allyBans: compact(view.allyBans),
+            enemyBans: compact(view.enemyBans),
+            result
+        });
+        activeSeries = updated;
+        void saveSeries(updated);
+        draftSeq = emptySequence();
+        pickerSlot = null;
+    }
+
+    function endSeries(): void {
+        activeSeries = null;
+    }
 
     /** League role priors — flex resolver + board hints (cached on records). */
     const leaguePriorsFn = $derived.by(() => {
@@ -181,7 +243,7 @@
     // (analyzer, win conditions, intel, exports) keeps reading ONE shape.
     $effect(() => {
         if (entryMode !== 'sequence') return;
-        const view = roleEntryView(draftSeq, allySide, seqRoleResolver);
+        const view = roleEntryView(draftSeq, allySide, seqRoleResolver, draftFormat);
         allyPicks = [...view.allyPicks];
         enemyPicks = [...view.enemyPicks];
         allyBans = [...view.allyBans];
@@ -366,8 +428,8 @@
         const slot = pickerSlot;
         if (slot === null) return null;
         if ('seq' in slot) {
-            const info = slotOf(slot.seq);
-            const board = BOARD_SLOTS.find((s) => s.seq === slot.seq);
+            const info = slotOf(slot.seq, draftFormat);
+            const board = boardSlotsFor(draftFormat).find((s) => s.seq === slot.seq);
             if (info === undefined || board === undefined) return null;
             return {
                 slot,
@@ -395,8 +457,8 @@
         if (slot === null) return;
         if ('seq' in slot) {
             // Sequence target: fill/replace in place; « Retirer » only undoes the tail.
-            if (championKey !== null) draftSeq = replaceAt(draftSeq, slot.seq, championKey);
-            else if (lastFilledSeq(draftSeq) === slot.seq) draftSeq = removeLast(draftSeq);
+            if (championKey !== null) draftSeq = replaceAt(draftSeq, slot.seq, championKey, undefined, draftFormat);
+            else if (lastFilledSeq(draftSeq, draftFormat) === slot.seq) draftSeq = removeLast(draftSeq, draftFormat);
             pickerSlot = null;
             return;
         }
@@ -405,8 +467,11 @@
         pickerSlot = null;
     }
 
-    /** Picker exclusions: the whole board in sequence mode, picks otherwise. */
-    const disabledPickerKeys = $derived(entryMode === 'sequence' ? [...usedKeys(draftSeq)] : pickedKeys);
+    /** Picker exclusions: board/picks + Fearless lockouts of the active series. */
+    const disabledPickerKeys = $derived([
+        ...(entryMode === 'sequence' ? usedKeys(draftSeq) : pickedKeys),
+        ...fearlessLocked
+    ]);
 
     function clearTeam(team: 'ally' | 'enemy'): void {
         if (team === 'ally') allyPicks = emptyFive();
@@ -613,19 +678,25 @@
     const coachAdvice = $derived.by(() => {
         const evaluate = coachEvaluate;
         if (evaluate === null) return null;
-        // Sequence mode: the EXACT board (true order, bans included) — the
-        // coach speaks on ban turns too. Role mode keeps the documented
-        // template approximation with forfeited bans.
+        // Sequence mode: the EXACT board — tournament bans are ordered
+        // actions (the coach speaks on ban turns); SoloQ bans are
+        // simultaneous, so they enter as EXCLUSIONS and the coach runs the
+        // picksOnly path, faithful to the client. Fearless lockouts join
+        // the exclusions in every mode.
         const state =
             entryMode === 'sequence'
-                ? draftStateFromActions(toDraftActions(draftSeq))
+                ? draftStateFromActions(toDraftActions(draftSeq, draftFormat), [
+                      ...fearlessLocked,
+                      ...(draftFormat === 'soloq' ? bannedKeys(draftSeq, 'soloq') : [])
+                  ])
                 : draftStateFromRoleEntry({
                       // Bans persist from a sequence session (null in pure role entry).
                       allyPicks,
                       enemyPicks,
                       allyBans,
                       enemyBans,
-                      allySide
+                      allySide,
+                      excludedKeys: fearlessLocked
                   });
         return recommendNext(state, {
             ourSide: allySide,
@@ -636,7 +707,7 @@
             ...(datasets !== null ? { dataset: datasets.fullDataset } : {}),
             ...(pairFit !== null ? { pairFit } : {}),
             ...(counterFit !== null ? { counterFit } : {}),
-            picksOnly: entryMode !== 'sequence',
+            picksOnly: entryMode !== 'sequence' || draftFormat === 'soloq',
             depth: 2,
             topK: 4,
             candidateCount: 6
@@ -783,25 +854,122 @@
             </button>
         </div>
     {:else}
-        <!-- Mode de saisie : par rôle (analyse) ou séquence exacte (draft réelle) -->
-        <div class="flex items-center gap-2">
-            <span class="panel-title">Saisie</span>
-            {#each [['roles', 'Par rôle'], ['sequence', 'Séquence exacte + flex']] as const as [mode, label] (mode)}
-                <button
-                    type="button"
-                    onclick={() => (entryMode = mode)}
-                    class="rounded-md px-3 py-1.5 text-xs font-semibold transition-colors {entryMode === mode
-                        ? 'bg-gold-500/15 text-gold-300 ring-1 ring-gold-600/50'
-                        : 'bg-slate-800/70 text-slate-400 hover:text-slate-200'}"
-                >
-                    {label}
-                </button>
-            {/each}
+        <!-- Mode de saisie + format + contexte de série (Bo / Fearless) -->
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <div class="flex items-center gap-2">
+                <span class="panel-title">Saisie</span>
+                {#each [['roles', 'Par rôle'], ['sequence', 'Séquence exacte + flex']] as const as [mode, label] (mode)}
+                    <button
+                        type="button"
+                        onclick={() => (entryMode = mode)}
+                        class="rounded-md px-3 py-1.5 text-xs font-semibold transition-colors {entryMode === mode
+                            ? 'bg-gold-500/15 text-gold-300 ring-1 ring-gold-600/50'
+                            : 'bg-slate-800/70 text-slate-400 hover:text-slate-200'}"
+                    >
+                        {label}
+                    </button>
+                {/each}
+            </div>
             {#if entryMode === 'sequence'}
-                <span class="text-[11px] text-slate-500">
-                    Ordre réel du tournoi, bans compris — les colonnes par rôle se remplissent toutes seules.
-                </span>
+                <div class="flex items-center gap-2">
+                    <span class="panel-title">Format</span>
+                    {#each [['pro', 'Tournoi 2026'], ['soloq', 'SoloQ']] as const as [fmt, label] (fmt)}
+                        <button
+                            type="button"
+                            onclick={() => {
+                                if (draftFormat !== fmt) {
+                                    draftFormat = fmt;
+                                    draftSeq = emptySequence();
+                                    pickerSlot = null;
+                                }
+                            }}
+                            class="rounded-md px-3 py-1.5 text-xs font-semibold transition-colors {draftFormat === fmt
+                                ? 'bg-arcane-500/15 text-arcane-300 ring-1 ring-arcane-600/50'
+                                : 'bg-slate-800/70 text-slate-400 hover:text-slate-200'}"
+                        >
+                            {label}
+                        </button>
+                    {/each}
+                </div>
             {/if}
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="panel-title">Série</span>
+                {#if activeSeries === null}
+                    {#each ['bo1', 'bo3', 'bo5'] as const as fmt (fmt)}
+                        <button
+                            type="button"
+                            onclick={() => (seriesFormatChoice = fmt)}
+                            class="rounded-md px-2.5 py-1.5 text-xs font-semibold uppercase transition-colors {seriesFormatChoice ===
+                            fmt
+                                ? 'bg-blue-500/15 text-blue-300 ring-1 ring-blue-600/50'
+                                : 'bg-slate-800/70 text-slate-400 hover:text-slate-200'}"
+                        >
+                            {fmt}
+                        </button>
+                    {/each}
+                    <label
+                        class="flex cursor-pointer items-center gap-1.5 text-xs {seriesFormatChoice === 'bo1'
+                            ? 'text-slate-600'
+                            : 'text-slate-300'}"
+                    >
+                        <input
+                            type="checkbox"
+                            bind:checked={fearlessChoice}
+                            disabled={seriesFormatChoice === 'bo1'}
+                            class="accent-amber-400"
+                        />
+                        Fearless
+                    </label>
+                    <button
+                        type="button"
+                        onclick={startSeries}
+                        class="rounded-md bg-gold-500/15 px-3 py-1.5 text-xs font-semibold text-gold-300 ring-1 ring-gold-600/50 hover:bg-gold-500/25"
+                    >
+                        Démarrer
+                    </button>
+                {:else}
+                    <span class="rounded-md bg-abyss-800 px-2.5 py-1 text-xs font-semibold text-slate-200">
+                        {activeSeries.format.toUpperCase()}
+                        {activeSeries.mode === 'fearless' ? '· Fearless' : ''} — game {Math.min(
+                            currentGameNumber,
+                            SERIES_MAX_GAMES[activeSeries.format]
+                        )}/{SERIES_MAX_GAMES[activeSeries.format]}
+                    </span>
+                    {#if fearlessLocked.length > 0}
+                        <span class="rounded-md bg-amber-500/15 px-2 py-1 text-[11px] font-semibold text-amber-300">
+                            {fearlessLocked.length} champion{fearlessLocked.length > 1 ? 's' : ''} verrouillé{fearlessLocked.length >
+                            1
+                                ? 's'
+                                : ''}
+                        </span>
+                    {/if}
+                    {#if !seriesOver}
+                        <button
+                            type="button"
+                            onclick={() => closeGame('ally')}
+                            class="rounded-md bg-emerald-500/15 px-2.5 py-1.5 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/25"
+                        >
+                            ✔ Game gagnée
+                        </button>
+                        <button
+                            type="button"
+                            onclick={() => closeGame('enemy')}
+                            class="rounded-md bg-rose-500/15 px-2.5 py-1.5 text-xs font-semibold text-rose-300 hover:bg-rose-500/25"
+                        >
+                            ✘ Game perdue
+                        </button>
+                    {:else}
+                        <span class="text-xs font-semibold text-gold-300">Série terminée.</span>
+                    {/if}
+                    <button
+                        type="button"
+                        onclick={endSeries}
+                        class="rounded-md bg-slate-800 px-2.5 py-1.5 text-xs text-slate-400 hover:text-slate-200"
+                    >
+                        Quitter la série
+                    </button>
+                {/if}
+            </div>
         </div>
 
         {#if entryMode === 'sequence'}
@@ -809,14 +977,15 @@
                 <DraftSequenceBoard
                     sequence={draftSeq}
                     {allySide}
+                    format={draftFormat}
                     roleHint={boardRoleHint}
                     onRequestPick={() => {
-                        const seq = nextOpenSeq(draftSeq);
+                        const seq = nextOpenSeq(draftSeq, draftFormat);
                         if (seq !== null) pickerSlot = { seq };
                     }}
                     onReplaceAt={(seq) => (pickerSlot = { seq })}
-                    onAssignRole={(seq, role) => (draftSeq = assignRole(draftSeq, seq, role))}
-                    onUndo={() => (draftSeq = removeLast(draftSeq))}
+                    onAssignRole={(seq, role) => (draftSeq = assignRole(draftSeq, seq, role, draftFormat))}
+                    onUndo={() => (draftSeq = removeLast(draftSeq, draftFormat))}
                     onReset={() => {
                         draftSeq = emptySequence();
                         allyBans = emptyFive();

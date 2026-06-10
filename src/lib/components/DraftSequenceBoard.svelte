@@ -15,20 +15,32 @@
  */
 -->
 <script module lang="ts">
-    import { SEQUENCE_SLOTS, type SequenceSlot } from '$lib/draft/sequence';
+    import { slotsFor, type DraftFormat, type SequenceSlot } from '$lib/draft/sequence';
 
     export interface BoardSlotView extends SequenceSlot {
         /** Broadcast label: B1…B5 / R1…R5 picks, BB1…BB5 / RB1…RB5 bans. */
         label: string;
     }
 
-    const counters: Record<string, number> = {};
-    export const BOARD_SLOTS: readonly BoardSlotView[] = SEQUENCE_SLOTS.map((slot) => {
-        const group = `${slot.side}-${slot.type}`;
-        counters[group] = (counters[group] ?? 0) + 1;
-        const prefix = slot.side === 'blue' ? 'B' : 'R';
-        return { ...slot, label: `${prefix}${slot.type === 'ban' ? 'B' : ''}${counters[group]}` };
-    });
+    function buildBoardSlots(format: DraftFormat): readonly BoardSlotView[] {
+        const counters: Record<string, number> = {};
+        return slotsFor(format).map((slot) => {
+            const group = `${slot.side}-${slot.type}`;
+            counters[group] = (counters[group] ?? 0) + 1;
+            const prefix = slot.side === 'blue' ? 'B' : 'R';
+            return { ...slot, label: `${prefix}${slot.type === 'ban' ? 'B' : ''}${counters[group]}` };
+        });
+    }
+
+    const BOARD_SLOTS_BY_FORMAT: Record<DraftFormat, readonly BoardSlotView[]> = {
+        pro: buildBoardSlots('pro'),
+        soloq: buildBoardSlots('soloq')
+    };
+
+    /** The format's walk slots with broadcast labels. */
+    export function boardSlotsFor(format: DraftFormat): readonly BoardSlotView[] {
+        return BOARD_SLOTS_BY_FORMAT[format];
+    }
 </script>
 
 <script lang="ts">
@@ -42,6 +54,7 @@
     interface Props {
         sequence: DraftSequence;
         allySide: 'blue' | 'red';
+        format?: DraftFormat;
         /** Corpus role read for flex chips; null = no hint available. */
         roleHint?: ((championKey: string) => { role: Role; p: number } | null) | undefined;
         onRequestPick: () => void;
@@ -51,19 +64,29 @@
         onReset: () => void;
     }
 
-    let { sequence, allySide, roleHint, onRequestPick, onReplaceAt, onAssignRole, onUndo, onReset }: Props =
-        $props();
+    let {
+        sequence,
+        allySide,
+        format = 'pro',
+        roleHint,
+        onRequestPick,
+        onReplaceAt,
+        onAssignRole,
+        onUndo,
+        onReset
+    }: Props = $props();
 
-    const cursor = $derived(nextOpenSeq(sequence));
-    const lastSeq = $derived(lastFilledSeq(sequence));
-    const cursorSlot = $derived(cursor === null ? null : BOARD_SLOTS.find((s) => s.seq === cursor)!);
+    const boardSlots = $derived(boardSlotsFor(format));
+    const cursor = $derived(nextOpenSeq(sequence, format));
+    const lastSeq = $derived(lastFilledSeq(sequence, format));
+    const cursorSlot = $derived(cursor === null ? null : boardSlots.find((s) => s.seq === cursor)!);
 
     const nameOf = (key: string): string => championNameByKey(key) ?? key;
     const sideFr = (side: 'blue' | 'red'): string => (side === 'blue' ? 'bleu' : 'rouge');
     const isAlly = (side: 'blue' | 'red'): boolean => side === allySide;
 
     const sideSlots = (side: 'blue' | 'red', type: 'ban' | 'pick'): BoardSlotView[] =>
-        BOARD_SLOTS.filter((s) => s.side === side && s.type === type);
+        boardSlots.filter((s) => s.side === side && s.type === type);
 </script>
 
 <section class="panel panel-gold p-4">
@@ -71,7 +94,7 @@
         <h2
             class="font-display bg-gradient-to-b from-gold-200 to-gold-500 bg-clip-text text-base tracking-[0.16em] text-transparent uppercase"
         >
-            Draft séquentielle
+            {format === 'soloq' ? 'Draft SoloQ' : 'Draft tournoi'}
         </h2>
         {#if cursorSlot !== null}
             <span class="text-sm text-slate-300">
@@ -105,7 +128,7 @@
 
     <!-- The 20-cell order strip: click the cursor to pick, a filled cell to edit. -->
     <div class="flex flex-wrap items-center gap-1.5 pb-4">
-        {#each BOARD_SLOTS as slot (slot.seq)}
+        {#each boardSlots as slot (slot.seq)}
             {@const entry = sequence.entries.get(slot.seq)}
             {@const isCursor = slot.seq === cursor}
             <button
@@ -129,7 +152,7 @@
                         <span class="text-[9px] font-semibold text-slate-500">{slot.label}</span>
                     {/if}
                 </span>
-                {#if slot.seq === 13}
+                {#if format === 'pro' ? slot.seq === 13 : slot.seq === 7}
                     <span class="absolute -left-2 inset-y-0 w-px bg-gold-700/40" aria-hidden="true"></span>
                 {/if}
             </button>
@@ -212,6 +235,11 @@
     <p class="pt-2 text-[10px] text-slate-600">
         Un pick se pose en <span class="font-semibold text-amber-300">FLEX</span> (rôle non engagé) — cliquez un
         rôle pour l'assigner, recliquez pour le libérer ; assigner le rôle d'un coéquipier le repasse en flex.
-        L'ordre est l'ordre RÉEL du tournoi : le coach lit la draft exacte, bans compris.
+        {#if format === 'soloq'}
+            Bans SIMULTANÉS (les deux équipes peuvent bannir le même champion) puis le serpentin de picks —
+            le coach traite les bans comme des exclusions, fidèle au client.
+        {:else}
+            L'ordre est l'ordre RÉEL du tournoi : le coach lit la draft exacte, bans compris.
+        {/if}
     </p>
 </section>
