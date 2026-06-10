@@ -29,12 +29,12 @@ export const CARGO_PAGE_LIMIT = 500;
 export type CargoTransport = (url: string) => Promise<unknown>;
 
 export class CargoError extends Error {
-    constructor(
-        message: string,
-        readonly code: string
-    ) {
+    readonly code: string;
+
+    constructor(message: string, code: string) {
         super(message);
         this.name = 'CargoError';
+        this.code = code;
     }
 }
 
@@ -261,11 +261,15 @@ export interface MwCredentials {
  * Usage: `const t = await MwSession.login(creds); fetchDraftRecords(q, {transport: t.transport})`.
  */
 export class MwSession {
-    private constructor(
-        private cookies: string,
-        private readonly fetchImpl: typeof fetch,
-        readonly api: string
-    ) {}
+    private cookies: string;
+    private readonly fetchImpl: typeof fetch;
+    readonly api: string;
+
+    private constructor(cookies: string, fetchImpl: typeof fetch, api: string) {
+        this.cookies = cookies;
+        this.fetchImpl = fetchImpl;
+        this.api = api;
+    }
 
     static async login(
         creds: MwCredentials,
