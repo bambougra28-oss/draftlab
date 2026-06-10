@@ -1,57 +1,46 @@
 # DraftLab — Status
 
-Updated: 2026-05-01
+Updated: 2026-06-10
 
 ## State
 
-**M4 prototype fonctionnel** — strategic layer (Game Plan + Power Curves +
-Risk Markers) shipping with a demonstrable browser-side prototype at
-`/prototype`.
-
-## Coverage
-
-- Champion tags: **172 / 172 (100%)**
-- Calibration confidence: 15 user-validated, 154 confidence:medium awaiting
-  review, 3 confidence:low (post-cutoff, web-verified).
+**V2.1 « Sommet » — R0 fait, R1 cœur livré.** La logique M1-M7 reconstruite est
+verte ; le plan directeur est `docs/ARCHITECTURE_V2.md` (roadmap R0-R9, six
+moteurs inédits en §6 bis, prior-art vérifié) ; la colonne vertébrale de
+données R1 (schéma `DraftRecord`, providers Leaguepedia/Oracle's Elixir,
+snapshots datés, détecteur de divergence) est codée et testée.
 
 ## Tests
 
-- 236 passing / 10 skipped (live-data tests bypassed without local sample)
-- Typecheck clean, lint clean.
+- vitest : **270 passed / 3 skipped** (28 fichiers)
+- svelte-check : 0 erreur (353 fichiers) · eslint : clean
+- Tag `recovery-complete` posé.
 
-## Modules shipped
+## Couches
 
-| Milestone | Module | File |
-|---|---|---|
-| M1 | DraftGap engine clone | `src/lib/engine/` |
-| M2 | Pool scrap + Bayesian comfort | `src/lib/pro/` |
-| M3.5 | Walk-forward calibration | (corpus + analyzer) |
-| **M4.1** | Champion tagging foundation | `src/lib/tags/` |
-| **M4.1.1** | Full champion tag coverage | `data/championTags.json` |
-| **M4.2** | Game Plan Classifier | `src/lib/strategic/gamePlanClassifier.ts` |
-| **M4.3** | Power Curve Visualizer | `src/lib/strategic/powerCurveCalculator.ts` + `src/lib/components/PowerCurveVisualizer.svelte` |
-| **M4.4** | Risk Markers | `src/lib/strategic/riskMarkerDetector.ts` |
-| **M4** | Prototype route | `src/routes/prototype/+page.svelte` |
+| Couche | État |
+|---|---|
+| M1 moteur + M2 pro + M4-M7 stratégique/storage | ✅ reconstruits, verts |
+| R1 data : `src/lib/data/` (DraftRecord, leaguepediaCargo, oraclesElixir, snapshots, divergence, leagues) + cache IndexedDB | ✅ codé + 60 tests |
+| Fixtures gol.gg (9 pages S16, 2026-06-10) | ✅ capturées (`tests/fixtures/golgg/`) |
+| Parsers golgg + proxy `/api/golgg` | ⬜ prochaine session (sur fixtures) |
+| Validation live Leaguepedia + corpus 2026 ordonné | ⬜ requiert bot password (A-actions) |
+| UI (routes + composants) | ⬜ R2 |
+| Harnais de backtest + recalibrage | ⬜ R3 |
 
-## How to run
+## Actions Alain (bloquantes ou à fort levier)
 
-```bash
-pnpm dev
-# → http://localhost:5173/             ← M2 draft analyzer
-# → http://localhost:5173/prototype    ← M4 strategic prototype
-```
+1. **A1 — push GitHub** (toujours AUCUN backup externe du repo) :
+   `winget install GitHub.cli` → `gh auth login` → `gh repo create draftlab --private --source=. --push` (+ `git push --tags`).
+2. **A2 fait par l'architecte** : copie de secours du dossier fondateur dans
+   `C:\Users\alain\Documents\draftlab-backup\` — à doubler hors machine.
+3. **Bot password Leaguepedia** (compte wiki gratuit → `Special:BotPasswords`) ;
+   renseigner `DRAFTLAB_LP_USER` / `DRAFTLAB_LP_PASS` pour la validation live
+   (`DRAFTLAB_LIVE=1 pnpm test leaguepedia.live`).
+4. Valider STEP_UP #9 (seuils pool tier) — #10 et #3 sont appliqués en R1.
 
-## Roadmap (next)
+## Suivant
 
-- **Polish M4.1.1**: review 154 confidence:medium tags (~1-2h pass).
-- **M5.1**: Adversary Plan Detector (pick-by-pick read using M4.2 classifier).
-- **M5.2**: Pool Tier Classifier (4 tiers: Strongest/Match Ready/Scrim Ready/Learning).
-- **M5.3**: Pocket Pick Risk Assessor.
-- **M5.4**: Suggestions de picks contextualisées par game plan adverse.
-
-Per `draftlab-frameworks-research.md` §5.
-
-## Unresolved
-
-See `docs/unresolved.md`. Two transverse decisions and three champion tags
-flagged for human review.
+R1 fin (parsers golgg sur fixtures + validation live + concordance ≥95 %),
+puis R2 (reconstruction UI — capture de référence à la racine) en parallèle
+de R3 (harnais + Win-Condition Graph v1). Détail : `docs/ARCHITECTURE_V2.md` §8.

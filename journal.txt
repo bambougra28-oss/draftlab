@@ -1,6 +1,50 @@
 DraftLab — Project journal
 
 ================================================================================
+V2.1 architecture + R0 + R1 core — the summit roadmap, then its data backbone
+2026-06-10 — autonomous after "carte blanche" / "on vise l'inédit" / "Allez"
+================================================================================
+
+Architecture phase (3 commits bb91d66 / 39962ce + tag recovery-complete):
+- docs/ARCHITECTURE_V2.md V2.1 "Sommet": mission, verdicts empiriques,
+  positionnement 2026, stratégie données multi-source, doctrine métho,
+  §6 bis = 6 moteurs inédits (ranges adverses / fog & reveal / win-condition
+  graph bilatéral / series solver hard-fearless / revue annotée / patch
+  oracle), décisions DA-V2-1..13, roadmap R0-R9 avec portes G1-G6 + Summit
+  Gate. Prior-art vérifié par agent (~30 recherches): I2/I3/I4 NOVEL.
+- 4 rapports de recherche web archivés sous docs/research/ (concurrence,
+  données+workflow avec sondes API live, méthodologie, formalismes).
+- STEP_UP #9 (pool tiers 20/10/3 vs 14/5/1 origine) + #10 (toutes ligues).
+
+R0 — filets de sécurité:
+- Backup hors repo: dossier fondateur + screenshot UI → Documents/draftlab-backup.
+- Worktree fantôme .claude/worktrees supprimé (vérifié: rien d'unique).
+- Tag recovery-complete posé. (A1 push GitHub = action Alain, toujours pending.)
+
+R1 core — colonne vertébrale données (commit feat(r1)):
+- Fixtures gol.gg capturées EN DIRECT (le site répondait à nouveau après une
+  panne le matin même; il bloque les IP datacenter → capture résidentielle,
+  9 pages S16 commitées sous tests/fixtures/golgg/). Parsers golgg = à
+  reconstruire la prochaine session, sur ces fixtures.
+- src/lib/data/: DraftRecord (side / pick order / gameNumber / patch
+  indépendants — règle First Selection 2026), template 20 slots ancré sur
+  le first-pick side, providers leaguepediaCargo (primaire; MwSession bot
+  password; rate-limit anonyme reconfirmé: 3 sondes limitées sur 15 min)
+  + oraclesElixir (CSV 2024+ avec ordre), snapshots immuables datés
+  (IndexedDB v2), divergence detector inter-sources, registre de ligues
+  2026 config-driven, cache datasets → IndexedDB (STEP_UP #3 appliqué).
+
+Verification:
+- vitest: 270 passed / 3 skipped (+60 nouveaux tests)
+- svelte-check: 0 errors (353 files) · eslint: clean
+
+Remaining for R1 acceptance (next sessions):
+- golgg.ts parsers + /api/golgg proxy sur les fixtures capturées.
+- Validation live Leaguepedia (requiert bot password — Special:BotPasswords,
+  variables DRAFTLAB_LP_USER/PASS) + premier corpus 2026 avec ordre.
+- Concordance inter-sources ≥95% mesurée sur 20 matchs réels.
+
+================================================================================
 V1.0-beta sprint — full strategic + UI + storage
 2026-05-04 — autonomous after "à toi d'architecturer, et finaliser tout ça"
 ================================================================================
