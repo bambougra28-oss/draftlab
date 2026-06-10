@@ -68,7 +68,25 @@
     } from '$lib/intel/corpusStore';
     import { fitTagCounterCells, fitTagPairCells, type TagPairFit } from '$lib/estimators/tagPairs';
     import { fitRolePriors, layerRolePriors, rolePriorsOf } from '$lib/aggregates/rolePriors';
-    import { draftStateFromRoleEntry, readEnemyRoles, recommendNext } from '$lib/intel/liveDraft';
+    import {
+        draftStateFromActions,
+        draftStateFromRoleEntry,
+        readEnemyRoles,
+        recommendNext
+    } from '$lib/intel/liveDraft';
+    import {
+        assignRole,
+        emptySequence,
+        lastFilledSeq,
+        nextOpenSeq,
+        removeLast,
+        replaceAt,
+        roleEntryView,
+        slotOf,
+        toDraftActions,
+        usedKeys
+    } from '$lib/draft/sequence';
+    import DraftSequenceBoard, { BOARD_SLOTS } from '$lib/components/DraftSequenceBoard.svelte';
     import { makeAnalyzeDraftEvaluator } from '$lib/strategic/draftNavigator';
     import { computePresence } from '$lib/aggregates/presence';
     import { canonicalTeamName } from '$lib/data/normalize';
@@ -107,8 +125,68 @@
     const emptyFive = (): (string | null)[] => [null, null, null, null, null];
     let allyPicks = $state<(string | null)[]>(emptyFive());
     let enemyPicks = $state<(string | null)[]>(emptyFive());
+    let allyBans = $state<(string | null)[]>(emptyFive());
+    let enemyBans = $state<(string | null)[]>(emptyFive());
     let allySide = $state<'blue' | 'red'>('blue');
-    let pickerSlot = $state<{ team: 'ally' | 'enemy'; role: Role } | null>(null);
+    let pickerSlot = $state<{ team: 'ally' | 'enemy'; role: Role } | { seq: number } | null>(null);
+
+    // ---- sequence entry mode (exact tournament order + flex picks) ----
+    let entryMode = $state<'roles' | 'sequence'>('roles');
+    let draftSeq = $state(emptySequence());
+
+    /** League role priors — flex resolver + board hints (cached on records). */
+    const leaguePriorsFn = $derived.by(() => {
+        if (leagueRecords === null) return null;
+        return rolePriorsOf(fitRolePriors(leagueRecords));
+    });
+
+    const seqRoleResolver = $derived.by(() => {
+        const priors = leaguePriorsFn;
+        if (priors === null) return undefined;
+        return (championKey: string, free: Role[]): Role => {
+            let best = free[0];
+            let bestWeight = -1;
+            for (const role of free) {
+                const weight = priors(championKey)[role] ?? 0;
+                if (weight > bestWeight) {
+                    bestWeight = weight;
+                    best = role;
+                }
+            }
+            return best;
+        };
+    });
+
+    const boardRoleHint = $derived.by(() => {
+        const priors = leaguePriorsFn;
+        if (priors === null) return undefined;
+        return (championKey: string): { role: Role; p: number } | null => {
+            const weights = priors(championKey);
+            let total = 0;
+            let best: Role | null = null;
+            let bestWeight = 0;
+            for (const role of ROLES) {
+                const weight = weights[role] ?? 0;
+                total += weight;
+                if (weight > bestWeight) {
+                    bestWeight = weight;
+                    best = role;
+                }
+            }
+            return best === null || total === 0 ? null : { role: best, p: bestWeight / total };
+        };
+    });
+
+    // Sequence mode writes through to the role-keyed state: every consumer
+    // (analyzer, win conditions, intel, exports) keeps reading ONE shape.
+    $effect(() => {
+        if (entryMode !== 'sequence') return;
+        const view = roleEntryView(draftSeq, allySide, seqRoleResolver);
+        allyPicks = [...view.allyPicks];
+        enemyPicks = [...view.enemyPicks];
+        allyBans = [...view.allyBans];
+        enemyBans = [...view.enemyBans];
+    });
 
     // ---- team context state (M2_PING3) ----
     let contextActive = $state(false);
@@ -287,6 +365,17 @@
     const pickerInfo = $derived.by(() => {
         const slot = pickerSlot;
         if (slot === null) return null;
+        if ('seq' in slot) {
+            const info = slotOf(slot.seq);
+            const board = BOARD_SLOTS.find((s) => s.seq === slot.seq);
+            if (info === undefined || board === undefined) return null;
+            return {
+                slot,
+                entries: [] as ChampionPoolEntry[],
+                label: 'Tous les champions',
+                title: `${info.type === 'ban' ? 'Ban' : 'Pick'} ${board.label} — côté ${info.side === 'blue' ? 'bleu' : 'rouge'}`
+            };
+        }
         const team = slot.team === 'ally' ? teamA : teamB;
         let entries: ChampionPoolEntry[] = [];
         let label = 'Pool du joueur';
@@ -304,10 +393,20 @@
     function assignPick(championKey: string | null): void {
         const slot = pickerSlot;
         if (slot === null) return;
+        if ('seq' in slot) {
+            // Sequence target: fill/replace in place; « Retirer » only undoes the tail.
+            if (championKey !== null) draftSeq = replaceAt(draftSeq, slot.seq, championKey);
+            else if (lastFilledSeq(draftSeq) === slot.seq) draftSeq = removeLast(draftSeq);
+            pickerSlot = null;
+            return;
+        }
         if (slot.team === 'ally') allyPicks[slot.role] = championKey;
         else enemyPicks[slot.role] = championKey;
         pickerSlot = null;
     }
+
+    /** Picker exclusions: the whole board in sequence mode, picks otherwise. */
+    const disabledPickerKeys = $derived(entryMode === 'sequence' ? [...usedKeys(draftSeq)] : pickedKeys);
 
     function clearTeam(team: 'ally' | 'enemy'): void {
         if (team === 'ally') allyPicks = emptyFive();
@@ -514,13 +613,20 @@
     const coachAdvice = $derived.by(() => {
         const evaluate = coachEvaluate;
         if (evaluate === null) return null;
-        const state = draftStateFromRoleEntry({
-            allyPicks,
-            enemyPicks,
-            allyBans: [null, null, null, null, null],
-            enemyBans: [null, null, null, null, null],
-            allySide
-        });
+        // Sequence mode: the EXACT board (true order, bans included) — the
+        // coach speaks on ban turns too. Role mode keeps the documented
+        // template approximation with forfeited bans.
+        const state =
+            entryMode === 'sequence'
+                ? draftStateFromActions(toDraftActions(draftSeq))
+                : draftStateFromRoleEntry({
+                      // Bans persist from a sequence session (null in pure role entry).
+                      allyPicks,
+                      enemyPicks,
+                      allyBans,
+                      enemyBans,
+                      allySide
+                  });
         return recommendNext(state, {
             ourSide: allySide,
             evaluate,
@@ -530,7 +636,7 @@
             ...(datasets !== null ? { dataset: datasets.fullDataset } : {}),
             ...(pairFit !== null ? { pairFit } : {}),
             ...(counterFit !== null ? { counterFit } : {}),
-            picksOnly: true,
+            picksOnly: entryMode !== 'sequence',
             depth: 2,
             topK: 4,
             candidateCount: 6
@@ -677,6 +783,50 @@
             </button>
         </div>
     {:else}
+        <!-- Mode de saisie : par rôle (analyse) ou séquence exacte (draft réelle) -->
+        <div class="flex items-center gap-2">
+            <span class="panel-title">Saisie</span>
+            {#each [['roles', 'Par rôle'], ['sequence', 'Séquence exacte + flex']] as const as [mode, label] (mode)}
+                <button
+                    type="button"
+                    onclick={() => (entryMode = mode)}
+                    class="rounded-md px-3 py-1.5 text-xs font-semibold transition-colors {entryMode === mode
+                        ? 'bg-gold-500/15 text-gold-300 ring-1 ring-gold-600/50'
+                        : 'bg-slate-800/70 text-slate-400 hover:text-slate-200'}"
+                >
+                    {label}
+                </button>
+            {/each}
+            {#if entryMode === 'sequence'}
+                <span class="text-[11px] text-slate-500">
+                    Ordre réel du tournoi, bans compris — les colonnes par rôle se remplissent toutes seules.
+                </span>
+            {/if}
+        </div>
+
+        {#if entryMode === 'sequence'}
+            <div class="animate-fade-up">
+                <DraftSequenceBoard
+                    sequence={draftSeq}
+                    {allySide}
+                    roleHint={boardRoleHint}
+                    onRequestPick={() => {
+                        const seq = nextOpenSeq(draftSeq);
+                        if (seq !== null) pickerSlot = { seq };
+                    }}
+                    onReplaceAt={(seq) => (pickerSlot = { seq })}
+                    onAssignRole={(seq, role) => (draftSeq = assignRole(draftSeq, seq, role))}
+                    onUndo={() => (draftSeq = removeLast(draftSeq))}
+                    onReset={() => {
+                        draftSeq = emptySequence();
+                        allyBans = emptyFive();
+                        enemyBans = emptyFive();
+                        pickerSlot = null;
+                    }}
+                />
+            </div>
+        {/if}
+
         <div class="animate-fade-up grid grid-cols-1 items-start gap-3 xl:grid-cols-12">
             <!-- Ally column -->
             <section class="space-y-2 xl:col-span-3">
@@ -692,13 +842,15 @@
                             {sideBadge(allySide).label}
                         </span>
                     </p>
-                    <button
-                        type="button"
-                        onclick={() => clearTeam('ally')}
-                        class="text-xs text-slate-600 hover:text-slate-300"
-                    >
-                        Vider
-                    </button>
+                    {#if entryMode === 'roles'}
+                        <button
+                            type="button"
+                            onclick={() => clearTeam('ally')}
+                            class="text-xs text-slate-600 hover:text-slate-300"
+                        >
+                            Vider
+                        </button>
+                    {/if}
                 </div>
                 {#each ROLES as role (role)}
                     {@const view = slotView(teamA, role, allyPicks[role])}
@@ -714,8 +866,8 @@
                             const key = allyPicks[role];
                             if (key !== null) setComfortTag(key, mode);
                         }}
-                        onSelect={() => (pickerSlot = { team: 'ally', role })}
-                        onClear={() => (allyPicks[role] = null)}
+                        onSelect={entryMode === 'roles' ? () => (pickerSlot = { team: 'ally', role }) : undefined}
+                        onClear={entryMode === 'roles' ? () => (allyPicks[role] = null) : undefined}
                     />
                 {/each}
             </section>
@@ -753,7 +905,7 @@
                         <ChampionPicker
                             poolEntries={pickerInfo.entries}
                             poolLabel={pickerInfo.label}
-                            disabledKeys={pickedKeys}
+                            disabledKeys={disabledPickerKeys}
                             onSelect={(key) => assignPick(key)}
                         />
                     </div>
@@ -780,13 +932,15 @@
                             {sideBadge(enemySide).label}
                         </span>
                     </p>
-                    <button
-                        type="button"
-                        onclick={() => clearTeam('enemy')}
-                        class="text-xs text-slate-600 hover:text-slate-300"
-                    >
-                        Vider
-                    </button>
+                    {#if entryMode === 'roles'}
+                        <button
+                            type="button"
+                            onclick={() => clearTeam('enemy')}
+                            class="text-xs text-slate-600 hover:text-slate-300"
+                        >
+                            Vider
+                        </button>
+                    {/if}
                 </div>
                 {#each ROLES as role (role)}
                     {@const view = slotView(teamB, role, enemyPicks[role])}
@@ -797,8 +951,8 @@
                         playerName={view.playerName}
                         playerStats={view.playerStats}
                         outsidePool={view.outsidePool}
-                        onSelect={() => (pickerSlot = { team: 'enemy', role })}
-                        onClear={() => (enemyPicks[role] = null)}
+                        onSelect={entryMode === 'roles' ? () => (pickerSlot = { team: 'enemy', role }) : undefined}
+                        onClear={entryMode === 'roles' ? () => (enemyPicks[role] = null) : undefined}
                     />
                 {/each}
             </section>
@@ -901,10 +1055,9 @@
                 unavailableReason={datasetLoading
                     ? 'Le coach attend la fin du téléchargement du dataset…'
                     : (datasetError ?? 'Coach indisponible.')}
-                noteFr="Phase de picks (cette vue ne saisit pas les bans) — ordre reconstruit sur le template, saisie par rôle.{teamB ===
-                null
-                    ? ' Synchronisez l’équipe adverse pour des ranges réelles.'
-                    : ''}"
+                noteFr={entryMode === 'sequence'
+                    ? `Ordre EXACT saisi (bans compris) — le coach lit la vraie draft, tours de ban inclus.${teamB === null ? ' Synchronisez l’équipe adverse pour des ranges réelles.' : ''}`
+                    : `Phase de picks (cette vue ne saisit pas les bans) — ordre reconstruit sur le template, saisie par rôle.${teamB === null ? ' Synchronisez l’équipe adverse pour des ranges réelles.' : ''}`}
             />
         </div>
 

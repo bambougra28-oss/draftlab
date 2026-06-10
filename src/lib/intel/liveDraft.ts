@@ -18,7 +18,7 @@
 import { banRotationOf, rotationOf } from '$lib/aggregates/rotations';
 import { predict, type TendencyTable } from '$lib/aggregates/tendency';
 import { buildDraftActions, DRAFT_TEMPLATE } from '$lib/data/draftRecord';
-import type { DraftSide } from '$lib/data/types';
+import type { DraftAction, DraftSide } from '$lib/data/types';
 import { counterThreat, pairPrior, type TagPairFit } from '$lib/estimators/tagPairs';
 import { ambiguityBits, roleAssignmentHypotheses, type RolePriors } from '$lib/strategic/fogReveal';
 import { classifyGamePlan } from '$lib/strategic/gamePlanClassifier';
@@ -72,6 +72,22 @@ export function draftStateFromRoleEntry(entry: RoleEntryDraft, tagsFile: Champio
     const available = new Set<string>(Object.keys(tagsFile.champions).filter((key) => !used.has(key)));
 
     return { actions, firstPickSide: 'blue', available };
+}
+
+/**
+ * Navigator state from EXACT ordered actions (the sequence entry mode) —
+ * no template approximation, no forfeited-ban sentinels: the coach sees the
+ * true board, ban turns included.
+ */
+export function draftStateFromActions(
+    actions: DraftAction[],
+    excludedKeys: string[] = [],
+    tagsFile: ChampionTagsFile = loadDefaultTags()
+): DraftState {
+    const used = new Set<string>(actions.map((a) => a.championKey));
+    for (const key of excludedKeys) used.add(key);
+    const available = new Set<string>(Object.keys(tagsFile.champions).filter((key) => !used.has(key)));
+    return { actions: [...actions].sort((a, b) => a.seq - b.seq), firstPickSide: 'blue', available };
 }
 
 export interface CoachReason {
