@@ -5,6 +5,7 @@
  * role→champion map). These model what we scrape from gol.gg.
  */
 import type { Role } from '$lib/types';
+import { LEAGUE_REGISTRY } from '$lib/data/leagues';
 
 export interface ChampionPoolEntry {
     championKey: string;
@@ -66,13 +67,15 @@ export interface ProTeam {
 export interface LeagueInfo {
     id: string;
     label: string;
-    /** LCK/LPL/LEC adapters are M2.5 — disabled in the UI for now. */
     enabled: boolean;
 }
 
-export const LEAGUES: readonly LeagueInfo[] = [
-    { id: 'lfl', label: 'LFL', enabled: true },
-    { id: 'lck', label: 'LCK', enabled: false },
-    { id: 'lpl', label: 'LPL', enabled: false },
-    { id: 'lec', label: 'LEC', enabled: false }
-];
+/**
+ * Derived from the R1 config-driven registry (STEP_UP #10 applied: every
+ * league is enabled now that the data layer is multi-source).
+ */
+export const LEAGUES: readonly LeagueInfo[] = LEAGUE_REGISTRY.map(({ id, label, enabled }) => ({
+    id,
+    label,
+    enabled
+}));

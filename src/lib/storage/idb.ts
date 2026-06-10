@@ -2,14 +2,17 @@
  * M6.2 — Minimal promisified IndexedDB wrapper (no external dependency).
  *
  * Schema v1: three object stores keyed by `id` — plans, series, preferences.
- * Used only client-side (DV4: no auth, no cloud sync). In tests, the global
- * `indexedDB` is provided by `fake-indexeddb/auto`.
+ * Schema v2 (R1): + `snapshots` (immutable dated provider payloads, DA-V2-3)
+ * and `datasets` (the ~50 MB DraftGap feeds, moved off localStorage —
+ * STEP_UP #3). The upgrade path only ever ADDS stores, so bumping the version
+ * preserves existing user data. Used only client-side (DV4: no auth, no cloud
+ * sync). In tests, the global `indexedDB` is provided by `fake-indexeddb`.
  */
 export const DB_NAME = 'draftlab';
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
-export type StoreName = 'plans' | 'series' | 'preferences';
-const STORES: StoreName[] = ['plans', 'series', 'preferences'];
+export type StoreName = 'plans' | 'series' | 'preferences' | 'snapshots' | 'datasets';
+const STORES: StoreName[] = ['plans', 'series', 'preferences', 'snapshots', 'datasets'];
 
 function promisifyRequest<T>(request: IDBRequest<T>): Promise<T> {
     return new Promise((resolve, reject) => {

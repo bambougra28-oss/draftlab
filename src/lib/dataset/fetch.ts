@@ -8,7 +8,8 @@
  * Both are cached for 24h (see ./cache). `fetchImpl` is injectable for tests.
  */
 import type { Dataset } from '$lib/types';
-import { readCache, writeCache } from './cache';
+import { clearCache, readCache, writeCache } from './cache';
+import { readCacheIdb, writeCacheIdb } from './idbCache';
 
 export const FULL_DATASET_URL = 'https://bucket.draftgap.com/datasets/v5/30-days.json';
 export const PATCH_DATASET_URL = 'https://bucket.draftgap.com/datasets/v5/current-patch.json';
@@ -38,11 +39,20 @@ async function loadCached(
     { fetchImpl = fetch, force = false }: FetchDatasetOptions = {}
 ): Promise<Dataset> {
     if (!force) {
+        // IndexedDB first (STEP_UP #3 — the ~50 MB feed fits there), then the
+        // legacy localStorage entry as a one-time migration read.
+        const idbCached = await readCacheIdb<Dataset>(cacheKey);
+        if (idbCached) return idbCached;
         const cached = readCache<Dataset>(cacheKey);
         if (cached) return cached;
     }
     const data = await fetchJson(url, fetchImpl);
-    writeCache(cacheKey, data);
+    const wroteIdb = await writeCacheIdb(cacheKey, data);
+    if (wroteIdb) {
+        clearCache(cacheKey); // free the localStorage quota once migrated
+    } else {
+        writeCache(cacheKey, data); // non-IDB environment — legacy behavior
+    }
     return data;
 }
 
