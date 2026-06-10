@@ -40,7 +40,7 @@
     };
 </script>
 
-<section class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+<section class="panel p-3">
     <h2 class="pb-2 text-[11px] font-semibold tracking-widest text-slate-500 uppercase">
         {title} ({markers.length})
     </h2>

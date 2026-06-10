@@ -91,7 +91,7 @@
         'w-full rounded-md border border-slate-700 bg-slate-800 px-2 py-1.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none disabled:opacity-50';
 </script>
 
-<section class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+<section class="panel p-3">
     <div class="flex items-center justify-between pb-3">
         <h2 class="text-[11px] font-semibold tracking-widest text-slate-500 uppercase">Contexte équipe</h2>
         <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-300">

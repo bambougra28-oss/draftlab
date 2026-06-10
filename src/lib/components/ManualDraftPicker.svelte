@@ -232,7 +232,7 @@
     </div>
 {/snippet}
 
-<section class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+<section class="panel p-3">
     <!-- Header: title + side toggle + completion state -->
     <div class="flex items-center justify-between pb-2">
         <h2 class="text-[11px] font-semibold tracking-widest text-slate-500 uppercase">Séquence du draft</h2>

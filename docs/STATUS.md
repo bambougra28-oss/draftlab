@@ -46,6 +46,17 @@ moteurs ont bougé — trois branchements mesurés le jour même :
    courbe de puissance observée porte l'axe (tags amortis ×0,25 dessous) ;
    sans courbe, repli tags-seuls plafonné à confiance `low` (r ≈ 0,006 avec
    la durée réelle — le signal mort à l'origine du G1 hasard).
+4. **Axe contre-compo au pick** (soir, `liveDraft.counterVs`) : les cellules
+   ordonnées validées par le banEV phase 2 parlent aussi au moment du pick —
+   « Profil qui contre leur compo révélée : +X pp », badge violet, plancher
+   1 pp.
+5. **Lecture des rôles adverses** (soir, I2 enfin branché) : priors de rôles
+   corpus (cascade équipe → ligue, `aggregates/rolePriors`) →
+   `roleAssignmentHypotheses` → alertes de désaccord (« 82 % mid chez eux —
+   slotté top », plancher 0,6) + ambiguïté en bits. **Validé pré-enregistré**
+   (`docs/calibration/role-inference-2026.md`, walk-forward, 7 corpus) :
+   top-hypothèse **95,0 %** à 3 picks révélés [94,7 ; 95,4], 93,4 % à 5 —
+   bat l'argmax indépendant, écrase le 20 % aléatoire.
 
 ## Verdicts du harnais (4 ligues, seed 42, 2026-06-10)
 

@@ -45,7 +45,7 @@
     }
 </script>
 
-<section class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+<section class="panel p-3">
     <h2 class="pb-2 text-[11px] font-semibold tracking-widest text-slate-500 uppercase">{title}</h2>
     <div class="flex flex-wrap gap-2">
         {#each actions as action (action.label)}

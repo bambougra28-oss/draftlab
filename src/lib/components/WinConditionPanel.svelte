@@ -62,7 +62,7 @@
     }
 </script>
 
-<section class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+<section class="panel p-3">
     <h2 class="flex items-center gap-2 pb-2 text-[11px] font-semibold tracking-widest text-slate-500 uppercase">
         {title}
         <span class="rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold text-amber-400 normal-case tracking-normal">

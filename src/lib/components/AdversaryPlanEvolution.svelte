@@ -39,7 +39,7 @@
     const pct = (share: number): string => `${Math.round(share * 100)}%`;
 </script>
 
-<section class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+<section class="panel p-3">
     <div class="flex items-center justify-between pb-2">
         <h2 class="text-[11px] font-semibold tracking-widest text-slate-500 uppercase">{title}</h2>
         <span class="rounded-full bg-slate-800 px-2 py-0.5 text-[10px] font-semibold text-slate-400">M5.1</span>

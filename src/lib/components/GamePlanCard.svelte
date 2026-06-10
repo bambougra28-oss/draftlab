@@ -45,7 +45,7 @@
     const pct = (share: number): string => `${Math.round(share * 100)}%`;
 </script>
 
-<section class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+<section class="panel p-3">
     <h2 class="pb-1 text-[11px] font-semibold tracking-widest uppercase {TITLE_CLASS[accent]}">{title}</h2>
 
     {#if plan === null}
