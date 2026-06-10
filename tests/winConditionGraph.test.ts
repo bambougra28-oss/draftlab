@@ -16,7 +16,9 @@ import type { ChampionTag, ChampionTagsFile } from '$lib/tags/types';
  *   dive {hardAoeDiver 2.5, softSingleDiver 1.75, peel 1, knockback 0.5}
  *   poke {rangedLong 1, siegeHint 0.5, hardAoeCounter 1}
  *   split {classifierShare 3, splitHint 1, meleeHighMobility 0.5, waveclear 1, earlyTempo 0.5}
- *   scaling {late 1, early 1, lateHyperBonus 0.5, datasetEdgeWeight 10}
+ *   scaling {late 1, early 1, lateHyperBonus 0.5, datasetEdgeWeight 10, tagWeightWithCurve 0.25}
+ *   — scaling is DATA-PRIMARY (STEP_UP #15): tag-only readings cap at 'low'
+ *   confidence; under an observed curve the tag components are damped ×0.25.
  *   snowball {earlyLane 1.5, lateOppositionBonus 0.5, earlyJungle 0.75}
  *   objectives {rangedLong 1, siegeHint 0.5, hardAoe 1} · pick {softSingle 1, highMobilityBonus 0.5, peel 1, knockback 0.5}
  *   planMinScore 0.25 · planTopK 3 · statementMinScore 1
@@ -318,9 +320,10 @@ describe('winConditionGraph — protect vs dive (mission flagship, 3v3)', () => 
         expect(report.statements[2]).toMatchObject({ direction: 'mid', falsifiableVia: 'objectives' });
     });
 
-    it('degrades confidence: medium for 3v3 comps, low for the lane-based snowball axis', () => {
+    it('degrades confidence: medium for 3v3 comps, low for lane-based snowball and tag-only scaling', () => {
         for (const axis of report.axes) {
-            expect(axis.confidence).toBe(axis.id === 'snowball-weakside' ? 'low' : 'medium');
+            const lowAxis = axis.id === 'snowball-weakside' || axis.id === 'scaling-differential';
+            expect(axis.confidence).toBe(lowAxis ? 'low' : 'medium');
         }
     });
 });
@@ -359,8 +362,12 @@ describe('winConditionGraph — poke/siege vs hard engage (5v5)', () => {
         expect(report.collision?.narrativeFr).toBe(DEFAULT_WIN_CONDITION_CONFIG.collisionOverridesFr[cell]);
     });
 
-    it('reads full comps at high confidence (including the lane axis)', () => {
-        for (const axis of report.axes) expect(axis.confidence).toBe('high');
+    it('reads full comps at high confidence — except tag-only scaling (STEP_UP #15)', () => {
+        // No dataset here: the scaling axis runs on tags alone, a signal that
+        // tracks real game length at r ≈ 0.006 on the pro corpus → 'low'.
+        for (const axis of report.axes) {
+            expect(axis.confidence).toBe(axis.id === 'scaling-differential' ? 'low' : 'high');
+        }
     });
 });
 
@@ -499,15 +506,17 @@ describe('winConditionGraph — invariants & edges', () => {
         [key('MissFortune')]: [{ wins: 30, games: 50 }, zero, zero, { wins: 20, games: 50 }, zero]
     });
 
-    it('refines the scaling axis with the observed power curve on full comps', () => {
+    it('the observed power curve is PRIMARY: tags damped ×0.25, full confidence restored', () => {
         // Team bucket winrates average only champions with data → ally late
         // 0.60 / early 0.40, enemy late 0.40 / early 0.60. Edge = (0.60−0.40)
-        // − (0.40−0.60) = 0.40 ×10 = +4 on top of the tag differential +2
-        // (poke comp: 3 late − 1 early vs all-mid) → 6, in a third component.
+        // − (0.40−0.60) = 0.40 ×10 = +4 (primary). Tag differential +2 (poke
+        // comp: 3 late − 1 early vs all-mid) damped ×0.25 → +0.5. Total 4.5.
         const report = analyzeWinConditions(POKE, ENGAGE, { dataset });
         const scaling = axisOf(report, 'scaling-differential');
-        expect(scaling.score).toBeCloseTo(6, 10);
+        expect(scaling.score).toBeCloseTo(4.5, 10);
         expect(scaling.components).toHaveLength(3);
+        expect(scaling.components[2].reason).toContain('signal primaire');
+        expect(scaling.confidence).toBe('high'); // the curve speaks → not capped
     });
 
     it('ignores the dataset on partial comps (lane order untrustworthy)', () => {

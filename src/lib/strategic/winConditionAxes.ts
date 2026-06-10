@@ -77,11 +77,21 @@ export interface WinConditionAxesConfig {
      */
     split: { classifierShare: number; splitHint: number; meleeHighMobility: number; waveclear: number; earlyTempo: number };
     /**
-     * Axis 5 — scaling windows (late − early; hyper bonus applies to late
-     * scalers only) refined by the observed power curve when a dataset is
-     * provided and both comps are full.
+     * Axis 5 — scaling, DATA-PRIMARY (STEP_UP #15): with a dataset and two
+     * full comps the observed power curve carries the axis and the tag
+     * windows (late − early; hyper bonus on late scalers) are damped by
+     * `tagWeightWithCurve`. Tag-only readings correlate ~0 with real game
+     * length on the pro corpus (draft science 2026-06) — the axis is capped
+     * at 'low' confidence without a curve.
      */
-    scaling: { lateWindow: number; earlyWindow: number; lateHyperCarryBonus: number; datasetEdgeWeight: number };
+    scaling: {
+        lateWindow: number;
+        earlyWindow: number;
+        lateHyperCarryBonus: number;
+        datasetEdgeWeight: number;
+        /** Multiplier on the tag components when the observed curve speaks. */
+        tagWeightWithCurve: number;
+    };
     /** Axis 6 — early scalers on top/bot (+ jungle), amplified vs a late opponent in lane. */
     snowball: { earlyLane: number; lateOppositionBonus: number; earlyJungle: number };
     /** Axis 7 — objective profile: zone control (poke range) + forced-fight power (hard AoE). */
@@ -109,7 +119,7 @@ export const DEFAULT_WIN_CONDITION_CONFIG: WinConditionAxesConfig = {
     dive: { hardAoeDiver: 2.5, softSingleDiver: 1.75, peel: 1, knockback: 0.5 },
     poke: { rangedLong: 1, siegeHint: 0.5, hardAoeCounter: 1 },
     split: { classifierShare: 3, splitHint: 1, meleeHighMobility: 0.5, waveclear: 1, earlyTempo: 0.5 },
-    scaling: { lateWindow: 1, earlyWindow: 1, lateHyperCarryBonus: 0.5, datasetEdgeWeight: 10 },
+    scaling: { lateWindow: 1, earlyWindow: 1, lateHyperCarryBonus: 0.5, datasetEdgeWeight: 10, tagWeightWithCurve: 0.25 },
     snowball: { earlyLane: 1.5, lateOppositionBonus: 0.5, earlyJungle: 0.75 },
     objectives: { rangedLong: 1, siegeHint: 0.5, hardAoe: 1 },
     pick: { softSingle: 1, highMobilityBonus: 0.5, peel: 1, knockback: 0.5 },

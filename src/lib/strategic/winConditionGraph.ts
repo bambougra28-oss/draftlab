@@ -233,7 +233,13 @@ function splitAxis(a: SideProfile, b: SideProfile, cfg: WinConditionAxesConfig, 
     return clashAxis('split-vs-crossmap', cfg, c, threat(a), counter(b), threat(b), counter(a), 'de split', 'waveclear/tempo');
 }
 
-/** Axis 5 — scaling-window differential, refined by the observed power curve when available. */
+/**
+ * Axis 5 — scaling differential, DATA-PRIMARY (STEP_UP #15). The observed
+ * power curve (time-bucket win rates) carries the axis when available; the
+ * tag windows correlate ~0 with real game length on the pro corpus (draft
+ * science 2026-06, r ≈ 0.006), so they are damped under a curve and the
+ * tag-only fallback is capped at LOW confidence.
+ */
 function scalingAxis(
     a: SideProfile,
     b: SideProfile,
@@ -250,29 +256,38 @@ function scalingAxis(
         });
     const latenessA = lateness(a);
     const latenessB = lateness(b);
-    const components: AxisComponent[] = [
-        { reason: `Fenêtres de scaling alliées (late − early, bonus hyper-carry) : ${fmt(latenessA)}`, value: latenessA },
-        { reason: `Fenêtres de scaling adverses : ${fmt(latenessB)}`, value: -latenessB }
-    ];
-    // Dataset refinement — only when both comps are full (role-ordered keys).
+
+    // Observed power curve — only when both comps are full (role-ordered keys).
+    let curveDelta: number | null = null;
+    let curveReason = '';
     if (dataset !== undefined && a.recognized === 5 && b.recognized === 5) {
         const curve = calculatePowerCurve(a.keys, b.keys, dataset);
         if (curve.ally.late !== null && curve.enemy.late !== null && curve.ally.early !== null && curve.enemy.early !== null) {
             const lateEdge = curve.ally.late - curve.enemy.late;
             const earlyEdge = curve.ally.early - curve.enemy.early;
-            const delta = (lateEdge - earlyEdge) * w.datasetEdgeWeight;
-            components.push({
-                reason: `Courbe de puissance observée : edge late ${fmt(lateEdge * 100)} pp − edge early ${fmt(earlyEdge * 100)} pp`,
-                value: delta
-            });
+            curveDelta = (lateEdge - earlyEdge) * w.datasetEdgeWeight;
+            curveReason = `Courbe de puissance observée (signal primaire) : edge late ${fmt(lateEdge * 100)} pp − edge early ${fmt(earlyEdge * 100)} pp`;
         }
     }
+
+    const tagWeight = curveDelta !== null ? w.tagWeightWithCurve : 1;
+    const damped = curveDelta !== null ? ` ×${w.tagWeightWithCurve} (courbe observée prioritaire)` : '';
+    const components: AxisComponent[] = [
+        {
+            reason: `Fenêtres de scaling alliées (late − early, bonus hyper-carry)${damped} : ${fmt(latenessA * tagWeight)}`,
+            value: latenessA * tagWeight
+        },
+        { reason: `Fenêtres de scaling adverses${damped} : ${fmt(latenessB * tagWeight)}`, value: -latenessB * tagWeight }
+    ];
+    if (curveDelta !== null) components.push({ reason: curveReason, value: curveDelta });
+
     return {
         id: 'scaling-differential',
         labelFr: cfg.narratives['scaling-differential'].labelFr,
         score: components.reduce((s, comp) => s + comp.value, 0),
         components,
-        confidence: c
+        // Tag-only scaling is near-noise against real durations — never 'high'.
+        confidence: curveDelta !== null ? c : 'low'
     };
 }
 
