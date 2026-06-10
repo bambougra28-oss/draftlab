@@ -19,7 +19,8 @@ import { banRotationOf, rotationOf } from '$lib/aggregates/rotations';
 import { predict, type TendencyTable } from '$lib/aggregates/tendency';
 import { buildDraftActions, DRAFT_TEMPLATE } from '$lib/data/draftRecord';
 import type { DraftSide } from '$lib/data/types';
-import { pairPrior, type TagPairFit } from '$lib/estimators/tagPairs';
+import { counterThreat, pairPrior, type TagPairFit } from '$lib/estimators/tagPairs';
+import { ambiguityBits, roleAssignmentHypotheses, type RolePriors } from '$lib/strategic/fogReveal';
 import { classifyGamePlan } from '$lib/strategic/gamePlanClassifier';
 import {
     navigate,
@@ -31,9 +32,9 @@ import {
 import { suggestPicks } from '$lib/strategic/pickSuggester';
 import { classifyPoolTier } from '$lib/strategic/poolTierClassifier';
 import { loadDefaultTags } from '$lib/tags';
-import type { ChampionTagsFile } from '$lib/tags/types';
+import type { ChampionTag, ChampionTagsFile } from '$lib/tags/types';
 import type { ProPlayer } from '$lib/pro/types';
-import type { Dataset } from '$lib/types';
+import { ROLES, type Dataset, type Role } from '$lib/types';
 
 export interface RoleEntryDraft {
     /** Role-indexed champion keys (0=Top … 4=Support), null = empty slot. */
@@ -94,6 +95,11 @@ export interface CoachCandidate {
      * (corpus cells, §6.3) — positive or negative; absent below the floor.
      */
     pairWith?: { championKey: string; championName: string; residualPp: number; evidence: number };
+    /**
+     * Ordered counter-cell read vs the revealed enemy comp (the signal the
+     * phase-2 banEV validated ×2.6-7.3 OOS) — absent below the floor.
+     */
+    counterVs?: { threatPp: number; evidence: number };
 }
 
 export interface CoachAdvice {
@@ -132,6 +138,12 @@ export interface CoachContext {
      */
     pairFit?: TagPairFit;
     /**
+     * Fitted ORDERED cross-team counter cells (corpus) — adds the
+     * counter-the-revealed-comp axis to pick reasons. Same signal the
+     * phase-2 banEV regime validated out of sample (3 beats + 1 tie).
+     */
+    counterFit?: TagPairFit;
+    /**
      * Pick-phase coaching: ban slots are treated as forfeited (the analyzer
      * view has no ban entry) — the turn is the first unfilled PICK slot and
      * the lookahead skips ban nodes (empty providers → navigator skip).
@@ -140,6 +152,77 @@ export interface CoachContext {
 }
 
 const SIDE_FR: Record<DraftSide, string> = { blue: 'bleu', red: 'rouge' };
+
+// ---- enemy role read (I2 hypotheses over the entered enemy picks) -----------
+
+/** Confidence floor before the data is allowed to contradict the user's slot. */
+export const ROLE_MISMATCH_MIN_P = 0.6;
+
+export interface EnemyRoleRead {
+    championKey: string;
+    /** Slot the user entered the pick in (0=Top … 4=Support). */
+    enteredRole: Role;
+    /** Most likely role per the corpus priors; null when nothing places it. */
+    topRole: Role | null;
+    pTopRole: number;
+    /** The data confidently disagrees with the entered slot. */
+    mismatch: boolean;
+}
+
+export interface EnemyRoleReport {
+    reads: EnemyRoleRead[];
+    /** Shannon bits left over the enemy role map (0 = fully readable). */
+    ambiguityBits: number;
+    experimental: true;
+}
+
+/**
+ * Read the enemy's probable role map from their entered picks: the I2
+ * hypothesis distribution (`roleAssignmentHypotheses`) marginalized per
+ * champion. Champions absent from the priors get a uniform fallback so one
+ * unknown pick cannot kill the whole enumeration. The mismatch flag is the
+ * actionable bit: « vous l'avez slotté top, mais il joue 82 % mid chez eux ».
+ */
+export function readEnemyRoles(entry: RoleEntryDraft, rolePriors: RolePriors): EnemyRoleReport {
+    const picks: { championKey: string; enteredRole: Role }[] = [];
+    entry.enemyPicks.forEach((key, index) => {
+        if (key !== null && key !== '') picks.push({ championKey: key, enteredRole: index as Role });
+    });
+    const safePriors: RolePriors = (championKey) => {
+        const weights = rolePriors(championKey);
+        for (const role of ROLES) if ((weights[role] ?? 0) > 0) return weights;
+        return { 0: 1, 1: 1, 2: 1, 3: 1, 4: 1 };
+    };
+    const hypotheses = roleAssignmentHypotheses(
+        picks.map((p) => p.championKey),
+        safePriors
+    );
+    const reads: EnemyRoleRead[] = picks.map(({ championKey, enteredRole }) => {
+        const marginal = new Map<Role, number>();
+        for (const hypothesis of hypotheses) {
+            for (const [role, key] of hypothesis.assignment) {
+                if (key === championKey) marginal.set(role, (marginal.get(role) ?? 0) + hypothesis.p);
+            }
+        }
+        let topRole: Role | null = null;
+        let pTopRole = 0;
+        for (const role of ROLES) {
+            const p = marginal.get(role) ?? 0;
+            if (p > pTopRole) {
+                pTopRole = p;
+                topRole = role;
+            }
+        }
+        return {
+            championKey,
+            enteredRole,
+            topRole,
+            pTopRole,
+            mismatch: topRole !== null && topRole !== enteredRole && pTopRole >= ROLE_MISMATCH_MIN_P
+        };
+    });
+    return { reads, ambiguityBits: ambiguityBits(hypotheses), experimental: true };
+}
 
 /**
  * Template seqs that OPEN a back-to-back double pick (8-9, 10-11, 18-19) —
@@ -321,6 +404,7 @@ export function recommendNext(state: DraftState, ctx: CoachContext): CoachAdvice
         const next = result.candidates[index + 1] ?? result.candidates[index];
         const reasonsFr: string[] = [];
         let pairWith: CoachCandidate['pairWith'];
+        let counterVs: CoachCandidate['counterVs'];
         if (candidate.actionType === 'pick') {
             const [suggestion] = suggestPicks({
                 allyComp,
@@ -339,6 +423,24 @@ export function recommendNext(state: DraftState, ctx: CoachContext): CoachAdvice
                             ? `Paire de profils éprouvée avec ${pairWith.championName} : +${pairWith.residualPp.toFixed(1)} pp sur les duos pros de même profil.`
                             : `Profils qui cohabitent mal avec ${pairWith.championName} : ${pairWith.residualPp.toFixed(1)} pp sur les duos pros de même profil.`
                     );
+                }
+            }
+            if (ctx.counterFit !== undefined && enemyComp.length > 0) {
+                const candidateTag = tagsFile.champions[candidate.championKey];
+                const enemyTags = enemyComp
+                    .map((key) => tagsFile.champions[key])
+                    .filter((tag): tag is ChampionTag => tag !== undefined);
+                if (candidateTag !== undefined && enemyTags.length > 0) {
+                    const report = counterThreat(candidateTag, enemyTags, ctx.counterFit);
+                    if (report.evidence > 0 && Math.abs(report.threat) >= PAIR_REASON_FLOOR) {
+                        const pp = report.threat * 100;
+                        counterVs = { threatPp: pp, evidence: report.evidence };
+                        reasonsFr.push(
+                            pp > 0
+                                ? `Profil qui contre leur compo révélée : +${pp.toFixed(1)} pp sur les face-à-face pros de même profil.`
+                                : `Profil historiquement dominé par leur compo : ${pp.toFixed(1)} pp sur les face-à-face pros.`
+                        );
+                    }
                 }
             }
         } else {
@@ -363,7 +465,8 @@ export function recommendNext(state: DraftState, ctx: CoachContext): CoachAdvice
                 immediatePp: candidate.components.immediateValue * 100,
                 lookaheadPp: candidate.components.lookaheadDelta * 100
             },
-            ...(pairWith !== undefined ? { pairWith } : {})
+            ...(pairWith !== undefined ? { pairWith } : {}),
+            ...(counterVs !== undefined ? { counterVs } : {})
         };
     });
 

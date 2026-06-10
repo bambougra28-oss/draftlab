@@ -8,7 +8,7 @@
     (DA-V2-11) until the engines pass their validation gates.
 -->
 <script lang="ts">
-    import type { CoachAdvice } from '$lib/intel/liveDraft';
+    import type { CoachAdvice, EnemyRoleReport } from '$lib/intel/liveDraft';
     import { championNameByKey } from '$lib/dataDragon/version';
     import ChampionIcon from '$lib/components/ChampionIcon.svelte';
 
@@ -18,14 +18,24 @@
         unavailableReason?: string | null;
         /** Shown under the headline — entry-order approximation note, etc. */
         noteFr?: string | null;
+        /** Enemy role read (I2 hypotheses) — mismatch warnings + ambiguity. */
+        roleReads?: EnemyRoleReport | null;
         title?: string;
     }
 
-    const { advice, unavailableReason = null, noteFr = null, title = 'Coach — prochain coup' }: Props = $props();
+    const {
+        advice,
+        unavailableReason = null,
+        noteFr = null,
+        roleReads = null,
+        title = 'Coach — prochain coup'
+    }: Props = $props();
 
     const nameOf = (key: string): string => championNameByKey(key) ?? key;
     const pct = (p: number): string => `${(100 * p).toFixed(1).replace('.', ',')} %`;
     const pp = (v: number): string => `${v >= 0 ? '+' : ''}${v.toFixed(1).replace('.', ',')} pp`;
+    const ROLE_FR = ['top', 'jungle', 'mid', 'bot', 'support'] as const;
+    const mismatches = $derived(roleReads === null ? [] : roleReads.reads.filter((r) => r.mismatch));
 </script>
 
 <section class="rounded-xl border border-slate-800 bg-slate-900 p-4">
@@ -76,6 +86,16 @@
                                             )}
                                         </span>
                                     {/if}
+                                    {#if candidate.counterVs !== undefined}
+                                        <span
+                                            class={candidate.counterVs.threatPp > 0
+                                                ? 'rounded bg-violet-900/50 px-1.5 py-0.5 text-[10px] text-violet-300'
+                                                : 'rounded bg-rose-900/50 px-1.5 py-0.5 text-[10px] text-rose-300'}
+                                        >
+                                            {candidate.counterVs.threatPp > 0 ? 'contre leur compo' : 'contré par leur compo'}
+                                            {candidate.counterVs.threatPp >= 0 ? '+' : ''}{candidate.counterVs.threatPp.toFixed(1).replace('.', ',')} pp
+                                        </span>
+                                    {/if}
                                 </div>
                                 {#if candidate.reasonsFr.length > 0}
                                     <ul class="mt-1 space-y-0.5 text-xs text-slate-400">
@@ -97,6 +117,27 @@
                     </li>
                 {/each}
             </ol>
+        {/if}
+
+        {#if mismatches.length > 0}
+            <div class="mt-3 rounded-lg border border-amber-900/60 bg-amber-950/30 p-2">
+                <p class="text-[11px] uppercase tracking-wide text-amber-400">Lecture des rôles adverses</p>
+                <ul class="mt-1 space-y-0.5 text-xs text-amber-200">
+                    {#each mismatches as read (read.championKey)}
+                        <li>
+                            {nameOf(read.championKey)} : {Math.round(read.pTopRole * 100)} %
+                            {ROLE_FR[read.topRole ?? 0]} d'après leurs games — vous l'avez slotté
+                            {ROLE_FR[read.enteredRole]}.
+                        </li>
+                    {/each}
+                </ul>
+            </div>
+        {/if}
+        {#if roleReads !== null && roleReads.reads.length > 1}
+            <p class="mt-2 text-[11px] text-slate-500">
+                Ambiguïté de leurs rôles : {roleReads.ambiguityBits.toFixed(1).replace('.', ',')} bit(s) —
+                0 = compo entièrement lisible.
+            </p>
         {/if}
 
         {#if advice.enemyExpectation.length > 0}
@@ -138,6 +179,12 @@
                     mêmes profils (engage + hyper-carry, etc.) dans le corpus. Les pros posent leurs duos aux
                     doubles slots — deux picks d'affilée, le 2ᵉ est insaisissable — d'où le rappel « pensez la
                     paire » quand vous ouvrez un double slot.
+                </p>
+                <p>
+                    <strong class="text-slate-300">Contre leur compo</strong> : le face-à-face historique des
+                    profils (le vôtre contre chacun des leurs) dans les games pros — le même signal qui guide
+                    les bans de phase 2, validé sur 4 ligues. Positif = ce profil bat historiquement ce
+                    qu'ils ont montré ; négatif = il se fait punir.
                 </p>
             </div>
         </details>

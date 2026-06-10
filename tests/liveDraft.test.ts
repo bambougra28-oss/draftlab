@@ -9,7 +9,7 @@ import { describe, it, expect } from 'vitest';
 import { draftStateFromRoleEntry, recommendNext, type RoleEntryDraft } from '$lib/intel/liveDraft';
 import { buildTendencyTable } from '$lib/aggregates/tendency';
 import { buildDraftActions } from '$lib/data/draftRecord';
-import { fitTagPairCells } from '$lib/estimators/tagPairs';
+import { fitTagCounterCells, fitTagPairCells } from '$lib/estimators/tagPairs';
 import type { DraftRecord, DraftSide } from '$lib/data/types';
 
 const emptyEntry = (): RoleEntryDraft => ({
@@ -242,6 +242,32 @@ describe('recommendNext', () => {
         expect(candidate.pairWith).toMatchObject({ championKey: '54', championName: 'Malphite' });
         expect(candidate.pairWith!.residualPp).toBeGreaterThan(1);
         expect(candidate.reasonsFr.some((r) => r.includes('Paire de profils éprouvée avec Malphite'))).toBe(true);
+    });
+
+    it('counter axis: a candidate whose profile beats the revealed enemy comp gains counterVs', () => {
+        // Enemy comp = 13+412 (the duo blue 54+18 beats 8/10 in pairCorpus):
+        // candidate 18's ordered cells vs their traits sit at residual +0.15.
+        const entry = emptyEntry();
+        entry.allyBans = ['86', '23', '36', null, null];
+        entry.enemyBans = ['75', '77', '106', null, null];
+        entry.allyPicks = ['54', null, null, null, null];
+        entry.enemyPicks = ['13', '412', null, null, null];
+        const state = draftStateFromRoleEntry(entry);
+
+        const advice = recommendNext(state, {
+            ourSide: 'blue',
+            evaluate,
+            fallbackCandidates: ['18'],
+            counterFit: fitTagCounterCells(pairCorpus, { priorN: 10 }),
+            depth: 1,
+            topK: 1
+        });
+        const [candidate] = advice.candidates;
+        expect(candidate.championKey).toBe('18');
+        expect(candidate.counterVs).toBeDefined();
+        expect(candidate.counterVs!.threatPp).toBeGreaterThan(1);
+        expect(candidate.counterVs!.evidence).toBeGreaterThan(0);
+        expect(candidate.reasonsFr.some((r) => r.includes('contre leur compo révélée'))).toBe(true);
     });
 
     it('pair axis stays silent under the floor (default shrink keeps 10 games quiet)', () => {

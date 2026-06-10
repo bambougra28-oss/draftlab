@@ -66,8 +66,9 @@
         loadCorpusRecords,
         type CorpusLeagueStatus
     } from '$lib/intel/corpusStore';
-    import { fitTagPairCells, type TagPairFit } from '$lib/estimators/tagPairs';
-    import { draftStateFromRoleEntry, recommendNext } from '$lib/intel/liveDraft';
+    import { fitTagCounterCells, fitTagPairCells, type TagPairFit } from '$lib/estimators/tagPairs';
+    import { fitRolePriors, layerRolePriors, rolePriorsOf } from '$lib/aggregates/rolePriors';
+    import { draftStateFromRoleEntry, readEnemyRoles, recommendNext } from '$lib/intel/liveDraft';
     import { makeAnalyzeDraftEvaluator } from '$lib/strategic/draftNavigator';
     import { computePresence } from '$lib/aggregates/presence';
     import { canonicalTeamName } from '$lib/data/normalize';
@@ -421,6 +422,8 @@
     let leagueRecords = $state<DraftRecord[] | null>(null);
     /** Tag-pair cells fitted on the FULL corpus (cross-league) — coach pair axis. */
     let pairFit = $state<TagPairFit | null>(null);
+    /** Ordered counter cells (same corpus) — coach counter-the-comp axis. */
+    let counterFit = $state<TagPairFit | null>(null);
 
     async function refreshCorpus(): Promise<void> {
         corpusBusy = true;
@@ -431,6 +434,7 @@
             leagueRecords = await loadCorpusRecords(leagueId);
             const allRecords = await loadAllCorpusRecords();
             pairFit = allRecords.length > 0 ? fitTagPairCells(allRecords) : null;
+            counterFit = allRecords.length > 0 ? fitTagCounterCells(allRecords) : null;
         } catch (error) {
             corpusWarnings = [error instanceof Error ? error.message : String(error)];
         } finally {
@@ -489,6 +493,24 @@
             .map(([key]) => key);
     });
 
+    /** Enemy role read — team-first priors, league fallback (I2 hypotheses). */
+    const enemyRoleReads = $derived.by(() => {
+        if (leagueRecords === null && corpusTeamB.length === 0) return null;
+        const league = fitRolePriors(leagueRecords ?? []);
+        const priors =
+            corpusTeamB.length > 0 ? layerRolePriors(fitRolePriors(corpusTeamB), league) : rolePriorsOf(league);
+        return readEnemyRoles(
+            {
+                allyPicks,
+                enemyPicks,
+                allyBans: [null, null, null, null, null],
+                enemyBans: [null, null, null, null, null],
+                allySide
+            },
+            priors
+        );
+    });
+
     const coachAdvice = $derived.by(() => {
         const evaluate = coachEvaluate;
         if (evaluate === null) return null;
@@ -507,6 +529,7 @@
             fallbackCandidates: coachFallback,
             ...(datasets !== null ? { dataset: datasets.fullDataset } : {}),
             ...(pairFit !== null ? { pairFit } : {}),
+            ...(counterFit !== null ? { counterFit } : {}),
             picksOnly: true,
             depth: 2,
             topK: 4,
@@ -863,6 +886,7 @@
         <!-- Coach en direct : recommandations expliquées sur la draft en cours -->
         <CoachPanel
             advice={coachAdvice}
+            roleReads={enemyRoleReads}
             unavailableReason={datasetLoading
                 ? 'Le coach attend la fin du téléchargement du dataset…'
                 : (datasetError ?? 'Coach indisponible.')}
