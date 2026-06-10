@@ -26,6 +26,18 @@
  * MEASURED 2026-06-10: chance (48.1 % [43.8 ; 52.5], n=511) — kept for
  * comparability, frozen, no parameter retuning on this track.
  *
+ * REPLICATION RUN (criteria frozen 2026-06-10 ~23:30, BEFORE pulling any
+ * 2025 data): the comp-level track measured 52.1 % [49.1 ; 55.1] (n=1059)
+ * on the four 2026 corpora — promising, not significant. The replication:
+ * run THIS script, unchanged, on the eight corpora (4×2026 static/corpus +
+ * 4×2025 data/corpus, per-corpus walk-forward as always). PRIMARY criterion:
+ * the pooled comp-track Wilson 95 % interval excludes 0.5 → G1 gate GREEN
+ * (wire compDurationAffinity into the I3 scaling axis). SECONDARY
+ * (descriptive): the 2025-alone corpora lean the same direction (≥ 51 %
+ * pooled). Anything else → the 52.1 % was noise; the track is retired, not
+ * retuned. Champion tags are the 26.11 file on 2025 games — accepted
+ * approximation, noted in the report.
+ *
  * COMP-LEVEL TRACK (pre-registered 2026-06-10 evening, before any result was
  * read — the hypothesis after both tracks above measured at chance: the
  * duration signal lives in COMPOSITION INTERACTIONS, not per-champion sums):

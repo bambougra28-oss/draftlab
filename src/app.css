@@ -1,4 +1,12 @@
 @import 'tailwindcss';
+/* Polices auto-hébergées (local-first, pas de CDN) : Marcellus = capitales
+ * romaines gravées (l'esprit Beaufort du client LoL) pour les titres ;
+ * IBM Plex Sans = corps de texte travaillé, chiffres tabulaires propres. */
+@import '@fontsource/marcellus';
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import '@fontsource/ibm-plex-sans/700.css';
 
 /*
  * DraftLab — système visuel « arène ».
@@ -8,6 +16,9 @@
  * ces tokens s'AJOUTENT, ils ne remplacent rien.
  */
 @theme {
+    --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Marcellus', 'IBM Plex Sans', serif;
+
     --color-abyss-950: #010a13;
     --color-abyss-900: #071018;
     --color-abyss-800: #0a1428;
@@ -28,6 +39,7 @@
 
 @layer base {
     body {
+        font-family: var(--font-sans);
         /* Chiffres tabulaires partout : les colonnes de stats s'alignent. */
         font-variant-numeric: tabular-nums;
     }
@@ -83,13 +95,35 @@
             radial-gradient(900px circle at 8% 112%, rgb(10 200 185 / 0.05), transparent 60%);
     }
 
-    /* Titre de section standard. */
+    /* Grain photographique très léger par-dessus l'ambiance — la matière. */
+    .app-backdrop::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        opacity: 0.035;
+    }
+
+    /* Titre de section standard — capitales gravées + losange d'or. */
     .panel-title {
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: 0.18em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-display);
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 0.2em;
         text-transform: uppercase;
         color: var(--color-slate-400);
+    }
+    .panel-title::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        flex-shrink: 0;
+        clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+        background: var(--color-gold-500);
+        opacity: 0.75;
     }
 }
 

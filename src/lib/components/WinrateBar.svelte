@@ -24,7 +24,7 @@
 
 <section class="panel p-3">
     <p class="panel-title pb-1">{label}</p>
-    <p class="pb-2 text-3xl font-black tracking-tight {tone}">{display}</p>
+    <p class="font-display pb-2 text-4xl {tone}">{display}</p>
     <div class="relative h-2.5 overflow-hidden rounded-full bg-gradient-to-r from-red-600/70 to-red-500/50">
         <div
             class="absolute inset-y-0 left-0 rounded-l-full bg-gradient-to-r from-blue-600 to-arcane-500 shadow-[0_0_12px_-2px_rgb(10_200_185/0.8)] transition-[width] duration-500 ease-out"

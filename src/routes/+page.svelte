@@ -677,11 +677,11 @@
             </button>
         </div>
     {:else}
-        <div class="grid grid-cols-1 items-start gap-3 xl:grid-cols-12">
+        <div class="animate-fade-up grid grid-cols-1 items-start gap-3 xl:grid-cols-12">
             <!-- Ally column -->
             <section class="space-y-2 xl:col-span-3">
                 <div class="flex items-center justify-between px-1">
-                    <p class="flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] uppercase {allySide === 'blue' ? 'text-blue-300' : 'text-red-300'}">
+                    <p class="font-display flex items-center gap-2 text-xs tracking-[0.22em] uppercase {allySide === 'blue' ? 'text-blue-300' : 'text-red-300'}">
                         <span
                             class="inline-block h-1.5 w-1.5 animate-pulse-glow rounded-full {allySide === 'blue'
                                 ? 'bg-blue-400 shadow-[0_0_8px_rgb(96_165_250)]'
@@ -769,7 +769,7 @@
             <!-- Enemy column -->
             <section class="space-y-2 xl:col-span-3">
                 <div class="flex items-center justify-between px-1">
-                    <p class="flex items-center gap-2 text-[11px] font-bold tracking-[0.2em] uppercase {enemySide === 'blue' ? 'text-blue-300' : 'text-red-300'}">
+                    <p class="font-display flex items-center gap-2 text-xs tracking-[0.22em] uppercase {enemySide === 'blue' ? 'text-blue-300' : 'text-red-300'}">
                         <span
                             class="inline-block h-1.5 w-1.5 rounded-full {enemySide === 'blue'
                                 ? 'bg-blue-400 shadow-[0_0_8px_rgb(96_165_250)]'
@@ -811,7 +811,7 @@
         </div>
 
         <!-- Bottom band: winrate + score detail + pool tiers -->
-        <div class="grid grid-cols-1 items-start gap-3 lg:grid-cols-3">
+        <div class="animate-fade-up grid grid-cols-1 items-start gap-3 lg:grid-cols-3" style="animation-delay: 90ms">
             <div class="space-y-1">
                 {#if result !== null}
                     <WinrateBar winrate={result.winrate} />
@@ -894,17 +894,19 @@
         </div>
 
         <!-- Coach en direct : recommandations expliquées sur la draft en cours -->
-        <CoachPanel
-            advice={coachAdvice}
-            roleReads={enemyRoleReads}
-            unavailableReason={datasetLoading
-                ? 'Le coach attend la fin du téléchargement du dataset…'
-                : (datasetError ?? 'Coach indisponible.')}
-            noteFr="Phase de picks (cette vue ne saisit pas les bans) — ordre reconstruit sur le template, saisie par rôle.{teamB ===
-            null
-                ? ' Synchronisez l’équipe adverse pour des ranges réelles.'
-                : ''}"
-        />
+        <div class="animate-fade-up" style="animation-delay: 180ms">
+            <CoachPanel
+                advice={coachAdvice}
+                roleReads={enemyRoleReads}
+                unavailableReason={datasetLoading
+                    ? 'Le coach attend la fin du téléchargement du dataset…'
+                    : (datasetError ?? 'Coach indisponible.')}
+                noteFr="Phase de picks (cette vue ne saisit pas les bans) — ordre reconstruit sur le template, saisie par rôle.{teamB ===
+                null
+                    ? ' Synchronisez l’équipe adverse pour des ranges réelles.'
+                    : ''}"
+            />
+        </div>
 
         <!-- Corpus pro embarqué (Leaguepedia → IndexedDB) -->
         <div class="panel p-3 text-xs text-slate-400">

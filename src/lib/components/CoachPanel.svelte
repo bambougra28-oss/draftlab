@@ -41,7 +41,7 @@
 <section class="panel panel-gold p-4">
     <header class="mb-3 flex flex-wrap items-center gap-2">
         <h2
-            class="bg-gradient-to-b from-gold-200 to-gold-500 bg-clip-text text-sm font-bold tracking-[0.14em] text-transparent uppercase"
+            class="font-display bg-gradient-to-b from-gold-200 to-gold-500 bg-clip-text text-base tracking-[0.16em] text-transparent uppercase"
         >
             {title}
         </h2>

@@ -61,9 +61,9 @@
     class="sticky top-0 z-40 flex items-center gap-1 border-b border-gold-700/25 bg-abyss-950/85 px-4 py-2 backdrop-blur-md"
 >
     <a href="/" class="group mr-5 flex items-baseline gap-0.5 select-none">
-        <span class="text-sm font-black tracking-[0.22em] text-slate-100 uppercase">Draft</span>
+        <span class="font-display text-base tracking-[0.22em] text-slate-100 uppercase">Draft</span>
         <span
-            class="bg-gradient-to-b from-gold-200 to-gold-500 bg-clip-text text-sm font-black tracking-[0.22em] text-transparent uppercase"
+            class="font-display bg-gradient-to-b from-gold-200 to-gold-500 bg-clip-text text-base tracking-[0.22em] text-transparent uppercase"
         >
             Lab
         </span>
