@@ -5,11 +5,15 @@ freelance / ERL / analyst. Public-data-only (gol.gg, Oracle's Elixir,
 Data Dragon). Game plan classification, adversary plan reading, ban
 priority hierarchy, Fearless first-class.
 
-> **Status:** post-recovery — all M1–M7 logic reconstructed & green
-> (210 tests); UI + gol.gg scraper + M3 runner being rebuilt.
-> See `docs/RECOVERY_HANDOFF.md` for the recovery state and
-> **`docs/ARCHITECTURE_V2.md` for the master plan toward pro-grade**
-> (replaces the lost `ARCHITECTURE_V1.md`).
+> **Status:** V2.1 « Sommet » built — full data backbone (Leaguepedia
+> primary + gol.gg + Oracle's Elixir), complete UI (8 routes, 21
+> components), and the six novel engines: adversary ranges with negative
+> information, fog & reveal, bilateral win conditions, Fearless series
+> solver with denial pricing & First Selection, chess-style annotated
+> review + printable prep pack, patch oracle. **764 tests, 4 gates
+> green.** Engine validation/calibration is gated on live data (bot
+> password + corpus) — see `docs/STATUS.md`. Master plan:
+> **`docs/ARCHITECTURE_V2.md`** · coach guide: `docs/USER_GUIDE.md`.
 
 ## Why DraftLab
 
@@ -55,12 +59,13 @@ The tagline:
 
 | Route | Purpose | Mode |
 |---|---|---|
-| `/` | Team scout + Bayesian draft analyzer + Pool Tier | Préparation |
-| `/prototype` | Game Plan / Power Curves / Risk Markers / Adversary Plan | Préparation |
+| `/` | Team scout + analyzer + win conditions + opponent intel (tendances, ranges, ban EV) + prep-pack export | Préparation |
+| `/prototype` | Game Plan / Power Curves / Risk Markers / Adversary Plan / Win Conditions | Préparation |
 | `/plans`, `/plans/[id]` | Plan A/B/C builder | Préparation |
-| `/series`, `/series/[id]` | Bo3/Bo5 with Fearless consumption tracker | Préparation |
-| `/live` | Match-day épuré view (stub V1, refinement M8.1) | Match |
-| `/help` | Quick navigation guide | — |
+| `/series`, `/series/[id]` | Bo3/Bo5 Fearless : consumption tracker + **War Room** (intégrité de pool, dépense-vs-rétention, First Selection) + feuille re-plan | Préparation / Inter-games |
+| `/review` | Revue annotée type moteur d'échecs (grades ?!/?/??, leak report) | Post-match |
+| `/live` | Match-day épuré view | Match |
+| `/help` | Guide de navigation | — |
 
 ## Setup
 

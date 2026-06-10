@@ -1,6 +1,68 @@
 DraftLab — Project journal
 
 ================================================================================
+THE FULL BUILD — V2.1 construite en une run multi-agents (vagues A/B/C)
+2026-06-10 — autonomous after "on va build entièrement draftlab en une run"
+================================================================================
+
+13 agents orchestrés en 3 vagues de workflow (~2.5M tokens), l'architecte
+intégrant et committant entre les vagues. 12 commits de jalons.
+
+Vague A (7 agents) — fin de R1 + R2 + socles R3/R4 :
+- golgg scraper reconstruit sur les fixtures (6 parsers, proxy durci,
+  bridge DraftRecord) — BUG DU SCRAPER ORIGINAL TROUVÉ ET CORRIGÉ
+  (double layout team-draft : le parsing positionnel de mai permutait
+  ban-phase-2/pick-phase-1 sur les rangées playoffs ; classification
+  par contenu désormais).
+- estimators/ (posteriors Beta exacts Lentz+bissection validés par
+  identités, cascade hiérarchique avec provenance, decay par patch,
+  Platt Newton), aggregates/ (presence/rotations/flex/combinations +
+  tendances Dirichlet à récence), winConditionGraph I3 (8 axes
+  bilatéraux antisymétriques, collision, statements falsifiables),
+  backtest/ (métriques, walk-forward anti-fuite, scorecard).
+- UI v1 reconstruite : 15 composants + 7 routes fidèles à la capture.
+- Incident environnement diagnostiqué : workerd.exe crashe au démarrage
+  sur cette machine (upstream cloudflare/workerd#4668) → fix une ligne
+  dans svelte.config.js (delete adapter.emulate, scopé win32).
+
+Vague B (4 agents, 2 chaînes) — les moteurs profonds :
+- rangeModel I1 (log-linéaire tendances×pool×méta×cohérence×info
+  NÉGATIVE restricted-choice, composantes auditées Σ=log-score,
+  closeGroup, surprise/alarme) + banEv best-response.
+- fogReveal I2 (déterminisation à support complet ≤120 role-maps,
+  fog value, coût de révélation, bait ledger — experimental:true).
+- seriesSolver I4 (V(σ) récursif, LE PERDANT prend la First Selection,
+  intégrité de pool MC seedée avec rôle goulot, rétention par
+  différence finie, déni Benoît-Krishna want×reach×drop, must-win) +
+  draftNavigator (expectimax probabiliste, 592 nœuds <200ms d3/k8,
+  adaptateur analyzeDraft).
+- annotator I5 (espace proba de victoire, bandes ?!/?/??, suppression
+  des choix proches, leak report) + prepPack (markdown print-first A4,
+  feuille re-plan 1 page, CSV RFC-4180).
+
+Vague C (2 agents) — finition :
+- opponentIntel (glue routes→moteurs, testée) ; 6 nouveaux panneaux
+  (WinCondition/Tendency/Range/WarRoom/ReviewBoard/ExportBar) ; routes
+  /, /prototype, /series/[id] étendues ; NOUVELLE route /review
+  (revue type moteur d'échecs, navigate au clic) ; badges DA-V2-11
+  partout, composantes jamais fusionnées (DA-V2-12).
+- patchOracle I6 (courbes de réponse aux buffs sur historique,
+  watchlist avec consignes d'inflation de priors) ; corpusRunner +
+  CLI pnpm backtest → docs/calibration/scorecard-<patch>.md ;
+  docs/calibration/README.md ; docs/USER_GUIDE.md reconstruit.
+
+Verification finale (les 4 portes, vérifiées par l'architecte) :
+- vitest : 764 passed / 5 skipped (56 fichiers)
+- svelte-check : 458 fichiers, 0 erreur, 0 warning
+- eslint : clean — vite build : exit 0 (adapter Cloudflare)
+
+Reste GATED SUR DONNÉES LIVE (pas sur du code) :
+- bot password Leaguepedia → premier corpus 2026 ordonné → courses du
+  harnais (portes G1-G6, scorecards R9) → recalibrage des configs.
+- push GitHub (A1) toujours en attente — TOUJOURS AUCUN BACKUP EXTERNE.
+- smoke navigateur réel par Alain (pnpm dev fonctionne après le fix).
+
+================================================================================
 V2.1 architecture + R0 + R1 core — the summit roadmap, then its data backbone
 2026-06-10 — autonomous after "carte blanche" / "on vise l'inédit" / "Allez"
 ================================================================================
