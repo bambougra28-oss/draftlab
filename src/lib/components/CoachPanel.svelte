@@ -45,11 +45,19 @@
         >
             {title}
         </h2>
-        <span class="rounded bg-amber-900/60 px-1.5 py-0.5 text-[10px] font-medium text-amber-300">
+        <span
+            class="cursor-help rounded bg-amber-900/60 px-1.5 py-0.5 text-[10px] font-medium text-amber-300"
+            title="Les briques du coach sont validées une à une (ranges, contre-profils, rôles), mais la qualité du classement final n'a pas encore passé sa porte de validation chiffrée — détail dans « Comment lire ? »."
+        >
             Expérimental — non calibré
         </span>
         {#if advice !== null && advice.evaluatedNodes > 0}
-            <span class="text-[10px] text-slate-500">{advice.evaluatedNodes} positions explorées</span>
+            <span
+                class="cursor-help text-[10px] text-slate-500"
+                title="Taille de l'arbre exploré pour ce tour : vos candidats × leurs réponses probables, profondeur 2."
+            >
+                {advice.evaluatedNodes} positions explorées
+            </span>
         {/if}
     </header>
 
@@ -198,6 +206,20 @@
                     profils (le vôtre contre chacun des leurs) dans les games pros — le même signal qui guide
                     les bans de phase 2, validé sur 4 ligues. Positif = ce profil bat historiquement ce
                     qu'ils ont montré ; négatif = il se fait punir.
+                </p>
+                <p>
+                    <strong class="text-amber-300">Expérimental — non calibré</strong> : la doctrine du projet
+                    est qu'aucun chiffre ne se montre sans preuve. Les briques du coach sont validées une à une
+                    (ranges adverses : battent la baseline sur 4 ligues ; contre-profils : validés par les bans
+                    de phase 2 ; lecture des rôles : 95 %), mais la qualité du CLASSEMENT final — « suivre le
+                    conseil n°1 fait-il gagner plus ? » — n'a pas encore passé sa porte de validation sur le
+                    corpus. Le badge tombera ce jour-là.
+                </p>
+                <p>
+                    <strong class="text-slate-300">Positions explorées</strong> : la taille de l'arbre de coups
+                    regardé pour ce tour (vos candidats × leurs réponses probables, 2 coups de profondeur).
+                    ~30 est normal au réglage par défaut ; le nombre monte quand l'équipe adverse est
+                    synchronisée — ses vraies tendances rendent l'arbre plus riche.
                 </p>
             </div>
         </details>
