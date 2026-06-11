@@ -2,6 +2,20 @@
 
 Updated: 2026-06-11 (run #2 JOUÉE — verdicts publiés, état de corpus corrigé)
 
+
+## ⚡ RUN #3 — RÉSULTAT (2026-06-11 soir)
+
+Protocole run #2 reproduit (designs gelés post-revue, runs one-shot architecte).
+
+| Run | Verdict | Chiffre | Conséquence |
+|---|---|---|---|
+| **F-c non-régression** | **PASSÉE** | 95,3 % k=3 défense active (plancher 94,5) | **La défense anti-pocket se branche en live** |
+| F4 endgame | non concluant (pré-assumé) | Δ +3,26 pp [−3,01 ; +9,55], n=92 | F-d ship Expérimental (garantie ingénierie) |
+| **A3 coach v2 (pools joueurs)** | ROUGE | TD 51,7 % ; **Δ vs méta +2,46 pp [−0,46 ; +5,38]** (v1 : +0,92 [−1,72 ; +3,64]) | Porte de validité byte-passée ; le levier pools est RÉEL (×2,7 sur le delta), borne basse frôle 0 — leviers v3 : carrières cross-ligues (déclaré dans la règle), candidats plus larges |
+| E3 calibration par ligue | ROUGE | 0 cellule validée (ICs chevauchent 0) | % bruts conservés, JSON tout validated:false |
+
+File run #4 (candidats) : carrières cross-corpus dans les pools A3 · premium pocket conditionné au fit · demande Fearless par gameNumber · enquête LPL bans.
+
 ## ⚡ RUN #2 — RÉSULTAT (2026-06-11)
 
 **L'événement central : la leçon Nasus menée au bout.** Le protocole « re-pull

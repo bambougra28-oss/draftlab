@@ -1,16 +1,17 @@
 {
-    "version": 1,
-    "generatedAt": "2026-06-11T11:59:29.196Z",
+    "version": 2,
+    "generatedAt": "2026-06-11T19:23:25.422Z",
     "corpora": [
         "static/corpus/lck-2026.json",
         "static/corpus/lec-2026.json",
         "static/corpus/lfl-2026.json",
         "static/corpus/lpl-2026.json",
+        "data/corpus/lck-2025.json",
         "data/corpus/lec-2025.json",
         "data/corpus/lfl-2025.json",
         "data/corpus/lpl-2025.json"
     ],
-    "nGames": 2659,
+    "nGames": 3214,
     "fittedThroughPatch": "26.11",
     "dataset": {
         "version": "16.12.1",
@@ -21,22 +22,120 @@
     "seed": 42,
     "positions": {
         "afterBans": {
-            "a": 0.15752689818073934,
+            "a": 0.1371154764778476,
             "b": 1,
-            "nTrain": 2659,
+            "nTrain": 3214,
             "validated": false
         },
         "after3Picks": {
-            "a": 0.14640945075264306,
-            "b": 0.675449277412124,
-            "nTrain": 2659,
+            "a": 0.12975258988629862,
+            "b": 0.4821732594425551,
+            "nTrain": 3214,
             "validated": false
         },
         "fullDraft": {
-            "a": 0.15940763695297408,
-            "b": 0.5490092266165404,
-            "nTrain": 2659,
+            "a": 0.138763488921224,
+            "b": 0.5160321006948565,
+            "nTrain": 3214,
             "validated": false
+        }
+    },
+    "leagues": {
+        "lck": {
+            "nGames": 892,
+            "fittedThroughPatch": "26.11",
+            "positions": {
+                "afterBans": {
+                    "a": 0.1347325939701549,
+                    "b": 1,
+                    "nTrain": 892,
+                    "validated": false
+                },
+                "after3Picks": {
+                    "a": 0.13559085274570323,
+                    "b": -0.04683988832103552,
+                    "nTrain": 892,
+                    "validated": false
+                },
+                "fullDraft": {
+                    "a": 0.13458475837933817,
+                    "b": 0.3864613273991525,
+                    "nTrain": 892,
+                    "validated": false
+                }
+            }
+        },
+        "lec": {
+            "nGames": 554,
+            "fittedThroughPatch": "26.10",
+            "positions": {
+                "afterBans": {
+                    "a": 0.1809979298634464,
+                    "b": 1,
+                    "nTrain": 554,
+                    "validated": false
+                },
+                "after3Picks": {
+                    "a": 0.17688400341130855,
+                    "b": 0.2823570200364619,
+                    "nTrain": 554,
+                    "validated": false
+                },
+                "fullDraft": {
+                    "a": 0.1887755715722413,
+                    "b": 0.7035702588731865,
+                    "nTrain": 554,
+                    "validated": false
+                }
+            }
+        },
+        "lfl": {
+            "nGames": 508,
+            "fittedThroughPatch": "26.10",
+            "positions": {
+                "afterBans": {
+                    "a": 0.20544397421480948,
+                    "b": 1,
+                    "nTrain": 508,
+                    "validated": false
+                },
+                "after3Picks": {
+                    "a": 0.20172411765732648,
+                    "b": 0.27177791365945525,
+                    "nTrain": 508,
+                    "validated": false
+                },
+                "fullDraft": {
+                    "a": 0.20746743648232197,
+                    "b": 0.3398814545122386,
+                    "nTrain": 508,
+                    "validated": false
+                }
+            }
+        },
+        "lpl": {
+            "nGames": 1260,
+            "fittedThroughPatch": "26.10",
+            "positions": {
+                "afterBans": {
+                    "a": 0.09212859996729918,
+                    "b": 1,
+                    "nTrain": 1260,
+                    "validated": false
+                },
+                "after3Picks": {
+                    "a": 0.07691483790583056,
+                    "b": 1.0732276247293155,
+                    "nTrain": 1260,
+                    "validated": false
+                },
+                "fullDraft": {
+                    "a": 0.09271809939241403,
+                    "b": 0.5904206671671886,
+                    "nTrain": 1260,
+                    "validated": false
+                }
+            }
         }
     }
 }
