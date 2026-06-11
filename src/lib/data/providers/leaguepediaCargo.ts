@@ -45,12 +45,8 @@ export class CargoRateLimitError extends CargoError {
     }
 }
 
-/** Aliased field list for the joined PB ⋈ SG query. */
-const FIELD_ALIASES: Record<string, string> = {
-    'PB.GameId': 'gid',
-    'PB.MatchId': 'mid',
-    'PB.N_GameInMatch': 'gn',
-    'PB.Winner': 'winner',
+/** SG-side aliases — the scoreboard columns (carry WHERE/ORDER of the pulls). */
+const SG_FIELD_ALIASES: Record<string, string> = {
     'SG.Team1': 'team1',
     'SG.Team2': 'team2',
     'SG.WinTeam': 'winteam',
@@ -60,14 +56,33 @@ const FIELD_ALIASES: Record<string, string> = {
     'SG.OverviewPage': 'ovp',
     'SG.Gamelength_Number': 'glen'
 };
+
+/** PB-side aliases — the draft table proper (GameId added separately). */
+const PB_FIELD_ALIASES: Record<string, string> = {
+    'PB.MatchId': 'mid',
+    'PB.N_GameInMatch': 'gn',
+    'PB.Winner': 'winner'
+};
 for (let i = 1; i <= 5; i++) {
-    FIELD_ALIASES[`PB.Team1Ban${i}`] = `t1b${i}`;
-    FIELD_ALIASES[`PB.Team2Ban${i}`] = `t2b${i}`;
-    FIELD_ALIASES[`PB.Team1Pick${i}`] = `t1p${i}`;
-    FIELD_ALIASES[`PB.Team2Pick${i}`] = `t2p${i}`;
-    FIELD_ALIASES[`PB.Team1Role${i}`] = `t1r${i}`;
-    FIELD_ALIASES[`PB.Team2Role${i}`] = `t2r${i}`;
+    PB_FIELD_ALIASES[`PB.Team1Ban${i}`] = `t1b${i}`;
+    PB_FIELD_ALIASES[`PB.Team2Ban${i}`] = `t2b${i}`;
+    PB_FIELD_ALIASES[`PB.Team1Pick${i}`] = `t1p${i}`;
+    PB_FIELD_ALIASES[`PB.Team2Pick${i}`] = `t2p${i}`;
+    PB_FIELD_ALIASES[`PB.Team1Role${i}`] = `t1r${i}`;
+    PB_FIELD_ALIASES[`PB.Team2Role${i}`] = `t2r${i}`;
 }
+
+/** Aliased field list for the joined PB ⋈ SG query. */
+const FIELD_ALIASES: Record<string, string> = {
+    'PB.GameId': 'gid',
+    ...PB_FIELD_ALIASES,
+    ...SG_FIELD_ALIASES
+};
+
+const fieldsParamOf = (aliases: Record<string, string>): string =>
+    Object.entries(aliases)
+        .map(([field, alias]) => `${field}=${alias}`)
+        .join(',');
 
 /** One raw cargoquery row, keyed by our aliases (all values are strings). */
 export type CargoRow = Record<string, string>;
@@ -81,9 +96,7 @@ export interface CargoQueryOptions {
 
 /** Build the full cargoquery GET url for the PB ⋈ SG join. */
 export function buildCargoUrl(options: CargoQueryOptions, api: string = LEAGUEPEDIA_API): string {
-    const fields = Object.entries(FIELD_ALIASES)
-        .map(([field, alias]) => `${field}=${alias}`)
-        .join(',');
+    const fields = fieldsParamOf(FIELD_ALIASES);
     const params = new URLSearchParams({
         action: 'cargoquery',
         format: 'json',
@@ -268,6 +281,98 @@ export async function fetchDraftRecords(
         if (delay > 0) await sleep(delay);
     }
     return records;
+}
+
+/** GameIds per PicksAndBansS7 `IN (…)` chunk — bounded by URL length (ids are long page names). */
+export const SPLIT_GAMEID_CHUNK = 40;
+
+export interface SplitFetchResult {
+    records: DraftRecord[];
+    /** GameIds with a scoreboard row but no PB row (remakes/forfeits/upstream holes). */
+    missingDrafts: string[];
+}
+
+/**
+ * `fetchDraftRecords` WITHOUT the server-side join — for the windows where
+ * Leaguepedia throttles `PB ⋈ SG` (observed 2026-06-10/11: the join is the
+ * expensive query; single-table reads stay cheap):
+ *   1) page `ScoreboardGames` alone — it carries every WHERE/ORDER column the
+ *      pull queries use (OverviewPage, DateTime, teams);
+ *   2) read `PicksAndBansS7` alone, `GameId IN (…)` by chunks;
+ *   3) join locally and feed the exact merged row shape to `rowToDraftRecord`.
+ * The WHERE clause must reference SG.* columns only (the pull scripts' case).
+ * Scoreboard order (the injected `orderBy`) is preserved in the output.
+ */
+export async function fetchDraftRecordsSplit(
+    query: Omit<CargoQueryOptions, 'offset' | 'limit'>,
+    options: FetchDraftsOptions & { chunkSize?: number } = {}
+): Promise<SplitFetchResult> {
+    const transport = options.transport ?? defaultTransport;
+    const sleep = options.sleep ?? defaultSleep;
+    const delay = options.pageDelayMs ?? 2000;
+    const maxPages = options.maxPages ?? 20;
+    const chunkSize = options.chunkSize ?? SPLIT_GAMEID_CHUNK;
+    const fetchedAt = options.now ? options.now() : new Date().toISOString();
+
+    // 1) Scoreboard pages (dedup defensively on paging boundaries).
+    const sgByGid = new Map<string, CargoRow>();
+    for (let page = 0; page < maxPages; page++) {
+        const params = new URLSearchParams({
+            action: 'cargoquery',
+            format: 'json',
+            origin: '*',
+            tables: 'ScoreboardGames=SG',
+            fields: `SG.GameId=gid,${fieldsParamOf(SG_FIELD_ALIASES)}`,
+            where: query.where,
+            limit: String(CARGO_PAGE_LIMIT),
+            offset: String(page * CARGO_PAGE_LIMIT)
+        });
+        if (query.orderBy) params.set('order_by', query.orderBy);
+        const rows = unwrapResponse(await transport(`${LEAGUEPEDIA_API}?${params.toString()}`));
+        for (const row of rows) {
+            if (row.gid && !sgByGid.has(row.gid)) sgByGid.set(row.gid, row);
+        }
+        if (rows.length < CARGO_PAGE_LIMIT) break;
+        if (delay > 0) await sleep(delay);
+    }
+
+    // 2) Draft rows, GameId IN (…) by chunks (also spaces phase 1 → phase 2).
+    const ids = Array.from(sgByGid.keys());
+    const pbByGid = new Map<string, CargoRow>();
+    for (let i = 0; i < ids.length; i += chunkSize) {
+        if (delay > 0) await sleep(delay);
+        const inList = ids
+            .slice(i, i + chunkSize)
+            .map((id) => `'${id.replace(/'/g, "\\'")}'`)
+            .join(',');
+        const params = new URLSearchParams({
+            action: 'cargoquery',
+            format: 'json',
+            origin: '*',
+            tables: 'PicksAndBansS7=PB',
+            fields: `PB.GameId=gid,${fieldsParamOf(PB_FIELD_ALIASES)}`,
+            where: `PB.GameId IN (${inList})`,
+            limit: String(CARGO_PAGE_LIMIT),
+            offset: '0'
+        });
+        const rows = unwrapResponse(await transport(`${LEAGUEPEDIA_API}?${params.toString()}`));
+        for (const row of rows) {
+            if (row.gid && !pbByGid.has(row.gid)) pbByGid.set(row.gid, row);
+        }
+    }
+
+    // 3) Local join, scoreboard order preserved.
+    const records: DraftRecord[] = [];
+    const missingDrafts: string[] = [];
+    for (const [gid, sgRow] of sgByGid) {
+        const pbRow = pbByGid.get(gid);
+        if (!pbRow) {
+            missingDrafts.push(gid);
+            continue;
+        }
+        records.push(rowToDraftRecord({ ...sgRow, ...pbRow }, fetchedAt));
+    }
+    return { records, missingDrafts };
 }
 
 /** All drafts of a tournament (Leaguepedia OverviewPage, e.g. "LCK/2026 Season/Rounds 1-2"). */

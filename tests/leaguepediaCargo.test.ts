@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import {
     buildCargoUrl,
     fetchDraftRecords,
+    fetchDraftRecordsSplit,
     fetchTournamentDrafts,
     fetchTeamDrafts,
     rowToDraftRecord,
@@ -167,6 +168,87 @@ describe('fetchDraftRecords — pagination & errors', () => {
         const err = await fetchDraftRecords({ where: 'x' }, { transport }).catch((e) => e);
         expect(err).toBeInstanceOf(CargoError);
         expect((err as CargoError).code).toBe('badvalue');
+    });
+});
+
+describe('fetchDraftRecordsSplit — no-join fallback', () => {
+    /** Keys served by the SG-only query (plus gid). */
+    const SG_KEYS = ['team1', 'team2', 'winteam', 'dt', 'patch', 'tournament', 'ovp', 'glen'];
+
+    function sgSideRow(gid: string): CargoRow {
+        const full = sampleRow();
+        const row: CargoRow = { gid };
+        for (const k of SG_KEYS) row[k] = full[k];
+        return row;
+    }
+
+    function pbSideRow(gid: string): CargoRow {
+        const row = sampleRow({ gid });
+        for (const k of SG_KEYS) delete row[k];
+        return row;
+    }
+
+    it('queries SG alone, then PB by GameId IN chunks, joins locally in SG order', async () => {
+        const calls: string[] = [];
+        const transport: CargoTransport = async (url) => {
+            calls.push(url);
+            if (calls.length === 1) return wrap([sgSideRow('g1'), sgSideRow('g2'), sgSideRow('g3')]);
+            if (calls.length === 2) return wrap([pbSideRow('g1')]); // g2: trou PB amont
+            return wrap([pbSideRow('g3')]);
+        };
+        const sleep = vi.fn(async () => {});
+        const { records, missingDrafts } = await fetchDraftRecordsSplit(
+            { where: "SG.OverviewPage LIKE 'LCK/2025%'", orderBy: 'SG.DateTime_UTC ASC' },
+            { transport, sleep, pageDelayMs: 2000, chunkSize: 2, now: () => 'now' }
+        );
+
+        expect(calls).toHaveLength(3);
+        const u1 = new URL(calls[0]);
+        expect(u1.searchParams.get('tables')).toBe('ScoreboardGames=SG');
+        expect(u1.searchParams.get('join_on')).toBeNull();
+        expect(u1.searchParams.get('where')).toBe("SG.OverviewPage LIKE 'LCK/2025%'");
+        expect(u1.searchParams.get('order_by')).toBe('SG.DateTime_UTC ASC');
+        expect(u1.searchParams.get('fields')).toContain('SG.GameId=gid');
+        expect(u1.searchParams.get('fields')).not.toContain('PB.');
+
+        const u2 = new URL(calls[1]);
+        expect(u2.searchParams.get('tables')).toBe('PicksAndBansS7=PB');
+        expect(u2.searchParams.get('where')).toBe("PB.GameId IN ('g1','g2')");
+        expect(u2.searchParams.get('fields')).toContain('PB.Team2Role3=t2r3');
+        expect(u2.searchParams.get('fields')).not.toContain('SG.');
+        expect(new URL(calls[2]).searchParams.get('where')).toBe("PB.GameId IN ('g3')");
+
+        // Jointure locale : ordre SG conservé, champs des deux moitiés fusionnés.
+        expect(records.map((r) => r.gameId)).toEqual(['g1', 'g3']);
+        expect(records[0].blueTeam).toBe('T1'); // moitié SG
+        expect(records[0].actions).toHaveLength(20); // moitié PB
+        expect(records[0].series?.gameNumber).toBe(1);
+        expect(missingDrafts).toEqual(['g2']);
+        // 0 sleep après la page SG courte ; 1 avant chaque chunk PB.
+        expect(sleep).toHaveBeenCalledTimes(2);
+    });
+
+    it('escapes quotes inside the IN clause', async () => {
+        const calls: string[] = [];
+        const transport: CargoTransport = async (url) => {
+            calls.push(url);
+            return calls.length === 1 ? wrap([sgSideRow("g'1")]) : wrap([pbSideRow("g'1")]);
+        };
+        const { records } = await fetchDraftRecordsSplit(
+            { where: 'x' },
+            { transport, sleep: async () => {}, now: () => 'now' }
+        );
+        expect(new URL(calls[1]).searchParams.get('where')).toBe("PB.GameId IN ('g\\'1')");
+        expect(records).toHaveLength(1);
+    });
+
+    it('propagates the typed rate-limit error', async () => {
+        const transport: CargoTransport = async () => ({
+            error: { code: 'ratelimited', info: 'slow down' }
+        });
+        await expect(
+            fetchDraftRecordsSplit({ where: 'x' }, { transport })
+        ).rejects.toBeInstanceOf(CargoRateLimitError);
     });
 });
 
