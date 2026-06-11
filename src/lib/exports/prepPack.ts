@@ -27,6 +27,7 @@ import { championNameByKey } from '$lib/dataDragon/version';
 import { loadDefaultTags } from '$lib/tags';
 import type { ChampionTagsFile } from '$lib/tags/types';
 import type { DraftPlan } from '$lib/storage/draftPlans';
+import type { PlannedAction, PlanTree, PlanTreeNode } from '$lib/strategic/planTree';
 import type { PoolTier } from '$lib/strategic/poolTierClassifier';
 import type { DenialValueResult, PoolIntegrityResult, RetentionValueResult } from '$lib/strategic/seriesSolver';
 import type { WinConditionConfidence, WinConditionReport } from '$lib/strategic/winConditionGraph';
@@ -95,6 +96,8 @@ export interface SeriesBudgetEntry {
 export interface PrepPackInput {
     header: PrepPackHeader;
     plans?: DraftPlan[];
+    /** Compiled opponent plan tree → printable repertoire section (R6). */
+    planTree?: PlanTree;
     banPages?: BanPage[];
     poolGrids?: PoolGridPlayer[];
     tendencies?: TendencyBlock[];
@@ -306,6 +309,76 @@ function renderNotes(notes: string[]): string {
     return ['## Notes', notes.map((note) => `- ${note}`).join('\n')].join('\n\n');
 }
 
+// ---- repertoire (chantier D — arbre de prep imprimable) -----------------------------
+
+/**
+ * Print budget of the repertoire: ~35 lines per A4 page in compact print —
+ * the section TARGETS two pages (R6), the mass floor does the real pruning.
+ */
+const REPERTOIRE_MAX_LINES = 70;
+
+/** « ban Rell, pick Vi (repli Sejuani) » — one prepared reply line. */
+function repertoireReply(actions: PlannedAction[], tags: ChampionTagsFile): string {
+    return actions
+        .map((action) => {
+            const fallback = action.fallback !== undefined ? ` (repli ${nameOf(action.fallback, tags)})` : '';
+            return `${action.type === 'ban' ? 'ban' : 'pick'} ${nameOf(action.championKey, tags)}${fallback}`;
+        })
+        .join(', ');
+}
+
+/**
+ * Chess-style printable repertoire: depth-first walk of the compiled tree,
+ * keeping only lines of pathMass ≥ replyMassFloor (the thick mainlines).
+ * Numbering 1 / 1.1 / 1.1.2 mirrors opening books; every branch line carries
+ * the model mass, the raw evidence and OUR prepared reply.
+ */
+function renderRepertoire(tree: PlanTree, tags: ChampionTagsFile): string {
+    const floor = tree.config.replyMassFloor;
+    const lines: string[] = [];
+    let truncated = false;
+
+    const walk = (node: PlanTreeNode, label: string, depth: number): void => {
+        let shown = 0;
+        for (const branch of node.branches) {
+            if (branch.child.pathMass < floor) continue;
+            if (lines.length >= REPERTOIRE_MAX_LINES) {
+                truncated = true;
+                return;
+            }
+            shown += 1;
+            const num = label === '' ? `${shown}` : `${label}.${shown}`;
+            const indent = '  '.repeat(depth);
+            const reply =
+                branch.child.ourLine.length > 0
+                    ? ` → nous : ${repertoireReply(branch.child.ourLine, tags)}`
+                    : '';
+            lines.push(
+                `${indent}- ${num}. ${nameOf(branch.championKey, tags)} ${pct(branch.p)} ` +
+                    `(${evidenceString(branch)})${reply}`
+            );
+            walk(branch.child, num, depth + 1);
+        }
+    };
+    walk(tree.root, '', 0);
+
+    const provenance = tree.modelProvenance;
+    const parts: string[] = [
+        `## Répertoire — script contre ${tree.opponent}`,
+        `> Lignes de masse ≥ ${pct(floor)} (plancher \`replyMassFloor\` du compile) — cible : 2 pages A4. ` +
+            `Modèle : ${provenance.records} games${provenance.latestPatch !== undefined ? `, patch ≤ ${provenance.latestPatch}` : ''}. ` +
+            'Les % sont la masse du MODÈLE à la compilation, pas une couverture mesurée.',
+        tree.root.ourLine.length > 0
+            ? `Ouverture préparée — nous : ${repertoireReply(tree.root.ourLine, tags)}.`
+            : 'Ouverture chez l’adversaire.'
+    ];
+    parts.push(lines.length > 0 ? lines.join('\n') : 'Aucune ligne au-dessus du plancher de masse.');
+    if (truncated) {
+        parts.push(`(Tronqué à ${REPERTOIRE_MAX_LINES} lignes — resserrez le plancher pour tenir les 2 pages.)`);
+    }
+    return parts.join('\n\n');
+}
+
 /** Non-empty array or undefined — empty sections are never rendered. */
 function present<T>(items: T[] | undefined): T[] | undefined {
     return items !== undefined && items.length > 0 ? items : undefined;
@@ -323,6 +396,7 @@ export function renderPrepPackMarkdown(input: PrepPackInput): string {
 
     const plans = present(input.plans);
     if (plans !== undefined) blocks.push(renderPlans(plans, tags));
+    if (input.planTree !== undefined) blocks.push(renderRepertoire(input.planTree, tags));
     const banPages = present(input.banPages);
     if (banPages !== undefined) blocks.push(renderBanPages(banPages, tags));
     const poolGrids = present(input.poolGrids);

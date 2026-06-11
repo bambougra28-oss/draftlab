@@ -1,14 +1,21 @@
 <!--
-    Coach en direct — the page's recommendation surface (liveDraft engine).
+    Coach en direct — the page's LINE-EXPLORER surface (liveDraft engine).
 
     Audience: a LEARNING drafter, not a professional coach. Every number is
     explained in plain French, the reasons list only the axes that actually
     fired, and the "Comment lire ?" block defines the vocabulary. Components
     stay separated (DA-V2-12) and the whole panel is badged Expérimental
-    (DA-V2-11) until the engines pass their validation gates.
+    (DA-V2-11). Gate A « conseil suivi » (docs/calibration/coach-gate-2026.md,
+    2026-06-11) : ROUGE — the ranking is not distinguishable from
+    meta-following (TD 51,6 %, IC [49,5 ; 53,7]), so the copy claims a
+    CHIFFRÉ LINE EXPLORER, never a validated recommendation (§5 of
+    docs/run2/A-coach-gate.md; identified lever: real player pools, run #3).
+    The % calibration mechanism (chantier E) is independent and untouched.
 -->
 <script lang="ts">
-    import type { CoachAdvice, EnemyRoleReport } from '$lib/intel/liveDraft';
+    import type { CoachAdvice, CoachCandidate, EnemyRoleReport } from '$lib/intel/liveDraft';
+    import type { DraftSide } from '$lib/data/types';
+    import { calibrateAllyWin, type WinCalibrationConfig } from '$lib/estimators/winCalibration';
     import { championNameByKey } from '$lib/dataDragon/version';
     import ChampionIcon from '$lib/components/ChampionIcon.svelte';
 
@@ -21,6 +28,12 @@
         /** Enemy role read (I2 hypotheses) — mismatch warnings + ambiguity. */
         roleReads?: EnemyRoleReport | null;
         title?: string;
+        /** Carte de calibration shippée (chantier E) — null = % bruts. */
+        calibration?: WinCalibrationConfig | null;
+        /** Picks verrouillés AVANT l'action conseillée (les deux sides). */
+        picksLocked?: number;
+        /** Side allié — perspective des winAfter (l'aller-retour espace bleu en dépend). */
+        ourSide?: DraftSide;
     }
 
     const {
@@ -28,12 +41,44 @@
         unavailableReason = null,
         noteFr = null,
         roleReads = null,
-        title = 'Coach — prochain coup'
+        title = 'Coach — explorateur de lignes',
+        calibration = null,
+        picksLocked = 0,
+        ourSide = 'blue'
     }: Props = $props();
 
     const nameOf = (key: string): string => championNameByKey(key) ?? key;
     const pct = (p: number): string => `${(100 * p).toFixed(1).replace('.', ',')} %`;
     const pp = (v: number): string => `${v >= 0 ? '+' : ''}${v.toFixed(1).replace('.', ',')} pp`;
+
+    /**
+     * Calibration à l'AFFICHAGE seulement (le tri du navigator et liveDraft ne
+     * changent pas ; b > 0 garantit l'ordre à position égale). L'ancre d'un
+     * candidat est la position APRÈS son action : un pick verrouille un pick de
+     * plus, un ban aucun.
+     */
+    const winShown = (candidate: CoachCandidate): number =>
+        calibration === null
+            ? candidate.winAfter
+            : calibrateAllyWin(
+                  candidate.winAfter,
+                  ourSide,
+                  picksLocked + (candidate.actionType === 'pick' ? 1 : 0),
+                  calibration
+              ).pAlly;
+
+    /** Écart vs le suivant, en pp, recalculé sur les valeurs AFFICHÉES (ordre inchangé). */
+    const edgeShownPp = (index: number): number => {
+        if (advice === null || index + 1 >= advice.candidates.length) return 0;
+        return Math.max(0, (winShown(advice.candidates[index]) - winShown(advice.candidates[index + 1])) * 100);
+    };
+
+    /** DA-V2-12 : seul le STATUT DU % change — le moteur de recommandation reste expérimental. */
+    const pctCalibrated = $derived(
+        calibration !== null &&
+            ((calibration.positions.fullDraft?.validated ?? false) ||
+                (calibration.positions.after3Picks?.validated ?? false))
+    );
     const ROLE_FR = ['top', 'jungle', 'mid', 'bot', 'support'] as const;
     const mismatches = $derived(roleReads === null ? [] : roleReads.reads.filter((r) => r.mismatch));
 </script>
@@ -46,10 +91,14 @@
             {title}
         </h2>
         <span
-            class="cursor-help rounded bg-amber-900/60 px-1.5 py-0.5 text-[10px] font-medium text-amber-300"
-            title="Les briques du coach sont validées une à une (ranges, contre-profils, rôles), mais la qualité du classement final n'a pas encore passé sa porte de validation chiffrée — détail dans « Comment lire ? »."
+            class="cursor-help rounded px-1.5 py-0.5 text-[10px] font-medium {pctCalibrated
+                ? 'bg-emerald-900/60 text-emerald-300'
+                : 'bg-amber-900/60 text-amber-300'}"
+            title={pctCalibrated
+                ? 'La gate « conseil suivi » a été jouée (2026-06-11) : le classement ne se distingue pas encore du suivi de méta (TD 51,6 %, IC [49,5 ; 53,7]) — le coach est un explorateur de lignes chiffré, pas une recommandation validée ; levier identifié : pools joueurs réels (run #3). Les % affichés, eux, passent par la carte de calibration mesurée walk-forward sur corpus pro : quand le coach dit X %, la fréquence observée tombe dans le bac correspondant — détail dans « Comment lire ? ».'
+                : 'La gate « conseil suivi » a été jouée (2026-06-11) : le classement ne se distingue pas encore du suivi de méta (TD 51,6 %, IC [49,5 ; 53,7]) — le coach est un explorateur de lignes chiffré, pas une recommandation validée ; levier identifié : pools joueurs réels (run #3). Détail dans « Comment lire ? ».'}
         >
-            Expérimental — non calibré
+            {pctCalibrated ? `Expérimental — % calibrés sur ${calibration?.nGames} games` : 'Expérimental — non calibré'}
         </span>
         {#if advice !== null && advice.evaluatedNodes > 0}
             <span
@@ -89,11 +138,11 @@
                                 <div class="flex flex-wrap items-baseline gap-2">
                                     <span class="font-semibold text-slate-100">{nameOf(candidate.championKey)}</span>
                                     <span class="text-xs text-slate-400">
-                                        win estimé après : <span class="font-medium text-slate-200">{pct(candidate.winAfter)}</span>
+                                        win estimé après : <span class="font-medium text-slate-200">{pct(winShown(candidate))}</span>
                                     </span>
-                                    {#if index === 0 && candidate.edgeVsNextPp >= 0.05}
+                                    {#if index === 0 && edgeShownPp(index) >= 0.05}
                                         <span class="rounded bg-blue-900/50 px-1.5 py-0.5 text-[10px] text-blue-300">
-                                            {pp(candidate.edgeVsNextPp)} vs le suivant
+                                            {pp(edgeShownPp(index))} vs le suivant
                                         </span>
                                     {/if}
                                     {#if candidate.pairWith !== undefined}
@@ -182,7 +231,8 @@
                 <p>
                     <strong class="text-slate-300">Win estimé après</strong> : la probabilité de victoire de
                     votre équipe si vous jouez ce champion puis que les deux camps jouent leurs meilleures
-                    suites (moteur statistique SoloQ + confort joueur — indicatif, non calibré sur le pro).
+                    suites (moteur statistique SoloQ + confort joueur — calibré sur corpus pro quand le
+                    bandeau l'indique, sinon indicatif non calibré).
                 </p>
                 <p>
                     <strong class="text-slate-300">Immédiat / Anticipation</strong> : la part du gain due au
@@ -209,11 +259,13 @@
                 </p>
                 <p>
                     <strong class="text-amber-300">Expérimental — non calibré</strong> : la doctrine du projet
-                    est qu'aucun chiffre ne se montre sans preuve. Les briques du coach sont validées une à une
-                    (ranges adverses : battent la baseline sur 4 ligues ; contre-profils : validés par les bans
-                    de phase 2 ; lecture des rôles : 95 %), mais la qualité du CLASSEMENT final — « suivre le
-                    conseil n°1 fait-il gagner plus ? » — n'a pas encore passé sa porte de validation sur le
-                    corpus. Le badge tombera ce jour-là.
+                    est qu'aucun chiffre ne se montre sans preuve. La gate « conseil suivi » a été jouée
+                    (2026-06-11) : le classement ne se distingue pas encore du suivi de méta (TD 51,6 %,
+                    IC [49,5 ; 53,7]) — le coach est un explorateur de lignes chiffré, pas une recommandation
+                    validée ; levier identifié : pools joueurs réels (run #3). Les briques restent validées
+                    une à une (ranges adverses : battent la baseline sur 4 ligues ; contre-profils : validés
+                    par les bans de phase 2 ; lecture des rôles : 95 %) — c'est le CLASSEMENT final qui n'a
+                    pas (encore) démontré de signal au-delà de la méta.
                 </p>
                 <p>
                     <strong class="text-slate-300">Positions explorées</strong> : la taille de l'arbre de coups

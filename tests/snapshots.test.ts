@@ -13,9 +13,9 @@ beforeEach(async () => {
     await idbClear('snapshots');
 });
 
-describe('snapshots store (schema v2)', () => {
-    it('is on schema v2 with the new stores reachable', async () => {
-        expect(DB_VERSION).toBe(2);
+describe('snapshots store (schema v3)', () => {
+    it('is on schema v3 with the new stores reachable', async () => {
+        expect(DB_VERSION).toBe(3);
         // Both new stores accept writes (would throw NotFoundError otherwise).
         await idbPut('snapshots', { id: 'probe-snap' });
         await idbPut('datasets', { id: 'probe-ds' });

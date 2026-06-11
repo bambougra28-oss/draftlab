@@ -56,7 +56,7 @@ registerHooks({
 
 type CargoModule = typeof import('../../src/lib/data/providers/leaguepediaCargo');
 type DraftRecord = import('../../src/lib/data/types').DraftRecord;
-const { MwSession, fetchCargoRows, LEAGUEPEDIA_ATTRIBUTION } = (await import(
+const { MwSession, fetchCargoRowsExport, LEAGUEPEDIA_ATTRIBUTION } = (await import(
     `${libRootHref}/data/providers/leaguepediaCargo.ts`
 )) as CargoModule;
 
@@ -77,16 +77,25 @@ console.log(`Login bot: ${user.split('@')[0]}@…`);
 const session = await MwSession.login({ username: user, password: pass });
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-/** SP rows of one tournament, with the pullCorpus ratelimit retry discipline. */
-async function playersOfTournament(overviewPage: string): Promise<Map<string, Map<string, string>>> {
-    const safe = overviewPage.replace(/'/g, "\\'");
+/** GameIds per SP `IN (…)` chunk — bounded by URL length (long page names). */
+const SP_GAMEID_CHUNK = 40;
+
+/**
+ * SP rows for a chunk of GameIds, with the pullCorpus ratelimit retry
+ * discipline. Queries by GameId (the exact join key of the records) — the
+ * record's `tournament` is a DISPLAY name, not the OverviewPage, so the
+ * original per-tournament WHERE matched nothing.
+ */
+async function playersOfGameIds(gameIds: string[]): Promise<Map<string, Map<string, string>>> {
+    const inList = gameIds.map((id) => `'${id.replace(/'/g, "\\'")}'`).join(',');
     for (let attempt = 1; ; attempt++) {
         try {
-            const rows = await fetchCargoRows(
+            // Special:CargoExport : le chemin hors bucket API (leçon des pulls).
+            const rows = await fetchCargoRowsExport(
                 {
                     tables: 'ScoreboardPlayers=SP',
                     fields: 'SP.GameId=gid,SP.Link=link,SP.Champion=champ',
-                    where: `SP.OverviewPage='${safe}'`,
+                    where: `SP.GameId IN (${inList})`,
                     orderBy: 'SP.GameId ASC'
                 },
                 { transport: session.transport, pageDelayMs: 2500 }
@@ -101,7 +110,7 @@ async function playersOfTournament(overviewPage: string): Promise<Map<string, Ma
             return byGame;
         } catch (error) {
             if ((error as { code?: string }).code !== 'ratelimited' || attempt === 5) throw error;
-            console.log(`  ${overviewPage} → rate-limited (tentative ${attempt}/5), pause 75 s…`);
+            console.log(`  chunk de ${gameIds.length} gameIds → rate-limited (tentative ${attempt}/5), pause 75 s…`);
             await sleep(75_000);
         }
     }
@@ -110,14 +119,15 @@ async function playersOfTournament(overviewPage: string): Promise<Map<string, Ma
 for (const input of inputs) {
     const absPath = resolve(repoRoot, input);
     const records = JSON.parse(readFileSync(absPath, 'utf8')) as DraftRecord[];
-    const tournaments = [...new Set(records.map((r) => r.tournament).filter((t): t is string => !!t))];
-    console.log(`\n${input} : ${records.length} records, ${tournaments.length} tournois`);
+    const gameIds = [...new Set(records.map((r) => r.gameId).filter((id) => id !== ''))];
+    console.log(`\n${input} : ${records.length} records, ${gameIds.length} gameIds`);
 
     const players = new Map<string, Map<string, string>>();
-    for (const tournament of tournaments) {
-        const byGame = await playersOfTournament(tournament);
+    for (let i = 0; i < gameIds.length; i += SP_GAMEID_CHUNK) {
+        const chunk = gameIds.slice(i, i + SP_GAMEID_CHUNK);
+        const byGame = await playersOfGameIds(chunk);
         for (const [gameId, game] of byGame) players.set(gameId, game);
-        console.log(`  ${tournament} → ${byGame.size} games`);
+        console.log(`  gameIds ${i + 1}-${i + chunk.length} → ${byGame.size} games avec joueurs`);
         await sleep(2500);
     }
 

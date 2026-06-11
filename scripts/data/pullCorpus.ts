@@ -8,8 +8,21 @@
  * (distinct pages, patches, unresolved champion names — new releases missing
  * from the tag file show up here first).
  *
- * Run: node --experimental-strip-types --no-warnings scripts/data/pullCorpus.ts \
- *        --like "LCK/2026%" [--like "LFL/2026%"] --out static/corpus/lck-2026.json
+ * Run: node --experimental-transform-types --no-warnings scripts/data/pullCorpus.ts \
+ *        --like "LCK/2026%" [--like "LFL/2026%"] --out static/corpus/lck-2026.json \
+ *        [--fresh-days 3]
+ *      (= pnpm corpus ; transform-types est requis : la chaîne d'imports charge
+ *      l'enum Role de $lib/types, refusé par strip-only.)
+ *
+ * Intégrité Bo (chantier G, leçon Nasus — pull du 10 juin 2026) : après
+ * construction des records, `validateBoIntegrity` détecte les séquences BoN
+ * impossibles (game-after-clinch, decider-winner-mismatch, doublons, gaps,
+ * équipes), les imprime en clair et les écrit dans le manifeste
+ * (`integrity: { violations, checkedAt }`). Quarantaine fraîcheur : les
+ * records datés de moins de --fresh-days jours (défaut 3) sont comptés et
+ * signalés (`freshness: { withinDays, count }`) — les saisies wiki fraîches
+ * sont les plus exposées aux erreurs humaines. AUCUN abort automatique : le
+ * pull aboutit toujours, les violations sont des données pour l'architecte.
  *
  * Same $lib module hook as scripts/backtest/runCorpus.ts (Node >= 22.15).
  * Data: Leaguepedia (lol.fandom.com), CC BY-SA 3.0 — keep the attribution
@@ -59,21 +72,33 @@ registerHooks({
 
 type CargoModule = typeof import('../../src/lib/data/providers/leaguepediaCargo');
 type DraftRecord = import('../../src/lib/data/types').DraftRecord;
-const { MwSession, fetchDraftRecords, LEAGUEPEDIA_ATTRIBUTION } = (await import(
-    `${libRootHref}/data/providers/leaguepediaCargo.ts`
-)) as CargoModule;
+type BoIntegrityModule = typeof import('../../src/lib/data/boIntegrity');
+type BoViolation = import('../../src/lib/data/boIntegrity').BoViolation;
+const { MwSession, fetchDraftRecords, fetchDraftRecordsExport, fetchDraftRecordsSplit, LEAGUEPEDIA_ATTRIBUTION } =
+    (await import(`${libRootHref}/data/providers/leaguepediaCargo.ts`)) as CargoModule;
+const { validateBoIntegrity, countFreshRecords } = (await import(
+    `${libRootHref}/data/boIntegrity.ts`
+)) as BoIntegrityModule;
 
 // ---- argv -------------------------------------------------------------------
 
 const likes: string[] = [];
 let outPath: string | undefined;
+let freshDays = 3;
+let splitJoin = false;
+let viaExport = false;
 const argv = process.argv.slice(2);
 for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--like') likes.push(argv[++i]);
     else if (argv[i] === '--out') outPath = argv[++i];
+    else if (argv[i] === '--fresh-days') freshDays = Number(argv[++i]);
+    else if (argv[i] === '--split-join') splitJoin = true;
+    else if (argv[i] === '--export') viaExport = true;
 }
-if (likes.length === 0 || outPath === undefined) {
-    console.error('Usage: pnpm corpus -- --like "LCK/2026%" [--like ...] --out static/corpus/<name>.json');
+if (likes.length === 0 || outPath === undefined || !Number.isFinite(freshDays) || freshDays < 0) {
+    console.error(
+        'Usage: pnpm corpus -- --like "LCK/2026%" [--like ...] --out static/corpus/<name>.json [--fresh-days 3] [--split-join] [--export]'
+    );
     process.exit(1);
 }
 
@@ -91,16 +116,35 @@ const session = await MwSession.login({ username: user, password: pass });
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
+if (splitJoin) console.log('Mode split-join : SG seul puis PB par chunks IN — le join serveur throttlé est contourné.');
+if (viaExport) console.log('Mode export : Special:CargoExport — chemin de code hors bucket API.');
 const all: DraftRecord[] = [];
 for (const like of likes) {
     const safe = like.replace(/'/g, "\\'");
     let records: DraftRecord[] | undefined;
     for (let attempt = 1; attempt <= 5 && records === undefined; attempt++) {
         try {
-            records = await fetchDraftRecords(
-                { where: `SG.OverviewPage LIKE '${safe}'`, orderBy: 'SG.DateTime_UTC ASC' },
-                { transport: session.transport, pageDelayMs: 2500 }
-            );
+            const query = { where: `SG.OverviewPage LIKE '${safe}'`, orderBy: 'SG.DateTime_UTC ASC' };
+            if (viaExport) {
+                records = await fetchDraftRecordsExport(query, {
+                    transport: session.transport,
+                    pageDelayMs: 2500
+                });
+            } else if (splitJoin) {
+                const { records: split, missingDrafts } = await fetchDraftRecordsSplit(query, {
+                    transport: session.transport,
+                    pageDelayMs: 2500
+                });
+                records = split;
+                if (missingDrafts.length > 0) {
+                    console.log(
+                        `  ${like} → ${missingDrafts.length} scoreboard(s) sans table de draft (remakes/forfaits/trous amont) :`
+                    );
+                    for (const gid of missingDrafts) console.log(`      ${gid}`);
+                }
+            } else {
+                records = await fetchDraftRecords(query, { transport: session.transport, pageDelayMs: 2500 });
+            }
         } catch (error) {
             if ((error as { code?: string }).code !== 'ratelimited' || attempt === 5) throw error;
             console.log(`  ${like} → rate-limited (tentative ${attempt}/5), pause 75 s…`);
@@ -148,6 +192,31 @@ if (unresolved.size > 0) {
     console.log('Champions : 100 % résolus vers les clés Data Dragon.');
 }
 
+// ---- intégrité Bo + quarantaine fraîcheur (chantier G, leçon Nasus) ----------
+// AUCUN abort : le pull aboutit toujours ; les violations sont des données
+// pour l'architecte (manifeste + sortie console).
+
+const generatedAt = new Date().toISOString();
+const violations = validateBoIntegrity(corpus);
+if (violations.length === 0) {
+    console.log('\nIntégrité Bo : aucune violation détectée.');
+} else {
+    console.log(`\nINTÉGRITÉ Bo : ${violations.length} violation(s) détectée(s) — le pull aboutit, à auditer :`);
+    for (const violation of violations) {
+        console.log(`  [${violation.kind}] série ${violation.matchId} · game ${violation.gameId}`);
+        console.log(`      ${violation.detailFr}`);
+    }
+}
+const freshCount = countFreshRecords(corpus, freshDays, Date.parse(generatedAt));
+if (freshCount > 0) {
+    console.warn(
+        `quarantaine fraîcheur : ${freshCount} records saisis il y a moins de ${freshDays} jours ` +
+            `— re-pull recommandé avant tout run de gate`
+    );
+} else {
+    console.log(`Fraîcheur : aucun record daté de moins de ${freshDays} jours.`);
+}
+
 // ---- write ------------------------------------------------------------------
 
 const absOut = resolve(repoRoot, outPath);
@@ -165,6 +234,10 @@ interface ManifestEntry {
     from: string | null;
     to: string | null;
     pulledAt: string | null;
+    /** Chantier G : violations Bo relevées au pull (checkedAt = generatedAt du pull). */
+    integrity?: { violations: BoViolation[]; checkedAt: string };
+    /** Chantier G : quarantaine fraîcheur — records datés de moins de withinDays jours. */
+    freshness?: { withinDays: number; count: number };
 }
 let manifest: { attribution: string; files: ManifestEntry[] } = {
     attribution: LEAGUEPEDIA_ATTRIBUTION,
@@ -183,7 +256,9 @@ const entry: ManifestEntry = {
     records: corpus.length,
     from: dates[0]?.slice(0, 10) ?? null,
     to: dates[dates.length - 1]?.slice(0, 10) ?? null,
-    pulledAt: corpus[0]?.provenance.fetchedAt ?? null
+    pulledAt: corpus[0]?.provenance.fetchedAt ?? null,
+    integrity: { violations, checkedAt: generatedAt },
+    freshness: { withinDays: freshDays, count: freshCount }
 };
 manifest.files = [...manifest.files.filter((f) => f.file !== fileName), entry].sort((a, b) =>
     a.file.localeCompare(b.file)

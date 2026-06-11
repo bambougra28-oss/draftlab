@@ -1,0 +1,712 @@
+/**
+ * Chantier D (run #2) — Couverture des plans à branches : TOUTE la logique
+ * pure de la règle pré-enregistrée de `docs/run2/D-plans-branches.md` §1.
+ * Le script `scripts/backtest/planCoverage.ts` (en-tête = règle gelée) ne
+ * fait que l'I/O : lecture des corpus, injection du rng/horloge, mise en
+ * forme du rapport — aucune logique de scoring ni de cache hors d'ici
+ * (patron runCorpus).
+ *
+ * Vocabulaire de la règle :
+ *  - unité u = (game g, côté s), s = « l'adversaire qu'on prépare » ;
+ *  - Train(g) = records du même corpus de patch STRICTEMENT antérieur ;
+ *  - now(g) = jour UTC de g.date, sinon jour UTC de la date max de Train(g),
+ *    sinon unité écartée et comptée (jamais devinée) ;
+ *  - bras A (modèle ÉQUIPE) : buildTendencyTable(Train, Train, {α:5, λ:0.9,
+ *    now: now(g), team}) — mémoïsé par (corpus, patch, équipe, now(g)) ;
+ *  - bras B (baseline LIGUE) : buildTendencyTable([], Train, …) — mémoïsé par
+ *    (corpus, patch), licite car le prior ligue n'est PAS décoté (aucun λ sur
+ *    le prior, documenté dans aggregates/tendency.ts) ;
+ *  - baseline secondaire descriptive : présence brute pick+ban slot- et
+ *    side-agnostique, filtrée par E_i AVANT troncature, jamais renormalisée.
+ *
+ * Tout est pur : rng injecté (mulberry32 côté script), aucune horloge système,
+ * aucune I/O. Le bootstrap apparié-clusterisé délègue au module partagé
+ * `$lib/backtest/clusterBootstrap` (les 2 unités d'une game voyagent ensemble).
+ */
+import { predict, slotGroupOf, buildTendencyTable, type SlotGroup, type TendencyTable } from '$lib/aggregates/tendency';
+import {
+    clusterBootstrapDeltaCI,
+    type ClusterBootstrapDelta,
+    type PairedObservation
+} from '$lib/backtest/clusterBootstrap';
+import { wilson95, type Interval } from '$lib/backtest/metrics';
+import { comparePatches, parsePatch } from '$lib/backtest/walkforward';
+import type { DraftAction, DraftRecord, DraftSide } from '$lib/data/types';
+
+/** Paramètres GELÉS de la règle §1 — aucun réglage après lecture. */
+export const PLAN_COVERAGE_FROZEN = {
+    /** Prior Dirichlet α (défaut shippé de aggregates/tendency.ts). */
+    alpha: 5,
+    /** Décote hebdomadaire λ (défaut shippé). */
+    lambdaPerWeek: 0.9,
+    /** Grille publiée : K ∈ {1,2,4,6,8} × P ∈ {1…10}. */
+    ks: [1, 2, 4, 6, 8] as readonly number[],
+    ps: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as readonly number[],
+    /** Point d'usage produit (gelé AVANT le run). */
+    kUsage: 4,
+    /** Plafond P de la profondeur tenue (phase 1 adverse complète). */
+    pCap: 6,
+    /** Resamples bootstrap. */
+    iterations: 1000
+} as const;
+
+// ---- temps -------------------------------------------------------------------
+
+/** Jour UTC (YYYY-MM-DD) d'une date ISO ; undefined si absente/illisible. */
+export function dayUtcOf(date: string | undefined): string | undefined {
+    if (date === undefined) return undefined;
+    const ms = Date.parse(date);
+    if (Number.isNaN(ms)) return undefined;
+    return new Date(ms).toISOString().slice(0, 10);
+}
+
+/**
+ * now(g) au jour UTC : g.date si défini/lisible, sinon le jour de la date max
+ * de Train(g) ; undefined si aucun record du train n'est daté (l'appelant
+ * écarte ET compte l'unité — règle §1.3, 0 cas sur les corpus actuels).
+ */
+export function nowDayOf(record: { date?: string }, train: { date?: string }[]): string | undefined {
+    const own = dayUtcOf(record.date);
+    if (own !== undefined) return own;
+    let maxMs: number | undefined;
+    for (const r of train) {
+        if (r.date === undefined) continue;
+        const ms = Date.parse(r.date);
+        if (Number.isNaN(ms)) continue;
+        if (maxMs === undefined || ms > maxMs) maxMs = ms;
+    }
+    return maxMs === undefined ? undefined : new Date(maxMs).toISOString().slice(0, 10);
+}
+
+// ---- cache de tables (clés gelées §1.3) ---------------------------------------
+
+export interface TableCacheStats {
+    /** Tables équipe réellement construites (entrées distinctes). */
+    teamTables: number;
+    /** Demandes de table équipe (réutilisations = requests − tables). */
+    teamRequests: number;
+    leagueTables: number;
+    leagueRequests: number;
+}
+
+export interface TableCache {
+    /** Bras A — clé (patch, équipe, jour UTC de now(g)) ; corpus = ce cache. */
+    teamTable(patch: string, team: string, nowDay: string): TendencyTable;
+    /** Bras B — clé (patch) : le prior ligue n'est pas décoté, donc indépendant de now(g). */
+    leagueTable(patch: string): TendencyTable;
+    /** Train(g) du corpus pour un patch (patchs strictement antérieurs). */
+    trainFor(patch: string): DraftRecord[];
+    stats(): TableCacheStats;
+}
+
+/**
+ * Le `now` passé à la table BASELINE est une constante : aucun record d'équipe
+ * n'y entre ([], donc λ jamais appliqué) et le prior ligue est délibérément
+ * non décoté — la table est indépendante de now(g), d'où la clé (corpus, patch).
+ */
+const BASELINE_NOW = '1970-01-01T00:00:00.000Z';
+
+/** Séparateur de clé inattaquable par un nom d'équipe (qui peut contenir '|'). */
+const KEY_SEP = '\u0000';
+
+/**
+ * Caches du harnais, GELÉS (§1.3) : une instance par corpus (la dimension
+ * « corpus » des clés est portée par l'instance). La table équipe dépend de
+ * now(g) via λ — jamais de réutilisation entre jours.
+ */
+export function makeTableCache(
+    records: DraftRecord[],
+    options?: { alpha?: number; lambdaPerWeek?: number }
+): TableCache {
+    const alpha = options?.alpha ?? PLAN_COVERAGE_FROZEN.alpha;
+    const lambdaPerWeek = options?.lambdaPerWeek ?? PLAN_COVERAGE_FROZEN.lambdaPerWeek;
+    const trains = new Map<string, DraftRecord[]>();
+    const teamTables = new Map<string, TendencyTable>();
+    const leagueTables = new Map<string, TendencyTable>();
+    let teamRequests = 0;
+    let leagueRequests = 0;
+
+    const trainFor = (patch: string): DraftRecord[] => {
+        let train = trains.get(patch);
+        if (train === undefined) {
+            train = records.filter(
+                (r) => r.patch !== undefined && parsePatch(r.patch) !== undefined && comparePatches(r.patch, patch) < 0
+            );
+            trains.set(patch, train);
+        }
+        return train;
+    };
+
+    return {
+        trainFor,
+        teamTable(patch, team, nowDay) {
+            teamRequests += 1;
+            const key = `${patch}${KEY_SEP}${team}${KEY_SEP}${nowDay}`;
+            let table = teamTables.get(key);
+            if (table === undefined) {
+                const train = trainFor(patch);
+                table = buildTendencyTable(train, train, {
+                    alpha,
+                    lambdaPerWeek,
+                    now: `${nowDay}T00:00:00.000Z`,
+                    team
+                });
+                teamTables.set(key, table);
+            }
+            return table;
+        },
+        leagueTable(patch) {
+            leagueRequests += 1;
+            let table = leagueTables.get(patch);
+            if (table === undefined) {
+                table = buildTendencyTable([], trainFor(patch), { alpha, lambdaPerWeek, now: BASELINE_NOW });
+                leagueTables.set(patch, table);
+            }
+            return table;
+        },
+        stats() {
+            return {
+                teamTables: teamTables.size,
+                teamRequests,
+                leagueTables: leagueTables.size,
+                leagueRequests
+            };
+        }
+    };
+}
+
+// ---- scoring d'une unité (§1.4) -----------------------------------------------
+
+/** Actions du côté s (l'adversaire préparé), triées par seq — a₁…a_m. */
+export function enemyActionsOf(record: DraftRecord, side: DraftSide): DraftAction[] {
+    return record.actions.filter((a) => a.side === side).sort((a, b) => a.seq - b.seq);
+}
+
+/**
+ * Rang 1-based du champion réel dans pred_i pour chaque action de l'unité ;
+ * undefined = absent des prédictions ou pred_i vide ou hors template (miss
+ * honnête). E_i = champions des actions de g (les DEUX côtés) de seq < seq(aᵢ)
+ * — exactement l'information publique au moment réel de l'action.
+ */
+export function unitRanks(record: DraftRecord, side: DraftSide, table: TendencyTable): (number | undefined)[] {
+    const mine = enemyActionsOf(record, side);
+    const all = [...record.actions].sort((a, b) => a.seq - b.seq);
+    return mine.map((action) => {
+        const slotGroup = slotGroupOf(action);
+        if (slotGroup === undefined) return undefined;
+        const exclude = new Set<string>();
+        for (const other of all) {
+            if (other.seq >= action.seq) break;
+            if (other.championKey !== '') exclude.add(other.championKey);
+        }
+        const preds = predict(table, { slotGroup, side, exclude });
+        const index = preds.findIndex((p) => p.championKey === action.championKey);
+        return index === -1 ? undefined : index + 1;
+    });
+}
+
+/** hit_i(K) par action (signature gelée du doc) : rang défini et ≤ K. */
+export function unitHits(record: DraftRecord, side: DraftSide, table: TendencyTable, k: number): boolean[] {
+    return hitsAt(unitRanks(record, side, table), k);
+}
+
+/** Convertit des rangs en hits à K. */
+export function hitsAt(ranks: (number | undefined)[], k: number): boolean[] {
+    return ranks.map((rank) => rank !== undefined && rank <= k);
+}
+
+/**
+ * Profondeur tenue D_u(K) = max{d ≤ cap : ∧_{i≤d} hit_i} (0 si hit₁ faux).
+ * L'appelant garantit m ≥ cap pour le critère primaire (m < cap est exclu
+ * et compté, pas tronqué silencieusement).
+ */
+export function heldDepth(hits: boolean[], cap: number): number {
+    const limit = Math.min(cap, hits.length);
+    let depth = 0;
+    for (let i = 0; i < limit; i++) {
+        if (!hits[i]) break;
+        depth += 1;
+    }
+    return depth;
+}
+
+// ---- grille de survie (§1.5) ---------------------------------------------------
+
+export interface SurviveCell {
+    k: number;
+    p: number;
+    /** Unités avec m ≥ P (les seules où survive(K,P) est définie). */
+    n: number;
+    survivors: number;
+    /** survivors / n ; NaN si n = 0. */
+    rate: number;
+    wilson: Interval;
+}
+
+export interface RankedUnit {
+    ranks: (number | undefined)[];
+}
+
+/** Taux de survive(K, P) = ∧_{i≤P} hit_i(K), pour chaque (K, P) de la grille. */
+export function surviveGrid(units: RankedUnit[], ks: readonly number[], ps: readonly number[]): SurviveCell[] {
+    const cells: SurviveCell[] = [];
+    for (const k of ks) {
+        for (const p of ps) {
+            let n = 0;
+            let survivors = 0;
+            for (const unit of units) {
+                if (unit.ranks.length < p) continue;
+                n += 1;
+                let survives = true;
+                for (let i = 0; i < p; i++) {
+                    const rank = unit.ranks[i];
+                    if (rank === undefined || rank > k) {
+                        survives = false;
+                        break;
+                    }
+                }
+                if (survives) survivors += 1;
+            }
+            cells.push({ k, p, n, survivors, rate: n === 0 ? NaN : survivors / n, wilson: wilson95(survivors, n) });
+        }
+    }
+    return cells;
+}
+
+/** Moyenne de D(K) plafonnée à cap sur une liste d'unités (NaN si vide). */
+export function meanHeldDepthAt(units: RankedUnit[], k: number, cap: number): number {
+    if (units.length === 0) return NaN;
+    let sum = 0;
+    for (const unit of units) sum += heldDepth(hitsAt(unit.ranks, k), cap);
+    return sum / units.length;
+}
+
+// ---- bootstrap apparié + clusterisé par game (§1.6) ----------------------------
+
+export interface ClusterPairedOptions {
+    /** Resamples (défaut 1000 — gelé). */
+    iterations?: number;
+    /** Source uniforme [0,1) injectée — mulberry32(seed) côté script. */
+    rng: () => number;
+}
+
+/**
+ * IC bootstrap 95 % de mean(metric(A)) − mean(metric(B)), apparié par unité
+ * (même index = même unité) et CLUSTERISÉ par game : les 2 unités d'une game
+ * voyagent ensemble dans chaque resample (anti pseudo-réplication, risque 6).
+ * Délègue au module partagé clusterBootstrapDeltaCI.
+ */
+export function clusterPairedBootstrap<U>(
+    unitsA: U[],
+    unitsB: U[],
+    byGame: (unit: U, index: number) => string,
+    metric: (unit: U) => number,
+    options: ClusterPairedOptions
+): ClusterBootstrapDelta {
+    if (unitsA.length !== unitsB.length) {
+        throw new Error('clusterPairedBootstrap : échantillons non appariés (longueurs différentes)');
+    }
+    const observations: PairedObservation[] = unitsA.map((unit, index) => ({
+        cluster: byGame(unit, index),
+        model: metric(unit),
+        baseline: metric(unitsB[index])
+    }));
+    return clusterBootstrapDeltaCI(observations, options);
+}
+
+// ---- baseline secondaire : présence brute (§1.3, descriptive) ------------------
+
+export interface PresenceEntry {
+    championKey: string;
+    /** Comptes d'ACTIONS (chaque pick et chaque ban résolu compte 1). */
+    count: number;
+}
+
+/**
+ * Classement par présence brute pick+ban de Train(g) : comptes d'actions,
+ * slot-agnostique et side-agnostique. Ex æquo : compte desc puis clé asc —
+ * déterministe. AUCUNE renormalisation (des comptes, jamais des probabilités).
+ */
+export function presenceRanking(train: DraftRecord[]): PresenceEntry[] {
+    const counts = new Map<string, number>();
+    for (const record of train) {
+        for (const action of record.actions) {
+            if (action.championKey === '') continue;
+            counts.set(action.championKey, (counts.get(action.championKey) ?? 0) + 1);
+        }
+    }
+    return [...counts.entries()]
+        .map(([championKey, count]) => ({ championKey, count }))
+        .sort((a, b) => b.count - a.count || (a.championKey < b.championKey ? -1 : 1));
+}
+
+/**
+ * Rangs de l'unité dans la liste de présence : E_i appliqué par FILTRAGE de la
+ * liste classée AVANT la troncature au K (le rang est la position dans la
+ * liste filtrée).
+ */
+export function presenceRanks(
+    record: DraftRecord,
+    side: DraftSide,
+    ranking: PresenceEntry[]
+): (number | undefined)[] {
+    const mine = enemyActionsOf(record, side);
+    const all = [...record.actions].sort((a, b) => a.seq - b.seq);
+    return mine.map((action) => {
+        const exclude = new Set<string>();
+        for (const other of all) {
+            if (other.seq >= action.seq) break;
+            if (other.championKey !== '') exclude.add(other.championKey);
+        }
+        let rank = 0;
+        for (const entry of ranking) {
+            if (exclude.has(entry.championKey)) continue;
+            rank += 1;
+            if (entry.championKey === action.championKey) return rank;
+        }
+        return undefined;
+    });
+}
+
+// ---- éligibilité et scoring d'un corpus (§1.2) ---------------------------------
+
+export interface ScoredUnit {
+    corpus: string;
+    gameId: string;
+    side: DraftSide;
+    /** Équipe adverse modélisée (chaîne telle quelle — pas de fuzzy matching). */
+    team: string;
+    /** Nombre d'actions adverses m (≤ 10 ; bans sautés absents par construction). */
+    m: number;
+    slotGroups: (SlotGroup | undefined)[];
+    /** Bras A — modèle équipe. */
+    ranksModel: (number | undefined)[];
+    /** Bras B — baseline ligue (prior conditionnel slotGroup×side). */
+    ranksBaseline: (number | undefined)[];
+    /** Baseline secondaire descriptive — présence brute. */
+    ranksPresence: (number | undefined)[];
+    /** Games de Train(g) où l'équipe apparaît (tranche descriptive §1.5). */
+    teamGamesInTrain: number;
+}
+
+export interface CorpusNotes {
+    records: number;
+    /** Games entrées au scoring (éligibles §1.2). */
+    gamesScored: number;
+    /** Patch absent ou non parsable. */
+    discardedNoPatch: number;
+    /** Au moins une action non résolue (championKey ''). */
+    discardedUnresolved: number;
+    /** Aucun patch strictement antérieur dans le corpus (premier patch). */
+    discardedFirstPatch: number;
+    /** Unités écartées : aucun record daté dans Train(g) et game non datée. */
+    unitsDiscardedNoDatedTrain: number;
+    /** Unités m < 6 : exclues du critère primaire, comptées ici. */
+    unitsMLt6: number;
+    units: number;
+}
+
+export interface ScoredCorpus {
+    label: string;
+    notes: CorpusNotes;
+    units: ScoredUnit[];
+    cacheStats: TableCacheStats;
+}
+
+const SIDES: readonly DraftSide[] = ['blue', 'red'];
+
+/**
+ * Pipeline complet d'un corpus : éligibilité (comptée, jamais devinée),
+ * tables aux clés gelées, rangs des trois bras par unité. Pur : pas d'I/O.
+ */
+export function scoreCorpus(
+    label: string,
+    records: DraftRecord[],
+    options?: { cache?: TableCache; pCap?: number }
+): ScoredCorpus {
+    const cache = options?.cache ?? makeTableCache(records);
+    const pCap = options?.pCap ?? PLAN_COVERAGE_FROZEN.pCap;
+    const notes: CorpusNotes = {
+        records: records.length,
+        gamesScored: 0,
+        discardedNoPatch: 0,
+        discardedUnresolved: 0,
+        discardedFirstPatch: 0,
+        unitsDiscardedNoDatedTrain: 0,
+        unitsMLt6: 0,
+        units: 0
+    };
+    const units: ScoredUnit[] = [];
+    const presenceByPatch = new Map<string, PresenceEntry[]>();
+    const teamGamesByKey = new Map<string, number>();
+
+    for (const record of records) {
+        const patch = record.patch;
+        if (patch === undefined || parsePatch(patch) === undefined) {
+            notes.discardedNoPatch += 1;
+            continue;
+        }
+        if (record.actions.some((a) => a.championKey === '')) {
+            notes.discardedUnresolved += 1;
+            continue;
+        }
+        const train = cache.trainFor(patch);
+        if (train.length === 0) {
+            notes.discardedFirstPatch += 1;
+            continue;
+        }
+        notes.gamesScored += 1;
+
+        const nowDay = nowDayOf(record, train);
+        let presence = presenceByPatch.get(patch);
+        if (presence === undefined) {
+            presence = presenceRanking(train);
+            presenceByPatch.set(patch, presence);
+        }
+
+        for (const side of SIDES) {
+            if (nowDay === undefined) {
+                notes.unitsDiscardedNoDatedTrain += 1;
+                continue;
+            }
+            const team = side === 'blue' ? record.blueTeam : record.redTeam;
+            const tableModel = cache.teamTable(patch, team, nowDay);
+            const tableBaseline = cache.leagueTable(patch);
+            const mine = enemyActionsOf(record, side);
+            const teamKey = `${patch}${KEY_SEP}${team}`;
+            let teamGames = teamGamesByKey.get(teamKey);
+            if (teamGames === undefined) {
+                teamGames = train.filter((r) => r.blueTeam === team || r.redTeam === team).length;
+                teamGamesByKey.set(teamKey, teamGames);
+            }
+            const unit: ScoredUnit = {
+                corpus: label,
+                gameId: record.gameId,
+                side,
+                team,
+                m: mine.length,
+                slotGroups: mine.map((a) => slotGroupOf(a)),
+                ranksModel: unitRanks(record, side, tableModel),
+                ranksBaseline: unitRanks(record, side, tableBaseline),
+                ranksPresence: presenceRanks(record, side, presence),
+                teamGamesInTrain: teamGames
+            };
+            if (unit.m < pCap) notes.unitsMLt6 += 1;
+            units.push(unit);
+            notes.units += 1;
+        }
+    }
+
+    return { label, notes, units, cacheStats: cache.stats() };
+}
+
+// ---- agrégation publiée (§1.5) + verdict (§1.6) --------------------------------
+
+/** Ordre de publication des slotGroups (§1.5). */
+export const SLOT_GROUP_ORDER: readonly SlotGroup[] = [
+    'B1-B3',
+    'B4-B5',
+    'P1',
+    'P2-3',
+    'P4-5',
+    'P6',
+    'P7',
+    'P8-9',
+    'P10'
+];
+
+export interface SlotGroupRate {
+    slotGroup: SlotGroup;
+    n: number;
+    hitsModel: number;
+    rateModel: number;
+    wilsonModel: Interval;
+    hitsBaseline: number;
+    rateBaseline: number;
+    wilsonBaseline: Interval;
+}
+
+export interface DepthSlice {
+    label: string;
+    n: number;
+    meanDepthModel: number;
+    meanDepthBaseline: number;
+}
+
+export interface CorpusSummary {
+    label: string;
+    notes: CorpusNotes;
+    cacheStats: TableCacheStats;
+    /** Colonne K = kUsage, P = 1…10 — bras A puis bras B. */
+    columnModel: SurviveCell[];
+    columnBaseline: SurviveCell[];
+    /** Unités m ≥ pCap (pool du primaire) de ce corpus. */
+    unitsPrimary: number;
+    meanDepthModel: number;
+    meanDepthBaseline: number;
+}
+
+export interface PlanCoverageGateOptions {
+    rng: () => number;
+    iterations?: number;
+    ks?: readonly number[];
+    ps?: readonly number[];
+    kUsage?: number;
+    pCap?: number;
+}
+
+export interface PlanCoverageData {
+    kUsage: number;
+    pCap: number;
+    iterations: number;
+    pool: {
+        units: number;
+        unitsPrimary: number;
+        gridModel: SurviveCell[];
+        gridBaseline: SurviveCell[];
+        /** Identité structurelle (pool m ≥ pCap, K = kUsage) : moyenne(D) = Σ survive. */
+        identityModel: { meanHeldDepth: number; surviveSum: number };
+        identityBaseline: { meanHeldDepth: number; surviveSum: number };
+        meanDepthModel: number;
+        meanDepthBaseline: number;
+        meanDepthPresence: number;
+        /** Plancher descriptif : colonne K = kUsage de la présence brute. */
+        presenceColumn: SurviveCell[];
+        slotGroupRates: SlotGroupRate[];
+        slices: DepthSlice[];
+        /** Critère PRIMAIRE : Δ profondeur tenue, IC clusterisé par game. */
+        primary: ClusterBootstrapDelta;
+        /** VERT ssi lo(IC) > 0 — rien d'autre ne rend la gate verte. */
+        verdictVert: boolean;
+    };
+    perCorpus: CorpusSummary[];
+}
+
+/** Vue par bras d'une unité primaire — l'objet apparié du bootstrap. */
+interface ArmView {
+    cluster: string;
+    ranks: (number | undefined)[];
+}
+
+/** Agrège les corpus scorés en données publiables — tous les nombres du rapport. */
+export function buildPlanCoverageData(corpora: ScoredCorpus[], options: PlanCoverageGateOptions): PlanCoverageData {
+    const ks = options.ks ?? PLAN_COVERAGE_FROZEN.ks;
+    const ps = options.ps ?? PLAN_COVERAGE_FROZEN.ps;
+    const kUsage = options.kUsage ?? PLAN_COVERAGE_FROZEN.kUsage;
+    const pCap = options.pCap ?? PLAN_COVERAGE_FROZEN.pCap;
+    const iterations = options.iterations ?? PLAN_COVERAGE_FROZEN.iterations;
+
+    const all = corpora.flatMap((c) => c.units);
+    const primary = all.filter((u) => u.m >= pCap);
+
+    const modelView = (u: ScoredUnit): RankedUnit => ({ ranks: u.ranksModel });
+    const baselineView = (u: ScoredUnit): RankedUnit => ({ ranks: u.ranksBaseline });
+    const presenceView = (u: ScoredUnit): RankedUnit => ({ ranks: u.ranksPresence });
+
+    const psCap = ps.filter((p) => p <= pCap);
+    const identityOf = (view: (u: ScoredUnit) => RankedUnit): { meanHeldDepth: number; surviveSum: number } => {
+        const views = primary.map(view);
+        const cells = surviveGrid(views, [kUsage], psCap);
+        return {
+            meanHeldDepth: meanHeldDepthAt(views, kUsage, pCap),
+            surviveSum: cells.reduce((sum, cell) => sum + (Number.isNaN(cell.rate) ? 0 : cell.rate), 0)
+        };
+    };
+
+    // Taux par action (descriptif) à K = kUsage, par slotGroup.
+    const slotGroupRates: SlotGroupRate[] = SLOT_GROUP_ORDER.map((slotGroup) => {
+        let n = 0;
+        let hitsModel = 0;
+        let hitsBaseline = 0;
+        for (const unit of all) {
+            for (let i = 0; i < unit.m; i++) {
+                if (unit.slotGroups[i] !== slotGroup) continue;
+                n += 1;
+                const rm = unit.ranksModel[i];
+                const rb = unit.ranksBaseline[i];
+                if (rm !== undefined && rm <= kUsage) hitsModel += 1;
+                if (rb !== undefined && rb <= kUsage) hitsBaseline += 1;
+            }
+        }
+        return {
+            slotGroup,
+            n,
+            hitsModel,
+            rateModel: n === 0 ? NaN : hitsModel / n,
+            wilsonModel: wilson95(hitsModel, n),
+            hitsBaseline,
+            rateBaseline: n === 0 ? NaN : hitsBaseline / n,
+            wilsonBaseline: wilson95(hitsBaseline, n)
+        };
+    });
+
+    // Tranches descriptives (jamais promues en verdict) : évidence d'équipe.
+    const sliceOf = (label: string, slice: ScoredUnit[]): DepthSlice => ({
+        label,
+        n: slice.length,
+        meanDepthModel: meanHeldDepthAt(slice.map(modelView), kUsage, pCap),
+        meanDepthBaseline: meanHeldDepthAt(slice.map(baselineView), kUsage, pCap)
+    });
+    const slices: DepthSlice[] = [
+        sliceOf(
+            'équipe ≥ 10 games au train',
+            primary.filter((u) => u.teamGamesInTrain >= 10)
+        ),
+        sliceOf(
+            'équipe < 10 games au train',
+            primary.filter((u) => u.teamGamesInTrain < 10)
+        )
+    ];
+
+    // PRIMAIRE : Δ profondeur tenue à K = kUsage (plafond pCap), apparié par
+    // unité, clusterisé par game (cluster = corpus + gameId).
+    const viewsA: ArmView[] = primary.map((u) => ({ cluster: `${u.corpus}${KEY_SEP}${u.gameId}`, ranks: u.ranksModel }));
+    const viewsB: ArmView[] = primary.map((u) => ({
+        cluster: `${u.corpus}${KEY_SEP}${u.gameId}`,
+        ranks: u.ranksBaseline
+    }));
+    const primaryDelta = clusterPairedBootstrap(
+        viewsA,
+        viewsB,
+        (view) => view.cluster,
+        (view) => heldDepth(hitsAt(view.ranks, kUsage), pCap),
+        { rng: options.rng, iterations }
+    );
+
+    const perCorpus: CorpusSummary[] = corpora.map((corpus) => {
+        const corpusPrimary = corpus.units.filter((u) => u.m >= pCap);
+        return {
+            label: corpus.label,
+            notes: corpus.notes,
+            cacheStats: corpus.cacheStats,
+            columnModel: surviveGrid(corpus.units.map(modelView), [kUsage], ps),
+            columnBaseline: surviveGrid(corpus.units.map(baselineView), [kUsage], ps),
+            unitsPrimary: corpusPrimary.length,
+            meanDepthModel: meanHeldDepthAt(corpusPrimary.map(modelView), kUsage, pCap),
+            meanDepthBaseline: meanHeldDepthAt(corpusPrimary.map(baselineView), kUsage, pCap)
+        };
+    });
+
+    return {
+        kUsage,
+        pCap,
+        iterations,
+        pool: {
+            units: all.length,
+            unitsPrimary: primary.length,
+            gridModel: surviveGrid(all.map(modelView), ks, ps),
+            gridBaseline: surviveGrid(all.map(baselineView), ks, ps),
+            identityModel: identityOf(modelView),
+            identityBaseline: identityOf(baselineView),
+            meanDepthModel: meanHeldDepthAt(primary.map(modelView), kUsage, pCap),
+            meanDepthBaseline: meanHeldDepthAt(primary.map(baselineView), kUsage, pCap),
+            meanDepthPresence: meanHeldDepthAt(primary.map(presenceView), kUsage, pCap),
+            presenceColumn: surviveGrid(all.map(presenceView), [kUsage], ps),
+            slotGroupRates,
+            slices,
+            primary: primaryDelta,
+            verdictVert: primaryDelta.ci95.lo > 0
+        },
+        perCorpus
+    };
+}

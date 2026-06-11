@@ -4,13 +4,13 @@
 
 | Métrique | Valeur | Baseline | Δ (IC 95 %) | Verdict |
 |---|---:|---:|---:|---|
-| log loss — issue de partie (side-only vs p=0,5) | 0.6968 | 0.6931 | +0.0037 [-0.002, +0.0097] | à égalité (non significatif) |
-| Brier — issue de partie (side-only vs p=0,5) | 0.2518 | 0.25 | +0.0018 [-0.001, +0.0049] | à égalité (non significatif) |
-| accuracy — issue de partie (side-only vs p=0,5) | 0.4825 | 0.5 | -0.0175 [-0.0804, +0.0455] | à égalité (non significatif) |
-| pick-in-range@8 — tendances (vs fréquence brute) | 0.3182 | 0.2706 | +0.0476 [+0.0255, +0.0671] | bat la baseline |
+| log loss — issue de partie (side-only vs p=0,5) | 0.6841 | 0.6931 | -0.0091 [-0.0205, +0.003] | à égalité (non significatif) |
+| Brier — issue de partie (side-only vs p=0,5) | 0.2455 | 0.25 | -0.0045 [-0.0101, +0.0012] | à égalité (non significatif) |
+| accuracy — issue de partie (side-only vs p=0,5) | 0.5839 | 0.5 | +0.0839 [+0.028, +0.1399] | bat la baseline |
+| pick-in-range@8 — tendances (vs fréquence brute) | 0.314 | 0.2682 | +0.0458 [+0.0262, +0.0647] | bat la baseline |
 | ban-hit@5 — bans du train (vs présence) | 2.6119 | 2.6014 | +0.0105 [-0.0629, +0.0734] | à égalité (non significatif) |
-| ban-hit@5 par side — banEV complet (vs présence) | 0.9388 | 1.3007 | -0.3619 [-0.4354, -0.2885] | sous la baseline |
-| ban-hit@2 phase 2 — contre-compo (vs présence) | 0.042 | 0.0157 | +0.0262 [+0.0052, +0.0472] | bat la baseline |
+| ban-hit@5 par side — banEV complet (vs présence) | 0.8811 | 1.3007 | -0.4196 [-0.5035, -0.3391] | sous la baseline |
+| ban-hit@2 phase 2 — contre-compo (vs présence) | 0.042 | 0.0157 | +0.0262 [+0.007, +0.0455] | bat la baseline |
 
 ## Notes
 

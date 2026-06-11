@@ -149,8 +149,10 @@
                 <dd class="text-slate-400">
                     Tendances conditionnelles par rotation et par side (« 4 des 6 dernières » — des comptes,
                     jamais des logits), ranges par slot (B1-B3 / P1 / P2-3) avec composantes dépliables —
-                    blanc = choix proches —, et pages de bans : EV = sortie attendue × (dégât + valeur
-                    structurelle), composantes affichées séparément.
+                    blanc = choix proches —, et pages de bans phase 1 : top présence + composantes séparées
+                    (sortie attendue, dégât si pris, atteinte structurelle). La piste EV agrégée du régime
+                    répertoire a été retirée (gate du 2026-06-11 : sous la baseline en LPL) ; les bans de
+                    phase 2 (contrer la compo révélée) sont un régime distinct, validé, affiché par le coach.
                 </dd>
             </div>
             <div>
@@ -190,11 +192,56 @@
                 </dd>
             </div>
             <div>
-                <dt class="font-semibold text-slate-200">Badges « Expérimental » / « Non calibré »</dt>
-                <dd class="text-slate-400">
-                    Tout affichage d'un moteur non calibré porte ce badge : poids des ranges, EV de bans,
-                    axes de victoire, solveur de série et oracle de revue sont des défauts de comportement en
-                    attente de calibration — des aides à la décision, pas des oracles.
+                <dt class="font-semibold text-slate-200">
+                    Badges « Expérimental » / « Non calibré » / « Calibré sur N games »
+                </dt>
+                <dd class="space-y-1.5 text-slate-400">
+                    <p>
+                        Tout affichage d'un moteur non calibré porte le badge « Non calibré » : poids des
+                        ranges, composantes de bans, axes de victoire, solveur de série et oracle de revue
+                        sont des défauts de comportement en attente de calibration — des aides à la décision,
+                        pas des oracles.
+                    </p>
+                    <p>
+                        <span class="font-semibold text-amber-400">Coach — explorateur de lignes</span> : la
+                        gate « conseil suivi » a été jouée (2026-06-11) et est rouge — le classement ne se
+                        distingue pas encore du suivi de méta (TD 51,6 %, IC [49,5 ; 53,7]). Le coach est un
+                        explorateur de lignes chiffré, pas une recommandation validée ; levier identifié :
+                        pools joueurs réels (run #3).
+                    </p>
+                    <p>
+                        <span class="font-semibold text-emerald-400">« Couverture adverse mesurée »</span>
+                        (script de prep) : gate verte du 2026-06-11 — à K = 4 branches, profondeur moyenne
+                        tenue (plafond 6) : 0,725 vs 0,588 pour un arbre ligue (Δ +0,137,
+                        IC [0,111 ; 0,162]). Mesure sous entrelacement supposé blue-first — biais partagé par
+                        les deux bras, noté dans le rapport ; sortir du script n'est pas un échec de prep.
+                    </p>
+                    <p>
+                        <span class="font-semibold text-amber-400">« Tes pockets » (lecture seule)</span> :
+                        la gate F1 (premium du pocket) est rouge — aucun premium démontré, le panneau reste
+                        une aide de lecture corrélationnelle. La gate F2 est verte : un pick surprise
+                        contamine la lecture des rôles voisins (Δ_contamination −82,5 pp,
+                        IC [−87,7 ; −77,7]) — l'alerte pick-préparé cite cette mesure en provenance.
+                    </p>
+                    <p>
+                        <span class="font-semibold text-emerald-400">« Calibré sur N games »</span> (barre de
+                        win % et % du coach, sans contexte équipe actif) signifie exactement ceci : quand
+                        l'outil affiche X %, la fréquence observée sur corpus pro walk-forward tombe dans le
+                        bac correspondant — il ne prédit toujours pas le vainqueur. La carte de calibration
+                        (méthode de Platt, un couple (a, b) par position de draft, mesurée sur N games de
+                        7 corpus pros) redresse le % brut sans changer l'ordre des candidats ; elle ne
+                        s'applique que si sa position a passé son verdict chiffré, sinon le % brut reste
+                        affiché avec « Non calibré ».
+                    </p>
+                    <p>
+                        Deux approximations d'application, déclarées avec la mesure : (a) la calibration est
+                        mesurée à trois ancres — 0, 3 et 10 picks verrouillés — et une position intermédiaire
+                        reçoit la carte de l'ancre que la partition lui assigne (0 pick → après bans ; 1 à 6
+                        → après 3 picks ; 7 à 10 → draft complète), jamais une interpolation ; (b) le % du
+                        coach passe par des rôles inférés (en mode séquence, le rôle le plus probable d'après
+                        les priors de rôle), alors que la mesure utilise les rôles réels du corpus — l'écart
+                        d'attribution de rôles n'est pas couvert par la mesure.
+                    </p>
                 </dd>
             </div>
         </dl>

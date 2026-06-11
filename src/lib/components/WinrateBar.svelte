@@ -6,16 +6,33 @@
  * share, red for the enemy, a center tick at 50%, and the big percentage
  * (French decimal comma, one decimal — the engine output is continuous).
  * Pure display.
+ *
+ * Chantier E adds the calibration badge (DA-V2-11), still pure display: the
+ * page computes the value AND the badge state/label (« Non calibré » vs
+ * « Calibré sur N games (7 corpus, walk-forward) ») from the shipped
+ * winCalibration.json; the bar only renders what it receives.
  */
 -->
 <script lang="ts">
     interface Props {
-        /** Ally win probability in [0, 1]. */
+        /** Ally win probability in [0, 1] (already calibrated by the page when applicable). */
         winrate: number;
         label?: string;
+        /** Calibration badge text — null hides the badge (other call sites unchanged). */
+        badgeLabel?: string | null;
+        /** true = the displayed % went through a VALIDATED calibration map. */
+        badgeCalibrated?: boolean;
+        /** Hover explanation of the badge (the why, for a learning drafter). */
+        badgeTitle?: string | null;
     }
 
-    let { winrate, label = 'Win % estimé (draft)' }: Props = $props();
+    let {
+        winrate,
+        label = 'Win % estimé (draft)',
+        badgeLabel = null,
+        badgeCalibrated = false,
+        badgeTitle = null
+    }: Props = $props();
 
     const clamped = $derived(Math.min(1, Math.max(0, winrate)));
     const display = $derived(`${(clamped * 100).toFixed(1).replace('.', ',')}%`);
@@ -23,7 +40,19 @@
 </script>
 
 <section class="panel p-3">
-    <p class="panel-title pb-1">{label}</p>
+    <div class="flex items-center justify-between gap-2 pb-1">
+        <p class="panel-title">{label}</p>
+        {#if badgeLabel !== null}
+            <span
+                class="cursor-help rounded px-1.5 py-0.5 text-[10px] font-medium {badgeCalibrated
+                    ? 'bg-emerald-900/60 text-emerald-300'
+                    : 'bg-amber-900/60 text-amber-300'}"
+                title={badgeTitle ?? undefined}
+            >
+                {badgeLabel}
+            </span>
+        {/if}
+    </div>
     <p class="font-display pb-2 text-4xl {tone}">{display}</p>
     <div class="relative h-2.5 overflow-hidden rounded-full bg-gradient-to-r from-red-600/70 to-red-500/50">
         <div

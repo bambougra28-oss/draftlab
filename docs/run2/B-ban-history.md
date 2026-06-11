@@ -2,6 +2,17 @@
 
 > GELÉ post-revue adversariale (2026-06-11) — règle définitive, aucun paramètre ne bouge après ce commit.
 
+> **AMENDEMENT DATÉ 2026-06-11 (avant le run, après re-pull)** — voir
+> `docs/run2/AMENDEMENT-corpus-20260611.md` : l'état de corpus corrigé
+> (réalignement PB→sides) change les valeurs du modèle ANCIEN des scorecards
+> régénérés à timestamps épinglés — la DONNÉE change, pas la règle. Constantes
+> `PUBLISHED` de la porte §1.4 amendées en conséquence : ancien lck
+> 0,9388→**0,8811** · lec 1,1096→**0,9890** · lpl 1,0408→**0,9144** ·
+> lfl inchangé (0 swap) ; les QUATRE baselines inchangées (side-agnostiques).
+> Le rouge mesuré du §0 est même PLUS rouge sur données propres — la
+> contamination croisée des tendances aidait le régime répertoire par
+> accident. `PUBLISHED_GENERATED_AT` inchangé (timestamps épinglés).
+
 > Statut : design pré-enregistré, AVANT toute implémentation et tout run.
 > Références : `docs/STATUS.md` (verdict rouge mesuré), `docs/research/2026-06_draft_science_corpus.md` §E,
 > `src/lib/strategic/banEv.ts`, `src/lib/backtest/corpusRunner.ts` (piste 4),

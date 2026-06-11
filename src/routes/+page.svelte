@@ -39,6 +39,7 @@
         type Team
     } from '$lib/types';
     import { analyzeDraft } from '$lib/engine/analyzer';
+    import { calibrateAllyWin, defaultWinCalibrationConfig } from '$lib/estimators/winCalibration';
     import { fetchDatasetPair, type DatasetPair } from '$lib/dataset/fetch';
     import { fetchTeam, fetchTeamList, GOLGG_DEFAULT_SEASON } from '$lib/pro/golgg';
     import type { ChampionPoolEntry, ProTeam, RecentDraft } from '$lib/pro/types';
@@ -71,6 +72,7 @@
     import {
         draftStateFromActions,
         draftStateFromRoleEntry,
+        rankOurCandidates,
         readEnemyRoles,
         recommendNext
     } from '$lib/intel/liveDraft';
@@ -97,7 +99,7 @@
         type Series,
         type SeriesFormat
     } from '$lib/storage/series';
-    import { makeAnalyzeDraftEvaluator } from '$lib/strategic/draftNavigator';
+    import { makeAnalyzeDraftEvaluator, navigate } from '$lib/strategic/draftNavigator';
     import { computePresence } from '$lib/aggregates/presence';
     import { canonicalTeamName } from '$lib/data/normalize';
     import type { DraftRecord } from '$lib/data/types';
@@ -111,6 +113,18 @@
         type PoolGridPlayer
     } from '$lib/exports/prepPack';
     import { listDraftPlans, type DraftPlan } from '$lib/storage/draftPlans';
+    import PlanTreePanel from '$lib/components/PlanTreePanel.svelte';
+    import PocketPanel from '$lib/components/PocketPanel.svelte';
+    import { fitPublicSelfModel } from '$lib/estimators/publicSelfModel';
+    import { advisePocketPicks, type PocketCandidate } from '$lib/strategic/pocketAdvisor';
+    import { loadDefaultTags } from '$lib/tags';
+    import type { BanEvEntry } from '$lib/strategic/banEv';
+    import { compilePlanTree, type CompileContext, type PlanTree } from '$lib/strategic/planTree';
+    import { trackPlan } from '$lib/strategic/planTracker';
+    import { getPlanTree } from '$lib/storage/planTrees';
+    import { predict, slotGroupOf } from '$lib/aggregates/tendency';
+    import { banRotationOf, rotationOf } from '$lib/aggregates/rotations';
+    import { comparePatches } from '$lib/backtest/walkforward';
 
     /**
      * gol.gg region code per league id. LEAGUE_REGISTRY carries no such mapping
@@ -290,6 +304,145 @@
         }
     }
 
+    // ---- Script de prep (chantier D) : arbre compilé + suivi de déviation ----
+    let activePlanId = $state<string | null>(null);
+    let activeTree = $state<PlanTree | null>(null);
+    /** Arbre recompilé en séance (« Recompiler d'ici ») — JAMAIS persisté. */
+    let sessionTree = $state<PlanTree | null>(null);
+    /** Seq de reprise du tracker après une recompile en cours de draft. */
+    let sessionTreeOffset = $state(0);
+    let recompiling = $state(false);
+
+    $effect(() => {
+        const id = activePlanId;
+        sessionTree = null;
+        sessionTreeOffset = 0;
+        if (id === null) {
+            activeTree = null;
+            return;
+        }
+        void getPlanTree(id).then((stored) => {
+            if (activePlanId === id) activeTree = stored ?? null;
+        });
+    });
+
+    const planTreeShown = $derived(sessionTree ?? activeTree);
+
+    /** trackPlan PUR en $derived de toDraftActions(draftSeq) — rejoué à chaque action. */
+    const planTrack = $derived.by(() => {
+        const tree = planTreeShown;
+        if (tree === null || entryMode !== 'sequence' || draftFormat !== 'pro') return null;
+        const actions = toDraftActions(draftSeq, 'pro').filter((a) => a.seq > sessionTreeOffset);
+        return trackPlan(tree, actions, allySide);
+    });
+
+    /** Seams de compile — mêmes predict/K que la gate (fonctions, jamais d'import du modèle). */
+    function compileSeams(): Pick<CompileContext, 'enemyDistribution' | 'evidenceOf' | 'ourReply'> | null {
+        const currentIntel = intel;
+        const evaluate = coachEvaluate;
+        if (currentIntel === null) return null;
+        const table = currentIntel.table;
+        const enemyDistribution: CompileContext['enemyDistribution'] = (state, slot) => {
+            const slotGroup = slot.type === 'pick' ? rotationOf(slot.seq) : banRotationOf(slot.seq);
+            if (slotGroup === undefined) return [];
+            const exclude = new Set(state.actions.map((a) => a.championKey).filter((k) => k !== ''));
+            return predict(table, { slotGroup, side: slot.side, exclude }).map((p) => ({
+                championKey: p.championKey,
+                p: p.p
+            }));
+        };
+        const evidenceOf: CompileContext['evidenceOf'] = (championKey, slot) => {
+            const slotGroup = slot.type === 'pick' ? rotationOf(slot.seq) : banRotationOf(slot.seq);
+            const entry =
+                slotGroup === undefined
+                    ? undefined
+                    : predict(table, { slotGroup, side: slot.side }).find((p) => p.championKey === championKey);
+            const exampleGameIds = currentIntel.records
+                .filter((r) =>
+                    r.actions.some(
+                        (a) => a.championKey === championKey && a.side === slot.side && slotGroupOf(a) === slotGroup
+                    )
+                )
+                .slice(0, 3)
+                .map((r) => r.gameId);
+            return {
+                rawCount: entry?.rawCount ?? 0,
+                total: entry?.total ?? 0,
+                ...(exampleGameIds.length > 0 ? { exampleGameIds } : {})
+            };
+        };
+        const ourReply: CompileContext['ourReply'] = (state, slot) => {
+            if (evaluate === null) return null; // → mapping statique du plan dans compilePlanTree
+            const result = navigate(state, {
+                ourSide: allySide,
+                ourCandidates: (s) =>
+                    rankOurCandidates(
+                        {
+                            ourSide: allySide,
+                            evaluate,
+                            table,
+                            ...(contextActive && teamA !== null ? { allyPlayers: teamA.players } : {}),
+                            fallbackCandidates: coachFallback
+                        },
+                        s,
+                        6
+                    ),
+                enemyDistribution,
+                evaluate,
+                depth: 2,
+                topK: 5
+            });
+            const best = result.candidates[0];
+            if (best === undefined) return null;
+            return {
+                seq: slot.seq,
+                type: slot.type,
+                championKey: best.championKey,
+                reasonsFr: ['Réponse du coach (expectimax profondeur 2) figée à la compilation.']
+            };
+        };
+        return { enemyDistribution, evidenceOf, ourReply };
+    }
+
+    function intelProvenance(): PlanTree['modelProvenance'] {
+        const records = intel?.records ?? [];
+        let latestPatch: string | undefined;
+        for (const r of records) {
+            if (r.patch !== undefined && (latestPatch === undefined || comparePatches(r.patch, latestPatch) > 0))
+                latestPatch = r.patch;
+        }
+        return { records: records.length, ...(latestPatch !== undefined ? { latestPatch } : {}), league: leagueId };
+    }
+
+    /** Recompile « d'ici » : budget réduit (< 2 s), horizon = actions adverses restantes. */
+    async function recompileFromHere(): Promise<void> {
+        const tree = planTreeShown;
+        const seams = compileSeams();
+        const plan = plans.find((p) => p.id === (tree?.planId ?? activePlanId));
+        if (tree === null || seams === null || plan === undefined || teamB === null) return;
+        recompiling = true;
+        try {
+            await new Promise((r) => setTimeout(r));
+            const actions = toDraftActions(draftSeq, 'pro');
+            const enemyLeft = 10 - actions.filter((a) => a.side !== allySide).length;
+            const compiled = compilePlanTree({
+                ourSide: allySide,
+                plan: $state.snapshot(plan) as DraftPlan,
+                ...seams,
+                excludedKeys: [...fearlessLocked],
+                initialActions: actions,
+                config: { enemyDepth: Math.max(1, Math.min(6, enemyLeft)), maxNodes: 600 },
+                now: Date.now(),
+                opponent: teamB.name,
+                modelProvenance: intelProvenance()
+            });
+            sessionTree = compiled;
+            sessionTreeOffset = actions.length > 0 ? actions[actions.length - 1].seq : 0;
+        } finally {
+            recompiling = false;
+        }
+    }
+
     $effect(() => {
         comfortTags = readComfortTags();
         // Re-read on every write so independent panels stay coherent.
@@ -361,6 +514,19 @@
             sideContext
         };
         return analyzeDraft(datasets.dataset, allyTeamMap, enemyTeamMap, config, datasets.fullDataset);
+    });
+
+    /** Picks verrouillés des deux sides — l'ancre de calibration (partition positionOf). */
+    const picksLocked = $derived(allyTeamMap.size + enemyTeamMap.size);
+
+    /**
+     * Calibration du % global (chantier E) : UNIQUEMENT la config mesurée par la
+     * règle gelée — aucun playerContext ni sideContext. Contexte actif ⇒ % brut
+     * + badge « Non calibré » (configuration hors claim, limitation V1 déclarée).
+     */
+    const calibratedWin = $derived.by(() => {
+        if (result === null || playerContext !== undefined || sideContext !== undefined) return null;
+        return calibrateAllyWin(result.winrate, allySide, picksLocked);
     });
 
     /** Per-pass contributions + sample sizes (S4/DA-V2-4: defendable numbers). */
@@ -638,6 +804,54 @@
         });
     });
 
+    /**
+     * Verdict B (gate ban-history du 2026-06-11, ROUGE : LPL sous la baseline) —
+     * l'EV agrégée du régime répertoire est RETIRÉE de l'affichage par défaut :
+     * tri par présence (le référentiel de la baseline du rapport), composants
+     * montrés séparément, jamais re-fusionnés. Le régime composition (phase 2,
+     * contre-compo) reste VERT et continue de s'afficher via le coach.
+     */
+    const banEntriesByPresence = (entries: BanEvEntry[]): BanEvEntry[] => {
+        const presenceOf = (key: string): number => intel?.presence.get(key)?.presence ?? 0;
+        return [...entries].sort((a, b) => {
+            const pa = presenceOf(a.championKey);
+            const pb = presenceOf(b.championKey);
+            if (pa !== pb) return pb - pa;
+            if (a.components.takeProbability !== b.components.takeProbability) {
+                return b.components.takeProbability - a.components.takeProbability;
+            }
+            return a.championKey < b.championKey ? -1 : 1;
+        });
+    };
+
+    // ---- Tes pockets (chantier F : F1 ROUGE ⇒ panneau en LECTURE seule, F-c débranché) ----
+    /**
+     * Réservoir F-a (fitPublicSelfModel sur le corpus ligue, équipe A = NOTRE
+     * modèle public) + conseiller F-b. Null tant que corpus/équipe A/fits de
+     * tags manquent — le panneau affiche alors le placeholder, jamais un
+     * réservoir inventé. `viableOnPatch` est un SEAM assumé : aucune source de
+     * viabilité patch n'est branchée, tout passe (documenté, pas deviné).
+     */
+    const pocketCandidates = $derived.by((): PocketCandidate[] | null => {
+        if (leagueRecords === null || teamA === null || pairFit === null || counterFit === null) return null;
+        const consumed = new Set(fearlessLocked);
+        const model = fitPublicSelfModel(
+            leagueRecords,
+            { team: teamA.name, now: new Date(nowTick).toISOString() },
+            consumed
+        );
+        return advisePocketPicks({
+            surprises: [...model.byRole.values()].flat(),
+            tagsFile: loadDefaultTags(),
+            allyCompKeys: [...allyTeamMap.values()],
+            enemyCompKeys: [...enemyTeamMap.values()],
+            counterFit,
+            pairFit,
+            viableOnPatch: () => true, // SEAM patch : tout passe tant qu'aucune source n'est branchée.
+            consumed
+        });
+    });
+
     // ---- Coach en direct (liveDraft + navigator) ----
     /** Engine evaluator — plain config: the coach compares DRAFT deltas. */
     const coachEvaluate = $derived.by(() => {
@@ -752,9 +966,11 @@
                             generatedAt: new Date().toLocaleString('fr-FR')
                         },
                         ...(plans.length > 0 ? { plans: $state.snapshot(plans) } : {}),
+                        ...(activeTree !== null ? { planTree: $state.snapshot(activeTree) as PlanTree } : {}),
+                        // Verdict B : ordre par présence (le ranking EV répertoire est retiré).
                         banPages: currentIntel.banPages.map((page) => ({
                             rotationLabel: page.rotationLabel,
-                            entries: page.entries.slice(0, 8)
+                            entries: banEntriesByPresence(page.entries).slice(0, 8)
                         })),
                         ...(poolGrids.length > 0 ? { poolGrids } : {}),
                         tendencies: intelTendencyBlocks,
@@ -1137,7 +1353,16 @@
         <div class="animate-fade-up grid grid-cols-1 items-start gap-3 lg:grid-cols-3" style="animation-delay: 90ms">
             <div class="space-y-1">
                 {#if result !== null}
-                    <WinrateBar winrate={result.winrate} />
+                    <WinrateBar
+                        winrate={calibratedWin?.pAlly ?? result.winrate}
+                        badgeLabel={calibratedWin !== null && calibratedWin.calibrated
+                            ? `Calibré sur ${calibratedWin.nGames} games (7 corpus, walk-forward)`
+                            : 'Non calibré'}
+                        badgeCalibrated={calibratedWin !== null && calibratedWin.calibrated}
+                        badgeTitle={calibratedWin !== null && calibratedWin.calibrated
+                            ? 'Quand l’outil affiche X %, la fréquence observée sur corpus pro (walk-forward) tombe dans le bac correspondant — il ne prédit toujours pas le vainqueur. Mesuré sans contexte équipe, rôles réels du corpus ; détail dans l’Aide.'
+                            : 'Pas de carte de calibration validée pour cette position de draft ou cette configuration (contexte équipe actif) — % brut SoloQ, à lire comme un signal indicatif. Détail dans l’Aide.'}
+                    />
                 {/if}
                 <p class="px-1 text-[10px] text-slate-600">
                     Source : DraftGap (SoloQ) — patch {datasets?.dataset.version ?? '?'} · 30 j v{datasets
@@ -1216,11 +1441,64 @@
             </div>
         </div>
 
-        <!-- Coach en direct : recommandations expliquées sur la draft en cours -->
+        <!-- Script de prep (chantier D) : suivi de l'arbre compilé en mode séquence -->
+        {#if entryMode === 'sequence'}
+            {#if draftFormat !== 'pro'}
+                <div class="rounded-lg border border-dashed border-slate-800 bg-slate-900/40 p-3 text-xs text-slate-500">
+                    Script de prep indisponible en SoloQ : les bans y sont simultanés (pas d'ordre à suivre) —
+                    l'arbre v1 couvre la draft tournoi uniquement.
+                </div>
+            {:else}
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="panel-title">Script de prep</span>
+                    <select
+                        value={activePlanId ?? 'none'}
+                        onchange={(e) => (activePlanId = e.currentTarget.value === 'none' ? null : e.currentTarget.value)}
+                        class="rounded-md border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-200"
+                    >
+                        <option value="none">Aucun plan</option>
+                        {#each plans as plan (plan.id)}<option value={plan.id}>{plan.name}</option>{/each}
+                    </select>
+                    {#if activePlanId !== null && planTreeShown === null}
+                        <span class="text-[11px] text-slate-500"
+                            >Ce plan n'a pas d'arbre compilé — ouvrez sa page /plans et « Compiler contre l'adversaire ».</span
+                        >
+                    {/if}
+                </div>
+                {#if planTreeShown !== null && planTrack !== null}
+                    {#if planTreeShown.ourSide !== allySide}
+                        <div class="rounded-lg border border-amber-900/50 bg-slate-900 p-3 text-xs text-amber-400">
+                            Arbre compilé pour le côté {planTreeShown.ourSide === 'blue' ? 'bleu' : 'rouge'} — vous êtes
+                            {allySide === 'blue' ? 'bleu' : 'rouge'} : recompilez côté prep, le suivi serait faux.
+                        </div>
+                    {:else}
+                        <!-- Gate D VERTE (docs/calibration/plan-coverage-2026.md, 2026-06-11) :
+                             profondeur moyenne tenue à K = 4 (plafond 6) — modèle 0,725 vs
+                             baseline ligue 0,588, Δ +0,137 IC [0,111 ; 0,162]. Le composant
+                             affiche le wording mesuré + caveat blue-first lui-même. -->
+                        <PlanTreePanel
+                            tree={planTreeShown}
+                            track={planTrack}
+                            planName={plans.find((p) => p.id === planTreeShown.planId)?.name}
+                            onRecompile={() => void recompileFromHere()}
+                            {recompiling}
+                            gateVerdict="vert"
+                            gateCoverage={{ model: 0.725, baseline: 0.588 }}
+                        />
+                    {/if}
+                {/if}
+            {/if}
+        {/if}
+
+        <!-- Coach en direct — explorateur de lignes chiffré (gate A rouge du 2026-06-11 :
+             pas une recommandation validée), lignes expliquées sur la draft en cours -->
         <div class="animate-fade-up" style="animation-delay: 180ms">
             <CoachPanel
                 advice={coachAdvice}
                 roleReads={enemyRoleReads}
+                calibration={defaultWinCalibrationConfig()}
+                {picksLocked}
+                ourSide={allySide}
                 unavailableReason={datasetLoading
                     ? 'Le coach attend la fin du téléchargement du dataset…'
                     : (datasetError ?? 'Coach indisponible.')}
@@ -1300,7 +1578,22 @@
                 <RangePanel blocks={intel.rangesBySlotGroup} title="Ranges — {teamB.name}" />
             </div>
 
-            <!-- Ban pages (EV vs the tendency distribution, components separated) -->
+            <!-- Chantier F — Tes pockets : F1 ROUGE ⇒ lecture seule (badge du composant) ;
+                 F2 VERTE citée en provenance par l'alerte ; F-c reste débranché (aucun
+                 appel à surpriseDefense). -->
+            {#if pocketCandidates !== null}
+                <PocketPanel candidates={pocketCandidates} />
+            {:else}
+                <div class="rounded-lg border border-dashed border-slate-800 bg-slate-900/40 p-4 text-xs text-slate-500">
+                    Tes pockets : synchronisez l'Équipe A (votre équipe) et importez le corpus ligue pour
+                    lire le réservoir de surprises — lecture du modèle public, jamais un claim de pool privé.
+                </div>
+            {/if}
+
+            <!-- Ban pages phase 1 (régime répertoire) — affichage honnête post-gate B
+                 (ROUGE, 2026-06-11) : tri par présence, composants séparés, AUCUNE EV
+                 agrégée. Le régime composition (phase 2) reste vert et s'affiche via
+                 le coach (« contre leur compo »). -->
             <section class="panel p-3">
                 <h2 class="panel-title flex items-center gap-2 pb-2">
                     Pages de bans — {teamB.name}
@@ -1318,27 +1611,38 @@
                             <div>
                                 <p class="pb-1 text-xs font-semibold text-slate-300">{page.rotationLabel}</p>
                                 <ul class="space-y-1">
-                                    {#each page.entries.slice(0, 6) as entry (entry.championKey)}
+                                    {#each banEntriesByPresence(page.entries).slice(0, 6) as entry (entry.championKey)}
+                                        {@const presenceEntry = intel.presence.get(entry.championKey)}
                                         <li class="rounded-md bg-slate-800/40 px-2 py-1.5">
                                             <div class="flex items-center gap-2">
                                                 <ChampionIcon championKey={entry.championKey} size={22} />
                                                 <span class="text-xs text-slate-200">
                                                     {championNameByKey(entry.championKey) ?? entry.championKey}
                                                 </span>
-                                                <span class="ml-auto font-mono text-[11px] text-slate-300" title="EV du ban (clé de tri)">
-                                                    EV {entry.ev.toFixed(2).replace('.', ',')}
+                                                <span
+                                                    class="ml-auto font-mono text-[11px] text-slate-300"
+                                                    title="Présence pick+ban dans leurs games (clé de tri — l'EV agrégée du régime répertoire est retirée)"
+                                                >
+                                                    présence {Math.round((presenceEntry?.presence ?? 0) * 100)} %
                                                 </span>
                                             </div>
                                             <p class="flex flex-wrap gap-1 pt-1 pl-8">
                                                 <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-400">
-                                                    sortie {Math.round(entry.components.takeProbability * 100)} %
+                                                    sortie attendue {Math.round(entry.components.takeProbability * 100)} %
                                                 </span>
+                                                {#if entry.components.banAttraction > 0}
+                                                    <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-400">
+                                                        banni contre eux ~{Math.round(entry.components.banAttraction * 100)} %
+                                                    </span>
+                                                {/if}
                                                 <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-400">
                                                     si pris −{entry.components.damage.toFixed(1).replace('.', ',')} pp
                                                 </span>
-                                                <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-400">
-                                                    structurel {Math.round(entry.components.structural * 100)} %
-                                                </span>
+                                                {#if entry.components.structural > 0}
+                                                    <span class="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-400">
+                                                        structurel {Math.round(entry.components.structural * 100)} %
+                                                    </span>
+                                                {/if}
                                             </p>
                                             {#if entry.rationaleFr.length > 0}
                                                 <p class="pt-0.5 pl-8 text-[10px] text-slate-500">
@@ -1352,8 +1656,9 @@
                         {/each}
                     </div>
                     <p class="pt-2 text-[10px] text-slate-600">
-                        EV = sortie attendue × (dégât de remplacement + valeur structurelle) — composantes
-                        affichées séparément, l'EV n'est qu'une clé de tri.
+                        Piste EV retirée (gate du 2026-06-11 : sous la baseline en LPL) — composants affichés
+                        séparément. Les bans de phase 2 (contrer la compo révélée) sont un régime distinct,
+                        validé, qui continue de s'afficher dans le coach.
                     </p>
                 {/if}
             </section>

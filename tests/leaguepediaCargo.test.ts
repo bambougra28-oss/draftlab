@@ -1,7 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
     buildCargoUrl,
+    buildCargoExportUrl,
     fetchDraftRecords,
+    fetchDraftRecordsExport,
+    fetchDraftRecordsSplit,
     fetchTournamentDrafts,
     fetchTeamDrafts,
     rowToDraftRecord,
@@ -128,6 +131,62 @@ describe('rowToDraftRecord', () => {
         const r = rowToDraftRecord(sampleRow({ winner: '', winteam: 'Gen.G' }), 'now');
         expect(r.winner).toBe('red');
     });
+
+    describe('PB match-order vs SG side-order realignment (First Selection era)', () => {
+        // Le cas finale LEC 2026 G5 vérifié live : PB.Team1 = Karmine Corp
+        // (équipe 1 du MATCH), SG.Team1 = G2 Esports (côté BLEU de la game),
+        // PB.Winner = 2 (= PB.Team2 = G2) = SG.WinTeam. Sans réalignement nous
+        // lisions « red (KC) gagne » et donnions les picks de KC à G2.
+        const finaleG5 = (over: CargoRow = {}): CargoRow =>
+            sampleRow({
+                pbt1: 'Karmine Corp',
+                pbt2: 'G2 Esports',
+                team1: 'G2 Esports',
+                team2: 'Karmine Corp',
+                winteam: 'G2 Esports',
+                winner: '2',
+                ...over
+            });
+
+        it('swaps PB columns and the winner index when PB.Team1 is the red side', () => {
+            const r = rowToDraftRecord(finaleG5(), 'now');
+            // winner index 2 → PB.Team2 = G2 = côté bleu après réalignement.
+            expect(r.winner).toBe('blue');
+            expect(r.blueTeam).toBe('G2 Esports');
+            // Les colonnes t1* (PB.Team1 = KC = red) vont au side rouge :
+            // t1p1 = Kai'Sa du sampleRow → désormais pick rouge seq 8.
+            const kaisa = r.actions.find((a) => a.championName === "Kai'Sa");
+            expect(kaisa?.side).toBe('red');
+            // Et t2b1 = Rumble (PB.Team2 = G2 = blue) ouvre les bans bleus.
+            const rumble = r.actions.find((a) => a.championName === 'Rumble');
+            expect(rumble?.side).toBe('blue');
+            expect(rumble?.seq).toBe(1);
+            expect(r.warnings.some((w) => w.includes('PB columns swapped'))).toBe(true);
+        });
+
+        it('keeps aligned games byte-identical (PB.Team1 = blue)', () => {
+            const aligned = rowToDraftRecord(
+                sampleRow({ pbt1: 'T1', pbt2: 'Gen.G' }),
+                '2026-06-10T12:00:00Z'
+            );
+            const legacy = rowToDraftRecord(sampleRow(), '2026-06-10T12:00:00Z');
+            expect(aligned.winner).toBe(legacy.winner);
+            expect(aligned.actions).toEqual(legacy.actions);
+            expect(aligned.warnings.some((w) => w.includes('swapped'))).toBe(false);
+        });
+
+        it('warns and leaves columns as-is when PB.Team1 matches neither side', () => {
+            const r = rowToDraftRecord(sampleRow({ pbt1: 'Autre Nom', pbt2: 'Gen.G' }), 'now');
+            expect(r.winner).toBe('blue'); // index 1 non inversé
+            expect(r.warnings.some((w) => w.includes('matches neither'))).toBe(true);
+        });
+
+        it('swapped game with winner index 1 credits the red side', () => {
+            // G1 de la finale : PB.Winner = 1 = PB.Team1 = KC, KC est red.
+            const r = rowToDraftRecord(finaleG5({ winner: '1', winteam: 'Karmine Corp' }), 'now');
+            expect(r.winner).toBe('red');
+        });
+    });
 });
 
 describe('fetchDraftRecords — pagination & errors', () => {
@@ -167,6 +226,155 @@ describe('fetchDraftRecords — pagination & errors', () => {
         const err = await fetchDraftRecords({ where: 'x' }, { transport }).catch((e) => e);
         expect(err).toBeInstanceOf(CargoError);
         expect((err as CargoError).code).toBe('badvalue');
+    });
+});
+
+describe('fetchDraftRecordsSplit — no-join fallback', () => {
+    /** Keys served by the SG-only query (plus gid). */
+    const SG_KEYS = ['team1', 'team2', 'winteam', 'dt', 'patch', 'tournament', 'ovp', 'glen'];
+
+    function sgSideRow(gid: string): CargoRow {
+        const full = sampleRow();
+        const row: CargoRow = { gid };
+        for (const k of SG_KEYS) row[k] = full[k];
+        return row;
+    }
+
+    function pbSideRow(gid: string): CargoRow {
+        const row = sampleRow({ gid });
+        for (const k of SG_KEYS) delete row[k];
+        return row;
+    }
+
+    it('queries SG alone, then PB by GameId IN chunks, joins locally in SG order', async () => {
+        const calls: string[] = [];
+        const transport: CargoTransport = async (url) => {
+            calls.push(url);
+            if (calls.length === 1) return wrap([sgSideRow('g1'), sgSideRow('g2'), sgSideRow('g3')]);
+            if (calls.length === 2) return wrap([pbSideRow('g1')]); // g2: trou PB amont
+            return wrap([pbSideRow('g3')]);
+        };
+        const sleep = vi.fn(async () => {});
+        const { records, missingDrafts } = await fetchDraftRecordsSplit(
+            { where: "SG.OverviewPage LIKE 'LCK/2025%'", orderBy: 'SG.DateTime_UTC ASC' },
+            { transport, sleep, pageDelayMs: 2000, chunkSize: 2, now: () => 'now' }
+        );
+
+        expect(calls).toHaveLength(3);
+        const u1 = new URL(calls[0]);
+        expect(u1.searchParams.get('tables')).toBe('ScoreboardGames=SG');
+        expect(u1.searchParams.get('join_on')).toBeNull();
+        expect(u1.searchParams.get('where')).toBe("SG.OverviewPage LIKE 'LCK/2025%'");
+        expect(u1.searchParams.get('order_by')).toBe('SG.DateTime_UTC ASC');
+        expect(u1.searchParams.get('fields')).toContain('SG.GameId=gid');
+        expect(u1.searchParams.get('fields')).not.toContain('PB.');
+
+        const u2 = new URL(calls[1]);
+        expect(u2.searchParams.get('tables')).toBe('PicksAndBansS7=PB');
+        expect(u2.searchParams.get('where')).toBe("PB.GameId IN ('g1','g2')");
+        expect(u2.searchParams.get('fields')).toContain('PB.Team2Role3=t2r3');
+        expect(u2.searchParams.get('fields')).not.toContain('SG.');
+        expect(new URL(calls[2]).searchParams.get('where')).toBe("PB.GameId IN ('g3')");
+
+        // Jointure locale : ordre SG conservé, champs des deux moitiés fusionnés.
+        expect(records.map((r) => r.gameId)).toEqual(['g1', 'g3']);
+        expect(records[0].blueTeam).toBe('T1'); // moitié SG
+        expect(records[0].actions).toHaveLength(20); // moitié PB
+        expect(records[0].series?.gameNumber).toBe(1);
+        expect(missingDrafts).toEqual(['g2']);
+        // 0 sleep après la page SG courte ; 1 avant chaque chunk PB.
+        expect(sleep).toHaveBeenCalledTimes(2);
+    });
+
+    it('escapes quotes inside the IN clause', async () => {
+        const calls: string[] = [];
+        const transport: CargoTransport = async (url) => {
+            calls.push(url);
+            return calls.length === 1 ? wrap([sgSideRow("g'1")]) : wrap([pbSideRow("g'1")]);
+        };
+        const { records } = await fetchDraftRecordsSplit(
+            { where: 'x' },
+            { transport, sleep: async () => {}, now: () => 'now' }
+        );
+        expect(new URL(calls[1]).searchParams.get('where')).toBe("PB.GameId IN ('g\\'1')");
+        expect(records).toHaveLength(1);
+    });
+
+    it('propagates the typed rate-limit error', async () => {
+        const transport: CargoTransport = async () => ({
+            error: { code: 'ratelimited', info: 'slow down' }
+        });
+        await expect(
+            fetchDraftRecordsSplit({ where: 'x' }, { transport })
+        ).rejects.toBeInstanceOf(CargoRateLimitError);
+    });
+});
+
+describe('fetchDraftRecordsExport — Special:CargoExport path', () => {
+    it('builds the export url with the joined tables and the space-separated params', () => {
+        const u = new URL(buildCargoExportUrl({ where: "SG.OverviewPage LIKE 'LCK/2025%'", orderBy: 'SG.DateTime_UTC ASC' }));
+        expect(u.pathname).toBe('/wiki/Special:CargoExport');
+        expect(u.searchParams.get('tables')).toBe('PicksAndBansS7=PB,ScoreboardGames=SG');
+        expect(u.searchParams.get('join on')).toBe('PB.GameId=SG.GameId');
+        expect(u.searchParams.get('order by')).toBe('SG.DateTime_UTC ASC');
+        expect(u.searchParams.get('format')).toBe('json');
+        expect(u.searchParams.get('fields')).toContain('PB.Team1Pick5=t1p5');
+        expect(u.searchParams.get('fields')).toContain('SG.DateTime_UTC=dt');
+    });
+
+    it('coerces array rows to string-valued CargoRow (numeric winner, __precision dropped)', async () => {
+        const raw = { ...sampleRow() } as Record<string, unknown>;
+        raw.winner = 1; // CargoExport renvoie un nombre
+        raw.dt__precision = 0; // jumeau parasite des datetimes
+        raw.glen = null; // champ nul → absent
+        const transport: CargoTransport = async () => [raw];
+        const records = await fetchDraftRecordsExport({ where: 'x' }, { transport, now: () => 'now' });
+        expect(records).toHaveLength(1);
+        expect(records[0].winner).toBe('blue'); // '1' après coercion
+        expect(records[0].gameLengthSeconds).toBeUndefined();
+        expect(records[0].actions).toHaveLength(20);
+    });
+
+    it('restores the dropped trailing zero of float-typed patches (26.10, not 26.1)', async () => {
+        const mk = (patch: unknown, gid: string) => {
+            const raw = { ...sampleRow({ gid }) } as Record<string, unknown>;
+            raw.patch = patch;
+            return raw;
+        };
+        const transport: CargoTransport = async () => [
+            mk(26.1, 'g1'), // float "26.10" → 26.1 → restauré "26.10"
+            mk(26.01, 'g2'), // deux décimales → inchangé
+            mk('25.S1.1', 'g3'), // chaîne → inchangée
+            mk(26, 'g4') // entier → "26" tel quel
+        ];
+        const records = await fetchDraftRecordsExport({ where: 'x' }, { transport, now: () => 'now' });
+        expect(records.map((r) => r.patch)).toEqual(['26.10', '26.01', '25.S1.1', '26']);
+    });
+
+    it('paginates until a short page and dedupes boundary rows', async () => {
+        const calls: string[] = [];
+        const fullPage = Array.from({ length: CARGO_PAGE_LIMIT }, (_, i) =>
+            ({ ...sampleRow({ gid: `g${i}` }) }) as Record<string, unknown>
+        );
+        const lastPage = [{ ...sampleRow({ gid: `g${CARGO_PAGE_LIMIT - 1}` }) }, { ...sampleRow({ gid: 'last' }) }];
+        const transport: CargoTransport = async (url) => {
+            calls.push(url);
+            return calls.length === 1 ? fullPage : lastPage;
+        };
+        const records = await fetchDraftRecordsExport(
+            { where: 'x' },
+            { transport, sleep: async () => {}, now: () => 'now' }
+        );
+        expect(calls).toHaveLength(2);
+        expect(new URL(calls[1]).searchParams.get('offset')).toBe(String(CARGO_PAGE_LIMIT));
+        expect(records).toHaveLength(CARGO_PAGE_LIMIT + 1); // boundary dupe écarté
+    });
+
+    it('maps a rate-limit error payload to the typed error', async () => {
+        const transport: CargoTransport = async () => ({ error: { code: 'ratelimited', info: 'slow' } });
+        await expect(fetchDraftRecordsExport({ where: 'x' }, { transport })).rejects.toBeInstanceOf(
+            CargoRateLimitError
+        );
     });
 });
 

@@ -279,8 +279,12 @@ function bestPairSignal(
     };
 }
 
-/** Our candidate ranking: pool tiers first (strongest → learning), then fallback. */
-function rankOurCandidates(ctx: CoachContext, state: DraftState, count: number): string[] {
+/**
+ * Our candidate ranking: pool tiers first (strongest → learning), then fallback.
+ * Exported for the coach gate runner (chantier A run #2): the gate replays the
+ * SHIPPED candidate chain by importing this very function — never a replica.
+ */
+export function rankOurCandidates(ctx: CoachContext, state: DraftState, count: number): string[] {
     const taken = new Set(state.actions.map((a) => a.championKey));
     const out: string[] = [];
     const push = (key: string): void => {
@@ -299,8 +303,12 @@ function rankOurCandidates(ctx: CoachContext, state: DraftState, count: number):
     return out.slice(0, count);
 }
 
-/** Enemy distribution for a slot from the tendency table (empty = skip). */
-function enemyDistributionOf(
+/**
+ * Enemy distribution for a slot from the tendency table (empty = skip).
+ * Exported for the coach gate runner (chantier A run #2) — same import-the-
+ * shipped-function rule as `rankOurCandidates`.
+ */
+export function enemyDistributionOf(
     ctx: CoachContext,
     state: DraftState,
     slot: NavigatorSlot
