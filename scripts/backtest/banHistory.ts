@@ -244,10 +244,15 @@ const PRIMARY = ['lck-2026.json', 'lec-2026.json', 'lfl-2026.json', 'lpl-2026.js
  * pour la baseline ET le modèle ANCIEN de chacun, sinon RUN INVALIDE.
  */
 const PUBLISHED: Record<string, { ancien: number; baseline: number }> = {
-    'lck-2026.json': { ancien: 0.9388, baseline: 1.3007 },
-    'lec-2026.json': { ancien: 1.1096, baseline: 1.2039 },
+    // AMENDEMENT DATÉ 2026-06-11 (docs/run2/AMENDEMENT-corpus-20260611.md) :
+    // scorecards régénérés sur l'état de corpus corrigé (réalignement PB→sides),
+    // timestamps épinglés aux publiés — la DONNÉE change, pas la règle. Les
+    // baselines (side-agnostiques) sont inchangées ; lfl (0 swap) inchangé.
+    // Anciennes valeurs du 2026-06-10 : lck 0.9388 · lec 1.1096 · lpl 1.0408.
+    'lck-2026.json': { ancien: 0.8811, baseline: 1.3007 },
+    'lec-2026.json': { ancien: 0.989, baseline: 1.2039 },
     'lfl-2026.json': { ancien: 1.2598, baseline: 1.067 },
-    'lpl-2026.json': { ancien: 1.0408, baseline: 1.2459 }
+    'lpl-2026.json': { ancien: 0.9144, baseline: 1.2459 }
 };
 
 /** §1.1 — shrinkage EB pré-enregistré du fit banAttraction. */
