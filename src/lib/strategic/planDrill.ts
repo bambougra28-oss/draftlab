@@ -254,6 +254,20 @@ function singleLine(root: PlanTreeNode, choose: (node: PlanTreeNode) => number):
     return path;
 }
 
+// ---- lectures rapides -----------------------------------------------------------------
+
+/**
+ * Vrai si l'arbre porte AU MOINS un défi drillable — une PlannedAction à nous
+ * (ourLine) quelque part. Faux ⇔ startDrill rendrait une session à 0 ligne :
+ * plan sans picks/bans renseignés, ou arbre compilé sans évaluateur ni
+ * mapping statique. Le panneau le lit AVANT de proposer « Démarrer ».
+ */
+export function hasChallenges(tree: PlanTree): boolean {
+    const visit = (node: PlanTreeNode): boolean =>
+        node.ourLine.length > 0 || node.branches.some((branch) => visit(branch.child));
+    return visit(tree.root);
+}
+
 // ---- session ------------------------------------------------------------------------
 
 /**

@@ -36,6 +36,7 @@
         answer as drillAnswer,
         currentChallenge,
         drillSummary,
+        hasChallenges,
         startDrill,
         type AnswerResult,
         type DrillMode,
@@ -81,6 +82,13 @@
 
     const challenge = $derived(drill === null ? null : currentChallenge(drill));
     const summary = $derived(drill === null ? null : drillSummary(drill));
+
+    /**
+     * Détection AVANT de démarrer : un arbre sans AUCUNE réponse préparée
+     * (plan vide compilé sans évaluateur) donnerait « Session terminée —
+     * 0 ligne jouée » ; on affiche l'état vide honnête à la place.
+     */
+    const drillable = $derived(hasChallenges(tree));
 
     function start(onlyLines?: number[]): void {
         session += 1;
@@ -195,6 +203,14 @@
     </p>
 
     {#if drill === null}
+        {#if !drillable}
+            <!-- ── État vide honnête : rien à driller, on le dit AVANT de démarrer ── -->
+            <div class="rounded-lg border border-dashed border-slate-700 bg-slate-950/40 p-3 text-xs leading-relaxed text-slate-400">
+                Cet arbre n'a aucune réponse préparée à driller — votre plan n'a pas de picks/bans
+                renseignés (ou l'arbre a été compilé sans évaluateur). Générez la prépa ou remplissez le
+                plan, puis recompilez.
+            </div>
+        {:else}
         <!-- ── Choix du mode + Démarrer ─────────────────────────────────── -->
         <fieldset class="space-y-1.5">
             <legend class="sr-only">Mode d'entraînement</legend>
@@ -217,6 +233,7 @@
         >
             Démarrer le drill
         </button>
+        {/if}
     {:else}
         <!-- ── Feedback immédiat (persiste jusqu'à la réponse suivante) ──── -->
         {#if feedback !== null}

@@ -9,6 +9,18 @@
  * disabled to prevent accidental duplicates. Every mutation persists
  * immediately to IndexedDB ($state.snapshot strips the reactive proxies before
  * the structured clone); text fields persist on change (blur/commit).
+ *
+ * Chantier « génération automatique de la prépa » : le bouton « Générer la
+ * prépa contre X » charge la paire de datasets (même cache IndexedDB que la
+ * page draft, au premier clic), construit l'évaluateur M1 en config plain
+ * (copie exacte de la page draft) et fait jouer le coach en self-play
+ * (generatePrepPlan) pour REMPLIR le plan éditable — bans, primaires,
+ * fallbacks, raisons FR — que l'humain cure ensuite (le moteur propose, le
+ * joueur dispose). L'arbre est recompilé dans la foulée avec un ourReply =
+ * navigate (l'évaluateur étant désormais chargé) : le drill devient riche
+ * immédiatement. Sans évaluateur, la compile garde son repli historique
+ * () => null → mapping statique du plan (qui fonctionne dès que le plan a
+ * des primaires).
  */
 -->
 <script lang="ts">
@@ -35,6 +47,20 @@
     import { banRotationOf, rotationOf } from '$lib/aggregates/rotations';
     import { comparePatches } from '$lib/backtest/walkforward';
     import { compilePlanTree, massByEnemyDepth, type CompileContext } from '$lib/strategic/planTree';
+    import { fetchDatasetPair } from '$lib/dataset/fetch';
+    import {
+        makeAnalyzeDraftEvaluator,
+        navigate,
+        type DraftEvaluator,
+        type DraftState,
+        type NavigatorCandidate
+    } from '$lib/strategic/draftNavigator';
+    import { rankOurCandidates } from '$lib/intel/liveDraft';
+    import { computePresence } from '$lib/aggregates/presence';
+    import { fitRolePriors, rolePriorsOf } from '$lib/aggregates/rolePriors';
+    import type { RolePriors } from '$lib/strategic/fogReveal';
+    import { generatePrepPlan } from '$lib/strategic/planGenerator';
+    import type { DraftSide } from '$lib/data/types';
     import { deletePlanTree, getPlanTree, savePlanTree, type StoredPlanTree } from '$lib/storage/planTrees';
     import PlanDrillPanel from '$lib/components/PlanDrillPanel.svelte';
 
@@ -121,76 +147,251 @@
         }
     }
 
-    async function compileAgainstOpponent(): Promise<void> {
+    /** Modèle adverse partagé par la compile ET la génération (un seul build par action). */
+    interface OpponentModel {
+        enemyDistribution: CompileContext['enemyDistribution'];
+        evidenceOf: NonNullable<CompileContext['evidenceOf']>;
+        table: ReturnType<typeof buildOpponentIntel>['table'];
+        /** Priors de rôle + repli de candidats — corpus de la ligue chargée. */
+        rolePriors: RolePriors;
+        fallbackCandidates: string[];
+        intelRecords: number;
+        latestPatch?: string;
+    }
+
+    /** Intel + seams depuis le corpus de la ligue de l'adversaire (mêmes predict/K que la gate). */
+    async function buildOpponentModel(): Promise<OpponentModel | null> {
+        if (opponent === null) return null;
+        const leagueRecords = (await loadCorpusRecords(opponentLeague)) ?? [];
+        const canonical = canonicalTeamName(opponent.name);
+        const corpusTeamRecords = leagueRecords.filter(
+            (r) => canonicalTeamName(r.blueTeam) === canonical || canonicalTeamName(r.redTeam) === canonical
+        );
+        const intel = buildOpponentIntel(opponent, {
+            now: new Date(Date.now()).toISOString(),
+            ...(leagueRecords.length > 0 ? { leagueRecords } : {}),
+            ...(corpusTeamRecords.length > 0 ? { corpusTeamRecords } : {})
+        });
+        const table = intel.table;
+        const enemyDistribution: CompileContext['enemyDistribution'] = (state, slot) => {
+            const slotGroup = slot.type === 'pick' ? rotationOf(slot.seq) : banRotationOf(slot.seq);
+            if (slotGroup === undefined) return [];
+            const exclude = new Set(state.actions.map((a) => a.championKey).filter((k) => k !== ''));
+            return predict(table, { slotGroup, side: slot.side, exclude }).map((p) => ({
+                championKey: p.championKey,
+                p: p.p
+            }));
+        };
+        const evidenceOf: NonNullable<CompileContext['evidenceOf']> = (championKey, slot) => {
+            const slotGroup = slot.type === 'pick' ? rotationOf(slot.seq) : banRotationOf(slot.seq);
+            const entry =
+                slotGroup === undefined
+                    ? undefined
+                    : predict(table, { slotGroup, side: slot.side }).find((p) => p.championKey === championKey);
+            const exampleGameIds = intel.records
+                .filter((r) =>
+                    r.actions.some(
+                        (a) =>
+                            a.championKey === championKey && a.side === slot.side && slotGroupOf(a) === slotGroup
+                    )
+                )
+                .slice(0, 3)
+                .map((r) => r.gameId);
+            return {
+                rawCount: entry?.rawCount ?? 0,
+                total: entry?.total ?? 0,
+                ...(exampleGameIds.length > 0 ? { exampleGameIds } : {})
+            };
+        };
+        let latestPatch: string | undefined;
+        for (const r of intel.records) {
+            if (r.patch !== undefined && (latestPatch === undefined || comparePatches(r.patch, latestPatch) > 0))
+                latestPatch = r.patch;
+        }
+        // Priors de rôle : cette page n'a AUCUNE notion de « notre équipe/ligue »
+        // (l'éditeur de plan est adversaire-centré) — « notre ligue » n'est donc
+        // jamais disponible ici ; on prend les priors de la ligue de
+        // l'ADVERSAIRE (le seul corpus chargé), choix documenté.
+        const rolePriors = rolePriorsOf(fitRolePriors(leagueRecords));
+        // Repli de candidats = présence de la ligue chargée (copie de la page draft).
+        const fallbackCandidates = [...computePresence(leagueRecords).entries()]
+            .sort((a, b) => b[1].presence - a[1].presence || (a[0] < b[0] ? -1 : 1))
+            .slice(0, 15)
+            .map(([key]) => key);
+        return {
+            enemyDistribution,
+            evidenceOf,
+            table,
+            rolePriors,
+            fallbackCandidates,
+            intelRecords: intel.records.length,
+            ...(latestPatch !== undefined ? { latestPatch } : {})
+        };
+    }
+
+    /**
+     * Self-play du coach sur UN état : candidats classés par navigate (depth 2,
+     * topK 5, rankOurCandidates avec repli présence + contrainte de rôle via
+     * rolePriors et plancher par défaut) — la même chaîne que la page draft.
+     */
+    function makeSelfPlay(
+        model: OpponentModel,
+        evaluate: DraftEvaluator,
+        ourSide: DraftSide
+    ): (state: DraftState) => NavigatorCandidate[] {
+        return (state) =>
+            navigate(state, {
+                ourSide,
+                ourCandidates: (s) =>
+                    rankOurCandidates(
+                        {
+                            ourSide,
+                            evaluate,
+                            table: model.table,
+                            fallbackCandidates: model.fallbackCandidates,
+                            rolePriors: model.rolePriors
+                        },
+                        s,
+                        6
+                    ),
+                enemyDistribution: model.enemyDistribution,
+                evaluate,
+                depth: 2,
+                topK: 5
+            }).candidates;
+    }
+
+    async function compileAgainstOpponent(prebuilt?: OpponentModel): Promise<void> {
         if (plan === null || opponent === null) return;
         compiling = true;
         try {
-            const leagueRecords = (await loadCorpusRecords(opponentLeague)) ?? [];
-            const canonical = canonicalTeamName(opponent.name);
-            const corpusTeamRecords = leagueRecords.filter(
-                (r) => canonicalTeamName(r.blueTeam) === canonical || canonicalTeamName(r.redTeam) === canonical
-            );
-            const now = Date.now();
-            const intel = buildOpponentIntel(opponent, {
-                now: new Date(now).toISOString(),
-                ...(leagueRecords.length > 0 ? { leagueRecords } : {}),
-                ...(corpusTeamRecords.length > 0 ? { corpusTeamRecords } : {})
-            });
-            const table = intel.table;
-            const enemyDistribution: CompileContext['enemyDistribution'] = (state, slot) => {
-                const slotGroup = slot.type === 'pick' ? rotationOf(slot.seq) : banRotationOf(slot.seq);
-                if (slotGroup === undefined) return [];
-                const exclude = new Set(state.actions.map((a) => a.championKey).filter((k) => k !== ''));
-                return predict(table, { slotGroup, side: slot.side, exclude }).map((p) => ({
-                    championKey: p.championKey,
-                    p: p.p
-                }));
-            };
-            const evidenceOf: CompileContext['evidenceOf'] = (championKey, slot) => {
-                const slotGroup = slot.type === 'pick' ? rotationOf(slot.seq) : banRotationOf(slot.seq);
-                const entry =
-                    slotGroup === undefined
-                        ? undefined
-                        : predict(table, { slotGroup, side: slot.side }).find((p) => p.championKey === championKey);
-                const exampleGameIds = intel.records
-                    .filter((r) =>
-                        r.actions.some(
-                            (a) =>
-                                a.championKey === championKey && a.side === slot.side && slotGroupOf(a) === slotGroup
-                        )
-                    )
-                    .slice(0, 3)
-                    .map((r) => r.gameId);
-                return {
-                    rawCount: entry?.rawCount ?? 0,
-                    total: entry?.total ?? 0,
-                    ...(exampleGameIds.length > 0 ? { exampleGameIds } : {})
-                };
-            };
-            let latestPatch: string | undefined;
-            for (const r of intel.records) {
-                if (r.patch !== undefined && (latestPatch === undefined || comparePatches(r.patch, latestPatch) > 0))
-                    latestPatch = r.patch;
-            }
+            const model = prebuilt ?? (await buildOpponentModel());
+            if (model === null) return;
+            const ourSide = plan.side ?? 'blue';
+            const evaluate = evaluator;
+            // ourReply : navigate dès que l'évaluateur M1 est chargé (après une
+            // génération) ; sinon, repli historique () => null → mapping
+            // statique du plan dans compilePlanTree (riche dès que le plan a
+            // des primaires — générés ou saisis).
+            const selfPlay = evaluate === null ? null : makeSelfPlay(model, evaluate, ourSide);
+            const ourReply: CompileContext['ourReply'] =
+                selfPlay === null
+                    ? () => null
+                    : (state, slot) => {
+                          const best = selfPlay(state)[0];
+                          if (best === undefined) return null;
+                          return {
+                              seq: slot.seq,
+                              type: slot.type,
+                              championKey: best.championKey,
+                              reasonsFr: ['Réponse du coach (expectimax profondeur 2) figée à la compilation.']
+                          };
+                      };
             const compiled = compilePlanTree({
-                ourSide: plan.side ?? 'blue',
+                ourSide,
                 plan: $state.snapshot(plan) as DraftPlan,
-                enemyDistribution,
-                evidenceOf,
-                // Côté prep : pas de dataset M1 chargé → mapping statique du plan
-                // (la page draft recompile avec navigate si besoin).
-                ourReply: () => null,
-                now,
+                enemyDistribution: model.enemyDistribution,
+                evidenceOf: model.evidenceOf,
+                ourReply,
+                now: Date.now(),
                 opponent: opponent.name,
                 modelProvenance: {
-                    records: intel.records.length,
-                    ...(latestPatch !== undefined ? { latestPatch } : {}),
+                    records: model.intelRecords,
+                    ...(model.latestPatch !== undefined ? { latestPatch: model.latestPatch } : {}),
                     league: opponentLeague
                 }
             });
             tree = await savePlanTree(compiled);
         } finally {
             compiling = false;
+        }
+    }
+
+    // ---- Génération automatique de la prépa (self-play du coach) ----
+    /** Évaluateur M1 — chargé au PREMIER clic Générer (datasets ~50 Mo, cache IndexedDB). */
+    let evaluator = $state<DraftEvaluator | null>(null);
+    let generating = $state(false);
+    /** Étape courante du spinner FR (datasets / modèle / self-play / recompile). */
+    let generationStep = $state<string | null>(null);
+    let generateError = $state<string | null>(null);
+    /** Trous laissés par la dernière génération (null = pas encore généré). */
+    let lastHoles = $state<number | null>(null);
+
+    /** Le plan porte-t-il déjà du contenu (confirm avant écrasement) ? */
+    function planHasContent(p: DraftPlan): boolean {
+        return (
+            p.bans.some((b) => b.championKey !== null) ||
+            p.picks.some((row) => row.primary !== null || row.fallback !== null)
+        );
+    }
+
+    async function generatePrep(): Promise<void> {
+        const currentPlan = plan;
+        const currentOpponent = opponent;
+        if (currentPlan === null || currentOpponent === null || generating) return;
+        if (
+            planHasContent(currentPlan) &&
+            !confirm(
+                `Le plan « ${currentPlan.name} » contient déjà des picks/bans : écraser par la prépa générée contre ${currentOpponent.name} ?`
+            )
+        )
+            return;
+        generating = true;
+        generateError = null;
+        lastHoles = null;
+        try {
+            let evaluate = evaluator;
+            if (evaluate === null) {
+                generationStep = 'Chargement des datasets (≈50 Mo au premier chargement, puis cache local)…';
+                const pair = await fetchDatasetPair();
+                // Config « plain » — copie exacte du coachEvaluate de la page draft.
+                evaluate = makeAnalyzeDraftEvaluator(
+                    { dataset: pair.dataset, fullDataset: pair.fullDataset },
+                    { ignoreChampionWinrates: false, riskLevel: 'medium', minGames: 0 }
+                );
+                evaluator = evaluate;
+            }
+            generationStep = `Modèle ${currentOpponent.name} (corpus ${opponentLeague.toUpperCase()})…`;
+            const model = await buildOpponentModel();
+            if (model === null) return;
+            generationStep = 'Self-play du coach (20 tours, profondeur 2)…';
+            await new Promise((resolve) => setTimeout(resolve)); // laisser le spinner se peindre
+            const ourSide = currentPlan.side ?? 'blue';
+            const selfPlay = makeSelfPlay(model, evaluate, ourSide);
+            const prep = generatePrepPlan({
+                ourSide,
+                // navigate trie par valeur desc : 1ᵉʳ = primaire, 2ᵉ = fallback.
+                ourReply: (state) => selfPlay(state).map((c) => ({ championKey: c.championKey })),
+                enemyDistribution: model.enemyDistribution,
+                rolePriors: model.rolePriors,
+                nameOf: (key) => championNameByKey(key) ?? key
+            });
+            // Remplit le plan ÉDITABLE puis persiste — l'utilisateur retouche
+            // ensuite tout ce qu'il veut (le moteur propose, le joueur dispose).
+            prep.bans.forEach((ban, index) => {
+                currentPlan.bans[index] = {
+                    championKey: ban.championKey,
+                    ...(ban.rationaleFr !== null ? { rationale: ban.rationaleFr } : {})
+                };
+            });
+            for (const row of prep.picks) {
+                const target = currentPlan.picks.find((p) => p.role === row.role);
+                if (target === undefined) continue;
+                target.primary = row.primary;
+                target.fallback = row.fallback;
+                target.rationale = row.rationaleFr ?? '';
+            }
+            lastHoles = prep.holes;
+            await persist();
+            // Recompile dans la foulée : l'évaluateur est désormais chargé,
+            // l'arbre porte des réponses navigate — le drill devient riche.
+            generationStep = "Recompilation de l'arbre…";
+            await compileAgainstOpponent(model);
+        } catch (error) {
+            generateError = error instanceof Error ? error.message : String(error);
+        } finally {
+            generating = false;
+            generationStep = null;
         }
     }
 
@@ -459,12 +660,46 @@
                 <button
                     type="button"
                     onclick={() => void compileAgainstOpponent()}
-                    disabled={opponent === null || compiling}
+                    disabled={opponent === null || compiling || generating}
                     class="rounded-md bg-gold-500/15 px-3 py-1.5 text-xs font-semibold text-gold-300 ring-1 ring-gold-600/50 hover:bg-gold-500/25 disabled:opacity-50"
                 >
                     {compiling ? 'Compilation…' : opponent === null ? 'Compiler (synchronisez un adversaire)' : `Compiler contre ${opponent.name}`}
                 </button>
+                <button
+                    type="button"
+                    onclick={() => void generatePrep()}
+                    disabled={opponent === null || generating || compiling}
+                    class="rounded-md bg-emerald-500/15 px-3 py-1.5 text-xs font-semibold text-emerald-300 ring-1 ring-emerald-600/50 hover:bg-emerald-500/25 disabled:opacity-50"
+                >
+                    {#if generating}
+                        <span class="inline-block animate-pulse">{generationStep ?? 'Génération de la prépa…'}</span>
+                    {:else if opponent === null}
+                        Générer la prépa (synchronisez un adversaire)
+                    {:else}
+                        Générer la prépa contre {opponent.name}
+                    {/if}
+                </button>
             </div>
+            <!-- Cadrage honnête : la génération est une proposition, jamais une vérité. -->
+            <p class="pt-2 text-[11px] text-slate-600">
+                Prépa générée par self-play du coach (explorateur de lignes — gate A rouge : proposition
+                data-driven, pas une vérité) ; à curer à la main. Le plan ci-dessus reste entièrement éditable
+                après génération.
+            </p>
+            {#if generateError !== null}
+                <p class="pt-1 text-[11px] text-red-400">Échec de la génération : {generateError}</p>
+            {/if}
+            {#if lastHoles !== null && !generating}
+                <p class="pt-1 text-[11px] text-emerald-300/90">
+                    Prépa générée et enregistrée dans le plan ci-dessus — retouchez librement (un nouveau «
+                    Compiler » mettra l'arbre à jour).
+                    {#if lastHoles > 0}
+                        {lastHoles} tour{lastHoles > 1 ? 's' : ''} sans proposition du modèle : trou{lastHoles > 1
+                            ? 's'
+                            : ''} laissé{lastHoles > 1 ? 's' : ''} vide{lastHoles > 1 ? 's' : ''} (jamais inventé).
+                    {/if}
+                </p>
+            {/if}
             {#if opponent === null}
                 <p class="pt-2 text-[11px] text-slate-600">
                     Sans adversaire synchronisé (et idéalement un corpus de sa ligue), pas de branches : l'arbre EST
