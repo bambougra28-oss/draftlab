@@ -260,7 +260,9 @@
                     <strong class="text-slate-300">Attendu côté adverse</strong> : leur range — ce que cette
                     équipe joue habituellement à ce moment de la draft, d'après ses games réelles (corpus
                     Leaguepedia + gol.gg). Les raisons listées sous chaque candidat ne sont jamais inventées :
-                    seuls les axes qui s'appliquent vraiment apparaissent.
+                    seuls les axes qui s'appliquent vraiment apparaissent. Les candidats respectent désormais
+                    les rôles encore ouverts de votre compo — un rôle déjà assigné chez vous écarte ceux qui ne
+                    jouent que ce rôle (un pick flex ne verrouille rien).
                 </p>
                 <p>
                     <strong class="text-slate-300">Paire</strong> : le signal des duos pros partageant les

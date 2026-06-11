@@ -55,8 +55,22 @@ export interface RoleEntryDraft {
 export function draftStateFromRoleEntry(entry: RoleEntryDraft, tagsFile: ChampionTagsFile = loadDefaultTags()): DraftState {
     const compact = (slots: (string | null)[]): string[] =>
         slots.filter((key): key is string => key !== null && key !== '');
-    const allyColumns = { picks: compact(entry.allyPicks), bans: compact(entry.allyBans) };
-    const enemyColumns = { picks: compact(entry.enemyPicks), bans: compact(entry.enemyBans) };
+    // Role-keyed entry COMMITS the role by construction (the user typed the
+    // champion at that role index) — carried on the actions so the role
+    // coverage filter (filterByOpenRoles) can read our own committed roles.
+    const columnsOf = (picks: (string | null)[], bans: (string | null)[]): { picks: string[]; roles: Role[]; bans: string[] } => {
+        const pickKeys: string[] = [];
+        const roles: Role[] = [];
+        picks.forEach((key, index) => {
+            if (key !== null && key !== '') {
+                pickKeys.push(key);
+                roles.push(index as Role);
+            }
+        });
+        return { picks: pickKeys, roles, bans: compact(bans) };
+    };
+    const allyColumns = columnsOf(entry.allyPicks, entry.allyBans);
+    const enemyColumns = columnsOf(entry.enemyPicks, entry.enemyBans);
     const blue = entry.allySide === 'blue' ? allyColumns : enemyColumns;
     const red = entry.allySide === 'blue' ? enemyColumns : allyColumns;
 
@@ -168,6 +182,15 @@ export interface CoachContext {
      * the lookahead skips ban nodes (empty providers → navigator skip).
      */
     picksOnly?: boolean;
+    /**
+     * Priors de rôle P(rôle | champion) — seam OPTIONNEL de la contrainte de
+     * couverture de rôle de NOTRE compo (filterByOpenRoles). Absent ⇒ filtre
+     * inactif (comportement historique). La page fournit les priors de la
+     * ligue du camp conseillé.
+     */
+    rolePriors?: RolePriors;
+    /** Plancher de viabilité du filtre de rôle (défaut DEFAULT_ROLE_COVERAGE_FLOOR). */
+    roleCoverageFloor?: number;
 }
 
 const SIDE_FR: Record<DraftSide, string> = { blue: 'bleu', red: 'rouge' };
@@ -282,6 +305,86 @@ function bestPairSignal(
     };
 }
 
+// ---- contrainte de couverture de rôle de NOTRE compo (post-gate-A) ----------
+
+/**
+ * Plancher de viabilité du filtre de rôle : part minimale de la masse
+ * P(rôle | champion) qui doit tomber sur nos rôles encore OUVERTS pour
+ * qu'un candidat reste proposé. Config exportée et injectable (DA-V2-6)
+ * via `CoachContext.roleCoverageFloor`.
+ */
+export const DEFAULT_ROLE_COVERAGE_FLOOR = 0.15;
+
+/** Confiance minimale avant d'écrire « pour votre X encore ouvert » (raison FR). */
+export const OPEN_ROLE_REASON_MIN_P = 0.6;
+
+/** Libellés FR des rôles pour la raison « encore ouvert » (audience apprenante). */
+const OPEN_ROLE_REASON_FR: Record<Role, string> = {
+    0: 'Pour votre top encore ouvert.',
+    1: 'Pour votre jungle encore ouverte.',
+    2: 'Pour votre mid encore ouvert.',
+    3: 'Pour votre ADC encore ouvert.',
+    4: 'Pour votre support encore ouvert.'
+};
+
+/**
+ * Rôles encore OUVERTS d'un side : les 5 rôles moins ceux des picks de ce
+ * side dont le rôle est COMMITTÉ (`action.role`). Un pick role-less (flex,
+ * mode séquence) ne verrouille AUCUN rôle — c'est voulu : l'incertitude
+ * reste entière tant que le rôle n'est pas engagé.
+ */
+export function openRolesOf(state: DraftState, side: DraftSide): Role[] {
+    const committed = new Set<Role>();
+    for (const action of state.actions) {
+        if (action.type === 'pick' && action.side === side && action.championKey !== '' && action.role !== undefined) {
+            committed.add(action.role);
+        }
+    }
+    return ROLES.filter((role) => !committed.has(role));
+}
+
+/** Masse de probabilité de rôle d'un candidat sur les rôles ouverts; null = champion inconnu des priors. */
+function openRoleViability(championKey: string, openRoles: readonly Role[], rolePriors: RolePriors): number | null {
+    const weights = rolePriors(championKey);
+    let total = 0;
+    let openMass = 0;
+    for (const role of ROLES) {
+        const weight = weights[role] ?? 0;
+        if (!Number.isFinite(weight) || weight <= 0) continue;
+        total += weight;
+        if (openRoles.includes(role)) openMass += weight;
+    }
+    return total === 0 ? null : openMass / total;
+}
+
+/**
+ * Config évoluée POST-gate-A (2026-06-11, contrainte de rôle = suspect n°3
+ * du rapport rouge) — la gate sera re-passée avec la config courante
+ * (run #3) ; le badge Expérimental reste.
+ *
+ * Filtre de couverture de rôle de NOTRE compo : un candidat n'est proposé
+ * que si une part suffisante (≥ floor) de sa masse P(rôle | champion) tombe
+ * sur nos rôles encore OUVERTS. Champion inconnu des priors ⇒ CONSERVÉ
+ * (uniforme, honnête : pas de data, pas d'exclusion). Garde-fou : si le
+ * filtre vidait la liste, la liste NON filtrée est retournée — mieux vaut
+ * des candidats discutables que zéro candidat.
+ */
+export function filterByOpenRoles(
+    candidates: string[],
+    state: DraftState,
+    ourSide: DraftSide,
+    rolePriors: RolePriors,
+    floor: number = DEFAULT_ROLE_COVERAGE_FLOOR
+): string[] {
+    const open = openRolesOf(state, ourSide);
+    if (open.length === ROLES.length) return candidates; // aucun rôle committé → rien à contraindre
+    const kept = candidates.filter((championKey) => {
+        const viability = openRoleViability(championKey, open, rolePriors);
+        return viability === null || viability >= floor;
+    });
+    return kept.length > 0 ? kept : candidates;
+}
+
 /**
  * Our candidate ranking: pool tiers first (strongest → learning), then fallback.
  * Exported for the coach gate runner (chantier A run #2): the gate replays the
@@ -303,6 +406,20 @@ export function rankOurCandidates(ctx: CoachContext, state: DraftState, count: n
         for (const entry of entries) push(entry.key);
     }
     for (const key of ctx.fallbackCandidates ?? []) push(key);
+
+    // Contrainte de couverture de rôle (post-gate-A, suspect n°3) : APRÈS le
+    // filtre de disponibilité (push), AVANT la troncature — chemins roster ET
+    // fallback. Aux tours de PICK seulement : un ban vise l'adversaire, pas
+    // la couverture de notre compo.
+    if (ctx.rolePriors !== undefined && nextSlotOf(state)?.type === 'pick') {
+        return filterByOpenRoles(
+            out,
+            state,
+            ctx.ourSide,
+            ctx.rolePriors,
+            ctx.roleCoverageFloor ?? DEFAULT_ROLE_COVERAGE_FLOOR
+        ).slice(0, count);
+    }
     return out.slice(0, count);
 }
 
@@ -426,6 +543,8 @@ export function recommendNext(state: DraftState, ctx: CoachContext): CoachAdvice
     // classifyGamePlan tolerates an empty comp (uniform + ambiguous): the
     // gap-fill reasons (engage, frontline, damage mix) must fire from pick 1.
     const targetPlan = classifyGamePlan(allyComp, tagsFile).primary;
+    // Nos rôles encore ouverts — alimente la raison FR « encore ouvert ».
+    const ourOpenRoles = openRolesOf(state, ctx.ourSide);
 
     const candidates: CoachCandidate[] = result.candidates.map((candidate, index) => {
         const next = result.candidates[index + 1] ?? result.candidates[index];
@@ -480,6 +599,21 @@ export function recommendNext(state: DraftState, ctx: CoachContext): CoachAdvice
             reasonsFr.push('Garde de bonnes suites : la valeur vient aussi des coups suivants.');
         } else if (candidate.components.lookaheadDelta < -0.002) {
             reasonsFr.push('Attention à la suite : leur meilleure réponse reprend une partie du gain.');
+        }
+        // Raison « rôle encore ouvert » (informatif, JAMAIS un nouveau tri) :
+        // le candidat n'a qu'UN rôle ouvert plausible (P(r|c) ≥ 0.6) et au
+        // moins un de nos rôles est committé — sinon la phrase ne dit rien.
+        if (candidate.actionType === 'pick' && ctx.rolePriors !== undefined && ourOpenRoles.length < ROLES.length) {
+            const weights = ctx.rolePriors(candidate.championKey);
+            let total = 0;
+            for (const role of ROLES) {
+                const weight = weights[role] ?? 0;
+                if (Number.isFinite(weight) && weight > 0) total += weight;
+            }
+            const plausible = ourOpenRoles.filter(
+                (role) => total > 0 && (weights[role] ?? 0) / total >= OPEN_ROLE_REASON_MIN_P
+            );
+            if (plausible.length === 1) reasonsFr.push(OPEN_ROLE_REASON_FR[plausible[0]]);
         }
         return {
             championKey: candidate.championKey,

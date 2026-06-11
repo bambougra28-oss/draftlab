@@ -251,8 +251,9 @@
     </div>
 
     <p class="pt-2 text-[10px] text-slate-600">
-        Un pick se pose en <span class="font-semibold text-amber-300">FLEX</span> (rôle non engagé) — cliquez un
-        rôle pour l'assigner, recliquez pour le libérer ; assigner le rôle d'un coéquipier le repasse en flex.
+        Un pick se pose en <span class="font-semibold text-amber-300">FLEX</span> (rôle non engagé) : gardez le
+        rôle ouvert — l'adversaire doit couvrir plusieurs hypothèses. Cliquez un rôle pour l'assigner, recliquez
+        pour le libérer ; assigner le rôle d'un coéquipier le repasse en flex.
         {#if format === 'soloq'}
             Bans SIMULTANÉS (les deux équipes peuvent bannir le même champion) puis le serpentin de picks —
             le coach traite les bans comme des exclusions, fidèle au client.

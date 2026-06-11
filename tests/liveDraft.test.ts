@@ -6,11 +6,22 @@
  * 103 Ahri, 68 Rumble, 13 Ryze, 60 Elise, 412 Thresh, 145 Kai'Sa.
  */
 import { describe, it, expect } from 'vitest';
-import { draftStateFromRoleEntry, recommendNext, type RoleEntryDraft } from '$lib/intel/liveDraft';
+import {
+    DEFAULT_ROLE_COVERAGE_FLOOR,
+    draftStateFromActions,
+    draftStateFromRoleEntry,
+    filterByOpenRoles,
+    openRolesOf,
+    rankOurCandidates,
+    recommendNext,
+    type RoleEntryDraft
+} from '$lib/intel/liveDraft';
 import { buildTendencyTable } from '$lib/aggregates/tendency';
 import { buildDraftActions } from '$lib/data/draftRecord';
 import { fitTagCounterCells, fitTagPairCells } from '$lib/estimators/tagPairs';
-import type { DraftRecord, DraftSide } from '$lib/data/types';
+import type { RolePriors } from '$lib/strategic/fogReveal';
+import type { DraftAction, DraftRecord, DraftSide } from '$lib/data/types';
+import { Role } from '$lib/types';
 
 const emptyEntry = (): RoleEntryDraft => ({
     allyPicks: [null, null, null, null, null],
@@ -52,6 +63,92 @@ describe('draftStateFromRoleEntry', () => {
 });
 
 // ---- recommendNext ------------------------------------------------------------
+
+/**
+ * Priors de rôle calculés à la main (poids bruts, normalisés par la fonction) :
+ * 60 Elise 90 % jungle / 10 % mid ; 103 Ahri flex 50/50 jungle-mid ;
+ * 412 Thresh 90 % support / 10 % mid ; tout autre champion = inconnu ({}).
+ */
+const rolePriorsStub: RolePriors = (championKey) =>
+    championKey === '60'
+        ? { [Role.Jungle]: 9, [Role.Middle]: 1 }
+        : championKey === '103'
+          ? { [Role.Jungle]: 5, [Role.Middle]: 5 }
+          : championKey === '412'
+            ? { [Role.Support]: 9, [Role.Middle]: 1 }
+            : {};
+
+/** Hand-built pick action (sequence mode shape: role only when committed). */
+const pickAction = (seq: number, side: DraftSide, championKey: string, role?: Role): DraftAction => ({
+    seq,
+    type: 'pick',
+    phase: seq <= 12 ? 'pick1' : 'pick2',
+    side,
+    championKey,
+    championName: championKey,
+    ...(role !== undefined ? { role } : {})
+});
+
+describe('filterByOpenRoles (contrainte de rôle post-gate-A)', () => {
+    /** Notre jungle committée (saisie par rôle : '13' au slot jungle). */
+    const jungleCommitted = (): ReturnType<typeof draftStateFromRoleEntry> => {
+        const entry = emptyEntry();
+        entry.allyPicks = [null, '13', null, null, null];
+        return draftStateFromRoleEntry(entry);
+    };
+
+    it('la saisie par rôle committe le rôle sur l’action (construction)', () => {
+        const state = jungleCommitted();
+        expect(state.actions[0]).toMatchObject({ type: 'pick', side: 'blue', championKey: '13', role: Role.Jungle });
+        expect(openRolesOf(state, 'blue')).toEqual([Role.Top, Role.Middle, Role.Bottom, Role.Support]);
+        expect(openRolesOf(state, 'red')).toEqual([Role.Top, Role.Jungle, Role.Middle, Role.Bottom, Role.Support]);
+    });
+
+    it('jungle committée : mono-jungle exclu (0.1 < 0.15), flex 2 rôles conservé, inconnu conservé', () => {
+        const state = jungleCommitted();
+        // 60 : masse ouverte 1/10 = 0.1 < 0.15 → exclu ; 103 : 5/10 = 0.5 →
+        // conservé ; '999' inconnu des priors → conservé (uniforme, honnête).
+        expect(filterByOpenRoles(['60', '103', '999'], state, 'blue', rolePriorsStub)).toEqual(['103', '999']);
+    });
+
+    it('un pick allié FLEX (role-less) ne verrouille aucun rôle', () => {
+        const state = draftStateFromActions([pickAction(7, 'blue', '13')]); // flex : pas de role
+        expect(openRolesOf(state, 'blue')).toHaveLength(5);
+        expect(filterByOpenRoles(['60', '103'], state, 'blue', rolePriorsStub)).toEqual(['60', '103']);
+    });
+
+    it('garde-fou : si le filtre vide la liste, la liste NON filtrée revient', () => {
+        const state = jungleCommitted();
+        expect(filterByOpenRoles(['60'], state, 'blue', rolePriorsStub)).toEqual(['60']);
+    });
+
+    it('floor injectable : à 0.05 le mono-jungle (0.1) repasse', () => {
+        const state = jungleCommitted();
+        expect(filterByOpenRoles(['60'], state, 'blue', rolePriorsStub, 0.05)).toEqual(['60']);
+        expect(DEFAULT_ROLE_COVERAGE_FLOOR).toBe(0.15);
+    });
+
+    it('rankOurCandidates : filtre branché aux tours de PICK, jamais aux bans', () => {
+        const ctx = {
+            ourSide: 'blue' as const,
+            evaluate,
+            fallbackCandidates: ['60', '103'],
+            rolePriors: rolePriorsStub
+        };
+        // Notre jungle committée + bans de phase 1 remplis → prochain slot =
+        // pick (seq 8) : le mono-jungle sort de la liste.
+        const entry = emptyEntry();
+        entry.allyBans = ['86', '23', '36', null, null];
+        entry.enemyBans = ['75', '77', '106', null, null];
+        entry.allyPicks = [null, '13', null, null, null];
+        const pickState = draftStateFromRoleEntry(entry);
+        expect(rankOurCandidates(ctx, pickState, 6)).toEqual(['103']);
+        // Draft vide → prochain slot = ban (seq 1) : pas de contrainte de
+        // couverture (un ban vise l'adversaire, pas notre compo).
+        const banState = draftStateFromRoleEntry(emptyEntry());
+        expect(rankOurCandidates(ctx, banState, 6)).toEqual(['60', '103']);
+    });
+});
 
 /** Stub evaluator: 0.5 + 0.1 per ally Malphite(54) + 0.05 per ally Ahri(103). */
 const evaluate = (allyKeys: string[], enemyKeys: string[]): number => {
@@ -330,6 +427,40 @@ describe('recommendNext', () => {
             fallbackCandidates: ['54']
         });
         expect(single.turn).toMatchObject({ seq: 7, doubleSlot: false });
+    });
+
+    it('role coverage: notre jungle pickée → le mono-jungler sort, la raison « encore ouvert » parle', () => {
+        // Bans done; B1 = 54 (top committé), B2 = 13 (jungle committée) via la
+        // saisie par rôle (le rôle est committé par construction) ; R1-R2 =
+        // 145/68. Prochain slot = seq 11, pick bleu, à nous. Rôles ouverts
+        // bleus = mid/ADC/support.
+        const entry = emptyEntry();
+        entry.allyBans = ['86', '23', '36', null, null];
+        entry.enemyBans = ['75', '77', '106', null, null];
+        entry.allyPicks = ['54', '13', null, null, null];
+        entry.enemyPicks = ['145', '68', null, null, null];
+        const state = draftStateFromRoleEntry(entry);
+
+        const advice = recommendNext(state, {
+            ourSide: 'blue',
+            evaluate,
+            fallbackCandidates: ['60', '412', '103'],
+            rolePriors: rolePriorsStub,
+            depth: 1,
+            topK: 3
+        });
+        expect(advice.turn).toMatchObject({ seq: 11, type: 'pick', side: 'blue', isOurs: true });
+        const keys = advice.candidates.map((c) => c.championKey);
+        // 60 (90 % jungle, 10 % mid) : viabilité ouverte 0.1 < 0.15 → exclu.
+        expect(keys).not.toContain('60');
+        expect(keys).toContain('412');
+        expect(keys).toContain('103');
+        // 412 : P(support)=0.9 ≥ 0.6 sur UN seul rôle ouvert → raison FR.
+        const thresh = advice.candidates.find((c) => c.championKey === '412')!;
+        expect(thresh.reasonsFr.at(-1)).toBe('Pour votre support encore ouvert.');
+        // 103 (50/50 jungle-mid) : aucun rôle ouvert ≥ 0.6 → pas de raison rôle.
+        const ahri = advice.candidates.find((c) => c.championKey === '103')!;
+        expect(ahri.reasonsFr.some((r) => r.includes('encore ouvert'))).toBe(false);
     });
 
     it('complete draft: turn null and an explicit FR headline', () => {
