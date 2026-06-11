@@ -25,7 +25,10 @@ import {
 } from '$lib/backtest/coachGateHarness';
 import { buildDraftActions } from '$lib/data/draftRecord';
 import type { DraftRecord, DraftSide } from '$lib/data/types';
+import type { ProPlayer } from '$lib/pro/types';
+import type { RolePriors } from '$lib/strategic/fogReveal';
 import { nextSlotOf, type DraftState } from '$lib/strategic/draftNavigator';
+import { Role } from '$lib/types';
 
 // ---- fabrique de records synthétiques (template tournoi, blue first) -----------
 
@@ -220,6 +223,73 @@ describe('makeCoachTurnEngine', () => {
         const value = engine.modelDeps.valueOf(state, slot!, 'p1');
         expect(Number.isFinite(value)).toBe(true);
         expect(engine.evaluatedNodes).toBeGreaterThan(0);
+    });
+});
+
+// ---- seam additif v2 (run #3, chantier A3) : allyPlayersFor / rolePriors ----------
+
+describe('seam additif v2 — allyPlayersFor / rolePriors (chantier A3, §2.1)', () => {
+    const toyEvaluate = (): number => 0.5;
+    const foldFor = makeFoldProvider([trainT1, trainT2, testG1], '2099-01-01T00:00:00Z');
+
+    /** État après les 6 bans de testG1 : prochain slot = seq 7, pick blue. */
+    const stateAfterBansOf = (engine: ReturnType<typeof makeCoachTurnEngine>): DraftState => {
+        const actions = testG1.actions.filter((a) => a.seq <= 6);
+        return {
+            actions,
+            firstPickSide: 'blue',
+            available: new Set([...engine.universe].filter((k) => !actions.some((a) => a.championKey === k)))
+        };
+    };
+
+    it('options absentes : le ctx du tour est le ctx v1 byte-identique (aucune clé ajoutée)', () => {
+        const engine = makeCoachTurnEngine(testG1, {
+            fold: foldFor('1.2')!,
+            locked: new Set(),
+            tagsKeys: ['tag1', 'tag2'],
+            evaluate: toyEvaluate
+        });
+        const state = stateAfterBansOf(engine);
+        const slot = nextSlotOf(state)!;
+        const entry = engine.turnEntryOf(state, slot);
+        // Aucune clé `allyPlayers` ni `rolePriors` — pas même `undefined` :
+        // le chemin `--chain v1` de la porte de validité en dépend.
+        expect('allyPlayers' in entry.ctx).toBe(false);
+        expect('rolePriors' in entry.ctx).toBe(false);
+        // C_t v1 inchangé : présence-top-15 → disponibilité → 6 → tronqué à 4.
+        expect(engine.candidatesOf(state, slot)).toEqual(['p1', 'p2', 'p3', 'p4']);
+    });
+
+    it('options posées : recopiées TELLES QUELLES dans le ctx ; pools en tête de C_t', () => {
+        const pool: ProPlayer[] = [
+            { id: 'J1', name: 'J1', role: Role.Top, pool: [{ championKey: 'tag1', games: 5, wins: 3 }] }
+        ];
+        const priors: RolePriors = () => ({});
+        const sides: DraftSide[] = [];
+        const engine = makeCoachTurnEngine(testG1, {
+            fold: foldFor('1.2')!,
+            locked: new Set(),
+            tagsKeys: ['tag1', 'tag2'],
+            evaluate: toyEvaluate,
+            allyPlayersFor: (side) => {
+                sides.push(side);
+                return pool;
+            },
+            rolePriors: priors
+        });
+        const state = stateAfterBansOf(engine);
+        const slot = nextSlotOf(state)!;
+        const entry = engine.turnEntryOf(state, slot);
+        // Recopiés tels quels (mêmes références — aucune transformation).
+        expect(entry.ctx.allyPlayers).toBe(pool);
+        expect(entry.ctx.rolePriors).toBe(priors);
+        // `allyPlayersFor` reçoit le side du slot (seq 7 = pick blue).
+        expect(sides).toEqual(['blue']);
+        // C_t : pool d'abord ('tag1', 5 games), puis repli présence. Les
+        // actions de testG1 ne portent aucun rôle ⇒ 5 rôles ouverts ⇒ le
+        // filtre de rôle ne contraint rien ; priors vides ⇒ candidats
+        // inconnus conservés de toute façon.
+        expect(engine.candidatesOf(state, slot)).toEqual(['tag1', 'p1', 'p2', 'p3']);
     });
 });
 

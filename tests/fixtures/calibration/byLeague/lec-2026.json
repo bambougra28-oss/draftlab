@@ -1,0 +1,554 @@
+[
+    {
+        "gameId": "LEC26-G1",
+        "tournament": "Ligue Synthétique LEC",
+        "league": "lec",
+        "date": "2026-01-11",
+        "patch": "26.01",
+        "blueTeam": "Équipe Azur",
+        "redTeam": "Équipe Carmin",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "11",
+                "championName": "Champ11",
+                "role": 0
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "21",
+                "championName": "Champ21",
+                "role": 0
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "22",
+                "championName": "Champ22",
+                "role": 1
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "12",
+                "championName": "Champ12",
+                "role": 1
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "13",
+                "championName": "Champ13",
+                "role": 2
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "23",
+                "championName": "Champ23",
+                "role": 2
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "24",
+                "championName": "Champ24",
+                "role": 3
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "14",
+                "championName": "Champ14",
+                "role": 3
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "15",
+                "championName": "Champ15",
+                "role": 4
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "25",
+                "championName": "Champ25",
+                "role": 4
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "synthetic",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        },
+        "winner": "blue"
+    },
+    {
+        "gameId": "LEC26-G2",
+        "tournament": "Ligue Synthétique LEC",
+        "league": "lec",
+        "date": "2026-01-13",
+        "patch": "26.01",
+        "blueTeam": "Équipe Azur",
+        "redTeam": "Équipe Carmin",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "21",
+                "championName": "Champ21",
+                "role": 0
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "11",
+                "championName": "Champ11",
+                "role": 0
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "12",
+                "championName": "Champ12",
+                "role": 1
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "22",
+                "championName": "Champ22",
+                "role": 1
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "23",
+                "championName": "Champ23",
+                "role": 2
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "13",
+                "championName": "Champ13",
+                "role": 2
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "14",
+                "championName": "Champ14",
+                "role": 3
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "24",
+                "championName": "Champ24",
+                "role": 3
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "25",
+                "championName": "Champ25",
+                "role": 4
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "15",
+                "championName": "Champ15",
+                "role": 4
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "synthetic",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        },
+        "winner": "red",
+        "series": {
+            "matchId": "LEC26-M1",
+            "gameNumber": 1
+        }
+    },
+    {
+        "gameId": "LEC26-G3",
+        "tournament": "Ligue Synthétique LEC",
+        "league": "lec",
+        "date": "2026-01-13",
+        "patch": "26.01",
+        "blueTeam": "Équipe Azur",
+        "redTeam": "Équipe Carmin",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "11",
+                "championName": "Champ11",
+                "role": 0
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "21",
+                "championName": "Champ21",
+                "role": 0
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "22",
+                "championName": "Champ22",
+                "role": 1
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "12",
+                "championName": "Champ12",
+                "role": 1
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "13",
+                "championName": "Champ13",
+                "role": 2
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "23",
+                "championName": "Champ23",
+                "role": 2
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "24",
+                "championName": "Champ24",
+                "role": 3
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "14",
+                "championName": "Champ14",
+                "role": 3
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "15",
+                "championName": "Champ15",
+                "role": 4
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "25",
+                "championName": "Champ25",
+                "role": 4
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "synthetic",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        },
+        "winner": "blue",
+        "series": {
+            "matchId": "LEC26-M1",
+            "gameNumber": 2
+        }
+    },
+    {
+        "gameId": "LEC26-G4",
+        "tournament": "Ligue Synthétique LEC",
+        "league": "lec",
+        "date": "2026-01-17",
+        "patch": "26.01",
+        "blueTeam": "Équipe Azur",
+        "redTeam": "Équipe Carmin",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "21",
+                "championName": "Champ21",
+                "role": 0
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "11",
+                "championName": "Champ11",
+                "role": 0
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "12",
+                "championName": "Champ12",
+                "role": 1
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "22",
+                "championName": "Champ22",
+                "role": 1
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "23",
+                "championName": "Champ23",
+                "role": 2
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "13",
+                "championName": "Champ13",
+                "role": 2
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "14",
+                "championName": "Champ14",
+                "role": 3
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "24",
+                "championName": "Champ24",
+                "role": 3
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "25",
+                "championName": "Champ25",
+                "role": 4
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "15",
+                "championName": "Champ15",
+                "role": 4
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "synthetic",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        },
+        "winner": "blue"
+    },
+    {
+        "gameId": "LEC26-D1",
+        "tournament": "Ligue Synthétique LEC",
+        "league": "lec",
+        "date": "2026-01-17",
+        "patch": "26.01",
+        "blueTeam": "Équipe Azur",
+        "redTeam": "Équipe Carmin",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "11",
+                "championName": "Champ11",
+                "role": 0
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "21",
+                "championName": "Champ21",
+                "role": 0
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "22",
+                "championName": "Champ22",
+                "role": 1
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "12",
+                "championName": "Champ12",
+                "role": 1
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "13",
+                "championName": "Champ13",
+                "role": 2
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "23",
+                "championName": "Champ23",
+                "role": 2
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "24",
+                "championName": "Champ24",
+                "role": 3
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "14",
+                "championName": "Champ14",
+                "role": 3
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "15",
+                "championName": "Champ15",
+                "role": 4
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "25",
+                "championName": "Champ25",
+                "role": 4
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "synthetic",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        }
+    }
+]

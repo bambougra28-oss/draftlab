@@ -1,0 +1,186 @@
+{
+    "version": "synthetic-byleague-1",
+    "date": "2026-06-11",
+    "championData": {
+        "11": {
+            "key": "11",
+            "name": "Champ11",
+            "statsByRole": {
+                "0": {
+                    "games": 2000,
+                    "wins": 1040,
+                    "matchup": {},
+                    "synergy": {},
+                    "damageProfile": {
+                        "magic": 0.34,
+                        "physical": 0.33,
+                        "true": 0.33
+                    },
+                    "statsByTime": []
+                }
+            }
+        },
+        "12": {
+            "key": "12",
+            "name": "Champ12",
+            "statsByRole": {
+                "1": {
+                    "games": 2000,
+                    "wins": 1040,
+                    "matchup": {},
+                    "synergy": {},
+                    "damageProfile": {
+                        "magic": 0.34,
+                        "physical": 0.33,
+                        "true": 0.33
+                    },
+                    "statsByTime": []
+                }
+            }
+        },
+        "13": {
+            "key": "13",
+            "name": "Champ13",
+            "statsByRole": {
+                "2": {
+                    "games": 2000,
+                    "wins": 1040,
+                    "matchup": {},
+                    "synergy": {},
+                    "damageProfile": {
+                        "magic": 0.34,
+                        "physical": 0.33,
+                        "true": 0.33
+                    },
+                    "statsByTime": []
+                }
+            }
+        },
+        "14": {
+            "key": "14",
+            "name": "Champ14",
+            "statsByRole": {
+                "3": {
+                    "games": 2000,
+                    "wins": 1040,
+                    "matchup": {},
+                    "synergy": {},
+                    "damageProfile": {
+                        "magic": 0.34,
+                        "physical": 0.33,
+                        "true": 0.33
+                    },
+                    "statsByTime": []
+                }
+            }
+        },
+        "15": {
+            "key": "15",
+            "name": "Champ15",
+            "statsByRole": {
+                "4": {
+                    "games": 2000,
+                    "wins": 1040,
+                    "matchup": {},
+                    "synergy": {},
+                    "damageProfile": {
+                        "magic": 0.34,
+                        "physical": 0.33,
+                        "true": 0.33
+                    },
+                    "statsByTime": []
+                }
+            }
+        },
+        "21": {
+            "key": "21",
+            "name": "Champ21",
+            "statsByRole": {
+                "0": {
+                    "games": 2000,
+                    "wins": 990,
+                    "matchup": {},
+                    "synergy": {},
+                    "damageProfile": {
+                        "magic": 0.34,
+                        "physical": 0.33,
+                        "true": 0.33
+                    },
+                    "statsByTime": []
+                }
+            }
+        },
+        "22": {
+            "key": "22",
+            "name": "Champ22",
+            "statsByRole": {
+                "1": {
+                    "games": 2000,
+                    "wins": 990,
+                    "matchup": {},
+                    "synergy": {},
+                    "damageProfile": {
+                        "magic": 0.34,
+                        "physical": 0.33,
+                        "true": 0.33
+                    },
+                    "statsByTime": []
+                }
+            }
+        },
+        "23": {
+            "key": "23",
+            "name": "Champ23",
+            "statsByRole": {
+                "2": {
+                    "games": 2000,
+                    "wins": 990,
+                    "matchup": {},
+                    "synergy": {},
+                    "damageProfile": {
+                        "magic": 0.34,
+                        "physical": 0.33,
+                        "true": 0.33
+                    },
+                    "statsByTime": []
+                }
+            }
+        },
+        "24": {
+            "key": "24",
+            "name": "Champ24",
+            "statsByRole": {
+                "3": {
+                    "games": 2000,
+                    "wins": 990,
+                    "matchup": {},
+                    "synergy": {},
+                    "damageProfile": {
+                        "magic": 0.34,
+                        "physical": 0.33,
+                        "true": 0.33
+                    },
+                    "statsByTime": []
+                }
+            }
+        },
+        "25": {
+            "key": "25",
+            "name": "Champ25",
+            "statsByRole": {
+                "4": {
+                    "games": 2000,
+                    "wins": 990,
+                    "matchup": {},
+                    "synergy": {},
+                    "damageProfile": {
+                        "magic": 0.34,
+                        "physical": 0.33,
+                        "true": 0.33
+                    },
+                    "statsByTime": []
+                }
+            }
+        }
+    }
+}

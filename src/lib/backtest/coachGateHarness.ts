@@ -31,6 +31,11 @@
  *
  * Pur là où c'est possible : zéro I/O, zéro horloge ; l'évaluateur, les clés
  * de tags et l'ancre de repli sont des seams injectés.
+ *
+ * Run #3, chantier A3 (docs/run3/A3-coach-player-pools.md §2.1) : seam ADDITIF
+ * `allyPlayersFor`/`rolePriors` sur `CoachTurnEngineOptions` — deux clés de
+ * ctx OPTIONNELLES recopiées telles quelles ; absentes ⇒ comportement v1
+ * byte-identique (prouvé par la porte W2 de `tests/coachGateHarness.test.ts`).
  */
 import { computePresence } from '$lib/aggregates/presence';
 import { buildTendencyTable, type TendencyTable } from '$lib/aggregates/tendency';
@@ -38,6 +43,8 @@ import type { ScoreGameDeps } from '$lib/backtest/coachGate';
 import { comparePatches, parsePatch } from '$lib/backtest/walkforward';
 import type { DraftRecord, DraftSide } from '$lib/data/types';
 import { enemyDistributionOf, rankOurCandidates, type CoachContext } from '$lib/intel/liveDraft';
+import type { ProPlayer } from '$lib/pro/types';
+import type { RolePriors } from '$lib/strategic/fogReveal';
 import {
     navigate,
     nextSlotOf,
@@ -202,6 +209,19 @@ export interface CoachTurnEngineOptions {
     tagsKeys: readonly string[];
     /** Évaluateur shippé (`makeAnalyzeDraftEvaluator` côté runner). */
     evaluate: DraftEvaluator;
+    /**
+     * Seam ADDITIF v2 (run #3, chantier A3 — docs/run3/A3-coach-player-pools.md
+     * §2.1) : pools joueurs du side conseillé, recopiés TELS QUELS dans le ctx
+     * du tour (`CoachContext.allyPlayers`). Absent ⇒ ctx v1 byte-identique
+     * (le chemin `--chain v1`).
+     */
+    allyPlayersFor?: (side: DraftSide) => ProPlayer[];
+    /**
+     * Seam ADDITIF v2 : priors de rôle P(rôle | champion), recopiés tels quels
+     * dans le ctx du tour (`CoachContext.rolePriors`). Absent ⇒ ctx v1
+     * byte-identique (filtre de rôle inerte, comme au run v1).
+     */
+    rolePriors?: RolePriors;
 }
 
 export interface CoachTurnEngine {
@@ -228,7 +248,7 @@ export function makeCoachTurnEngine(
     record: DraftRecord,
     opts: CoachTurnEngineOptions
 ): CoachTurnEngine {
-    const { fold, locked, tagsKeys, evaluate } = opts;
+    const { fold, locked, tagsKeys, evaluate, allyPlayersFor, rolePriors } = opts;
 
     // Disponibilité : univers (clés tags ∪ train ∪ game) − lockouts ; les
     // révélés sont soustraits par la lib, le pick réel ré-ajouté par elle.
@@ -246,11 +266,17 @@ export function makeCoachTurnEngine(
         let entry = turnEntries.get(slot.seq);
         if (entry === undefined) {
             const enemyTeam = slot.side === 'blue' ? record.redTeam : record.blueTeam;
+            // Ctx v1 EXACT + (seam v2, A3 §1.1) exactement deux injections
+            // OPTIONNELLES recopiées telles quelles : `allyPlayers` et
+            // `rolePriors`. Absentes ⇒ le ctx v1 byte-identique (aucune clé
+            // ajoutée — le chemin `--chain v1` de la porte de validité).
             const ctx: CoachContext = {
                 ourSide: slot.side,
                 evaluate,
                 table: fold.tableFor(enemyTeam),
+                ...(allyPlayersFor !== undefined ? { allyPlayers: allyPlayersFor(slot.side) } : {}),
                 fallbackCandidates: fold.top15,
+                ...(rolePriors !== undefined ? { rolePriors } : {}),
                 depth: 2,
                 topK: 4,
                 candidateCount: 6
