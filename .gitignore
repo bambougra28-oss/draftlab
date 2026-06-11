@@ -17,6 +17,8 @@ Thumbs.db
 draftlab-frameworks-research.md
 # Oracle's Elixir source CSVs — re-fetched on demand by scrapeOraclesElixir.ts
 data/raw/
+# Frozen DraftGap snapshots for the run #2 gates (52 MB) — hashes committed in data/datasets/SNAPSHOT.md
+data/datasets/*.json
 # Disposable run / validation outputs from scripts (audit-*.txt, *-report.txt, etc.)
 /audit-*.txt
 /calibration-*.txt
