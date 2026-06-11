@@ -12,9 +12,13 @@
  *     absente : chemin C-ROUGE, le composant le dit), coût de révélation I2,
  *     appât I2 ;
  *  3. CÔTÉ ADVERSE : dark pool (lecture pondérée par rôle) + alerte
- *     pick-préparé badgée « Expérimental — F2 non verte ».
+ *     pick-préparé citant sa provenance mesurée : gate F2 VERTE (2026-06-11,
+ *     Δ_contamination −82,5 pp, IC [−87,7 ; −77,7] —
+ *     docs/calibration/role-surprise-f2.md). Le mécanisme de défense F-c
+ *     reste DÉBRANCHÉ : l'alerte est une lecture, jamais une action.
  *
- * Badge Expérimental GLOBAL tant que F1 n'est pas VERTE. Caveat permanent :
+ * Badge Expérimental GLOBAL tant que F1 n'est pas VERTE (gate jouée le
+ * 2026-06-11 : ROUGE — aucun premium du pocket démontré). Caveat permanent :
  * corrélation, jamais causalité. « Comment lire ? » pédagogique avec le cas
  * fondateur G2-Nasus (Skewmond, finale LEC 2026, G5, séquence corrigée
  * KC-G2-KC-G2-G2).
@@ -189,13 +193,17 @@
     <!-- Bloc 3 — côté adverse -->
     <h3 class="pt-1 pb-1 text-xs font-semibold text-slate-300">Côté adverse</h3>
     {#if preparedAlert !== null}
-        <p class="mb-1 flex items-center gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-[11px] text-amber-300">
+        <p class="mb-1 flex flex-wrap items-center gap-2 rounded-md border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-[11px] text-amber-300">
             ⚠ Pick préparé — leur prep est profonde : {nameOf(preparedAlert.championKey)}
             ({fmtBits(preparedAlert.bits)}{preparedAlert.roleNoveltyStructural
                 ? ', rôle jamais vu au corpus'
-                : ''}). Lecture de rôles à élargir.
-            <span class="rounded-full bg-amber-500/15 px-1.5 text-[9px] font-semibold text-amber-400">
-                Expérimental — F2 non verte
+                : ''}). Lecture de rôles à élargir — un pick surprise contamine la lecture des rôles voisins
+            (gate F2 verte du 2026-06-11 : Δ_contamination −82,5 pp, IC [−87,7 ; −77,7]).
+            <span
+                class="cursor-help rounded-full bg-emerald-500/15 px-1.5 text-[9px] font-semibold text-emerald-400"
+                title="Gate role-surprise F2 (docs/calibration/role-surprise-f2.md, 2026-06-11) : sur un pick hors modèle public, l'accuracy de lecture des rôles voisins chute de 82,5 pp (IC 95 % [−87,7 ; −77,7]). Alerte en lecture seule : la défense automatique (F-c) reste débranchée."
+            >
+                F2 verte — lecture seule
             </span>
         </p>
     {/if}
@@ -247,8 +255,9 @@
                 Aucun score fusionné : c'est à toi d'arbitrer, comme un staff le fait.
             </p>
             <p>
-                Rappel : le premium du pocket n'est pas encore mesuré (gate F1) — d'ici là, tout ce panneau est une
-                aide de lecture corrélationnelle, jamais une promesse de victoire.
+                Rappel : la gate F1 a été jouée (2026-06-11) et n'a PAS démontré de premium du pocket (verdict
+                rouge) — tout ce panneau reste une aide de lecture corrélationnelle, jamais une promesse de
+                victoire.
             </p>
         </div>
     </details>

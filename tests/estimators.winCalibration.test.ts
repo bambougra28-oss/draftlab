@@ -63,9 +63,16 @@ describe('winCalibration — calibrateAllyWin', () => {
         expect(out).toEqual({ pAlly: 0.6, calibrated: false, position: 'fullDraft' });
     });
 
-    it('passes through on a null position (placeholder default config)', () => {
-        // The committed placeholder has all three positions at null.
-        expect(defaultWinCalibrationConfig().positions.fullDraft).toBeNull();
+    it('passes through on the SHIPPED default config (run E rouge: validated:false everywhere)', () => {
+        // The committed artifact is whatever the LAST run wrote (rule: always
+        // written, never hand-edited). Run E (2026-06-11) shipped real fits
+        // with validated:false on all three positions — the UI must never
+        // apply them. The contract pinned here: no position is applicable,
+        // so the default config passes raw values through.
+        const positions = defaultWinCalibrationConfig().positions;
+        for (const position of Object.values(positions)) {
+            if (position !== null) expect(position.validated).toBe(false);
+        }
         const out = calibrateAllyWin(0.55, 'blue', 8);
         expect(out.pAlly).toBe(0.55);
         expect(out.calibrated).toBe(false);

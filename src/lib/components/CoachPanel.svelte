@@ -1,11 +1,16 @@
 <!--
-    Coach en direct — the page's recommendation surface (liveDraft engine).
+    Coach en direct — the page's LINE-EXPLORER surface (liveDraft engine).
 
     Audience: a LEARNING drafter, not a professional coach. Every number is
     explained in plain French, the reasons list only the axes that actually
     fired, and the "Comment lire ?" block defines the vocabulary. Components
     stay separated (DA-V2-12) and the whole panel is badged Expérimental
-    (DA-V2-11) until the engines pass their validation gates.
+    (DA-V2-11). Gate A « conseil suivi » (docs/calibration/coach-gate-2026.md,
+    2026-06-11) : ROUGE — the ranking is not distinguishable from
+    meta-following (TD 51,6 %, IC [49,5 ; 53,7]), so the copy claims a
+    CHIFFRÉ LINE EXPLORER, never a validated recommendation (§5 of
+    docs/run2/A-coach-gate.md; identified lever: real player pools, run #3).
+    The % calibration mechanism (chantier E) is independent and untouched.
 -->
 <script lang="ts">
     import type { CoachAdvice, CoachCandidate, EnemyRoleReport } from '$lib/intel/liveDraft';
@@ -36,7 +41,7 @@
         unavailableReason = null,
         noteFr = null,
         roleReads = null,
-        title = 'Coach — prochain coup',
+        title = 'Coach — explorateur de lignes',
         calibration = null,
         picksLocked = 0,
         ourSide = 'blue'
@@ -90,8 +95,8 @@
                 ? 'bg-emerald-900/60 text-emerald-300'
                 : 'bg-amber-900/60 text-amber-300'}"
             title={pctCalibrated
-                ? 'Le moteur de RECOMMANDATION reste expérimental (classement non validé), mais les % affichés passent par la carte de calibration mesurée walk-forward sur corpus pro : quand le coach dit X %, la fréquence observée tombe dans le bac correspondant — détail dans « Comment lire ? ».'
-                : 'Les briques du coach sont validées une à une (ranges, contre-profils, rôles), mais la qualité du classement final n’a pas encore passé sa porte de validation chiffrée — détail dans « Comment lire ? ».'}
+                ? 'La gate « conseil suivi » a été jouée (2026-06-11) : le classement ne se distingue pas encore du suivi de méta (TD 51,6 %, IC [49,5 ; 53,7]) — le coach est un explorateur de lignes chiffré, pas une recommandation validée ; levier identifié : pools joueurs réels (run #3). Les % affichés, eux, passent par la carte de calibration mesurée walk-forward sur corpus pro : quand le coach dit X %, la fréquence observée tombe dans le bac correspondant — détail dans « Comment lire ? ».'
+                : 'La gate « conseil suivi » a été jouée (2026-06-11) : le classement ne se distingue pas encore du suivi de méta (TD 51,6 %, IC [49,5 ; 53,7]) — le coach est un explorateur de lignes chiffré, pas une recommandation validée ; levier identifié : pools joueurs réels (run #3). Détail dans « Comment lire ? ».'}
         >
             {pctCalibrated ? `Expérimental — % calibrés sur ${calibration?.nGames} games` : 'Expérimental — non calibré'}
         </span>
@@ -254,11 +259,13 @@
                 </p>
                 <p>
                     <strong class="text-amber-300">Expérimental — non calibré</strong> : la doctrine du projet
-                    est qu'aucun chiffre ne se montre sans preuve. Les briques du coach sont validées une à une
-                    (ranges adverses : battent la baseline sur 4 ligues ; contre-profils : validés par les bans
-                    de phase 2 ; lecture des rôles : 95 %), mais la qualité du CLASSEMENT final — « suivre le
-                    conseil n°1 fait-il gagner plus ? » — n'a pas encore passé sa porte de validation sur le
-                    corpus. Le badge tombera ce jour-là.
+                    est qu'aucun chiffre ne se montre sans preuve. La gate « conseil suivi » a été jouée
+                    (2026-06-11) : le classement ne se distingue pas encore du suivi de méta (TD 51,6 %,
+                    IC [49,5 ; 53,7]) — le coach est un explorateur de lignes chiffré, pas une recommandation
+                    validée ; levier identifié : pools joueurs réels (run #3). Les briques restent validées
+                    une à une (ranges adverses : battent la baseline sur 4 ligues ; contre-profils : validés
+                    par les bans de phase 2 ; lecture des rôles : 95 %) — c'est le CLASSEMENT final qui n'a
+                    pas (encore) démontré de signal au-delà de la méta.
                 </p>
                 <p>
                     <strong class="text-slate-300">Positions explorées</strong> : la taille de l'arbre de coups
