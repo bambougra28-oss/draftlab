@@ -235,10 +235,8 @@ registerHooks({
 });
 
 type CoachGateModule = typeof import('../../src/lib/backtest/coachGate');
-type LiveDraftModule = typeof import('../../src/lib/intel/liveDraft');
+type HarnessModule = typeof import('../../src/lib/backtest/coachGateHarness');
 type NavigatorModule = typeof import('../../src/lib/strategic/draftNavigator');
-type TendencyModule = typeof import('../../src/lib/aggregates/tendency');
-type PresenceModule = typeof import('../../src/lib/aggregates/presence');
 type MetricsModule = typeof import('../../src/lib/backtest/metrics');
 type ClusterModule = typeof import('../../src/lib/backtest/clusterBootstrap');
 type WalkforwardModule = typeof import('../../src/lib/backtest/walkforward');
@@ -247,33 +245,25 @@ type TagsModule = typeof import('../../src/lib/tags');
 type DraftRecord = import('../../src/lib/data/types').DraftRecord;
 type DraftSide = import('../../src/lib/data/types').DraftSide;
 type Dataset = import('../../src/lib/types').Dataset;
-type DraftState = import('../../src/lib/strategic/draftNavigator').DraftState;
-type NavigatorSlot = import('../../src/lib/strategic/draftNavigator').NavigatorSlot;
-type NavigatorMemoEntry = import('../../src/lib/strategic/draftNavigator').NavigatorMemoEntry;
-type TendencyTable = import('../../src/lib/aggregates/tendency').TendencyTable;
-type CoachContext = import('../../src/lib/intel/liveDraft').CoachContext;
 type CoachTurnScore = import('../../src/lib/backtest/coachGate').CoachTurnScore;
-type ScoreGameDeps = import('../../src/lib/backtest/coachGate').ScoreGameDeps;
 type PairedObservation = import('../../src/lib/backtest/clusterBootstrap').PairedObservation;
 
 const { scoreGameForGate, eligibilitySkipOf } = (await import(
     `${libRootHref}/backtest/coachGate.ts`
 )) as CoachGateModule;
-const { rankOurCandidates, enemyDistributionOf } = (await import(
-    `${libRootHref}/intel/liveDraft.ts`
-)) as LiveDraftModule;
-const { navigate, nextSlotOf, makeAnalyzeDraftEvaluator } = (await import(
+// Folds/deps : harnais EXTRAIT de ce script (chantier W2, étape 1) —
+// comportement byte-identique prouvé par tests/coachGateHarness.test.ts.
+const { buildFearlessDetector, makeFoldProvider, makeCoachTurnEngine } = (await import(
+    `${libRootHref}/backtest/coachGateHarness.ts`
+)) as HarnessModule;
+const { makeAnalyzeDraftEvaluator } = (await import(
     `${libRootHref}/strategic/draftNavigator.ts`
 )) as NavigatorModule;
-const { buildTendencyTable } = (await import(`${libRootHref}/aggregates/tendency.ts`)) as TendencyModule;
-const { computePresence } = (await import(`${libRootHref}/aggregates/presence.ts`)) as PresenceModule;
 const { wilson95, mulberry32 } = (await import(`${libRootHref}/backtest/metrics.ts`)) as MetricsModule;
 const { clusterBootstrapDeltaCI } = (await import(
     `${libRootHref}/backtest/clusterBootstrap.ts`
 )) as ClusterModule;
-const { comparePatches, parsePatch } = (await import(
-    `${libRootHref}/backtest/walkforward.ts`
-)) as WalkforwardModule;
+const { parsePatch } = (await import(`${libRootHref}/backtest/walkforward.ts`)) as WalkforwardModule;
 const { loadDefaultTags } = (await import(`${libRootHref}/tags/index.ts`)) as TagsModule;
 
 // ---- argv -------------------------------------------------------------------
@@ -404,121 +394,16 @@ interface CorpusCoverage {
     seconds: number;
 }
 
-interface Fold {
-    presenceOrder: string[];
-    presenceValue: Map<string, number>;
-    top15: string[];
-    trainKeys: Set<string>;
-    nowK: string;
-    wrTrain: Map<string, { wins: number; games: number }>;
-    tableFor: (team: string) => TendencyTable;
-}
-
 const allGames: GameResult[] = [];
 const allCoverage: CorpusCoverage[] = [];
 
 for (const { input, records } of corpora) {
     const startedAt = Date.now();
 
-    // -- détecteur Fearless (réutilisations inter-games par série) --
-    const seriesGames = new Map<string, DraftRecord[]>();
-    for (const record of records) {
-        const matchId = record.series?.matchId;
-        if (matchId === undefined) continue;
-        const bucket = seriesGames.get(matchId) ?? [];
-        bucket.push(record);
-        seriesGames.set(matchId, bucket);
-    }
-    for (const bucket of seriesGames.values()) {
-        bucket.sort(
-            (a, b) => a.series!.gameNumber - b.series!.gameNumber || (a.gameId < b.gameId ? -1 : 1)
-        );
-    }
-    const resolvedPicksOf = (record: DraftRecord): string[] =>
-        record.actions.filter((a) => a.type === 'pick' && a.championKey !== '').map((a) => a.championKey);
-    let detectorReused = 0;
-    let detectorExamined = 0;
-    for (const bucket of seriesGames.values()) {
-        const prior = new Set<string>();
-        bucket.forEach((game, index) => {
-            const picks = resolvedPicksOf(game);
-            if (index > 0) {
-                for (const key of picks) {
-                    detectorExamined += 1;
-                    if (prior.has(key)) detectorReused += 1;
-                }
-            }
-            for (const key of picks) prior.add(key);
-        });
-    }
-    const lockoutsOn = detectorReused === 0;
-    const lockedFor = (record: DraftRecord): Set<string> => {
-        const locked = new Set<string>();
-        const matchId = record.series?.matchId;
-        const gameNumber = record.series?.gameNumber;
-        if (!lockoutsOn || matchId === undefined || gameNumber === undefined || gameNumber <= 1) {
-            return locked;
-        }
-        for (const other of seriesGames.get(matchId) ?? []) {
-            if (other.series!.gameNumber >= gameNumber) continue;
-            for (const key of resolvedPicksOf(other)) locked.add(key);
-        }
-        return locked;
-    };
-
-    // -- folds paresseux par patch (présence, top-15, tables par équipe, now_k, WR train) --
-    const foldByPatch = new Map<string, Fold | null>();
-    const foldFor = (patch: string): Fold | null => {
-        const cached = foldByPatch.get(patch);
-        if (cached !== undefined) return cached;
-        const train = records.filter(
-            (r) =>
-                r.patch !== undefined && parsePatch(r.patch) !== undefined && comparePatches(r.patch, patch) < 0
-        );
-        if (train.length === 0) {
-            foldByPatch.set(patch, null);
-            return null;
-        }
-        const presenceOrder = [...computePresence(train).entries()]
-            .sort((a, b) => b[1].presence - a[1].presence || (a[0] < b[0] ? -1 : 1))
-            .map(([key]) => key);
-        const presenceValue = new Map<string, number>(presenceOrder.map((key, index) => [key, -index]));
-        const top15 = presenceOrder.slice(0, 15);
-        const trainKeys = new Set<string>();
-        for (const r of train) {
-            for (const a of r.actions) if (a.championKey !== '') trainKeys.add(a.championKey);
-        }
-        let nowK: string | undefined;
-        for (const r of records) {
-            if (r.patch !== patch || r.date === undefined) continue;
-            if (nowK === undefined || r.date < nowK) nowK = r.date;
-        }
-        const wrTrain = new Map<string, { wins: number; games: number }>();
-        const tally = (team: string, won: boolean): void => {
-            const cell = wrTrain.get(team) ?? { wins: 0, games: 0 };
-            cell.games += 1;
-            if (won) cell.wins += 1;
-            wrTrain.set(team, cell);
-        };
-        for (const r of train) {
-            if (r.winner === undefined) continue;
-            tally(r.blueTeam, r.winner === 'blue');
-            tally(r.redTeam, r.winner === 'red');
-        }
-        const tables = new Map<string, TendencyTable>();
-        const now = nowK ?? generatedAt;
-        const tableFor = (team: string): TendencyTable => {
-            let table = tables.get(team);
-            if (table === undefined) {
-                table = buildTendencyTable(train, train, { team, now });
-                tables.set(team, table);
-            }
-            return table;
-        };
-        const fold: Fold = { presenceOrder, presenceValue, top15, trainKeys, nowK: now, wrTrain, tableFor };
-        foldByPatch.set(patch, fold);
-        return fold;
-    };
+    // -- détecteur Fearless + folds paresseux par patch : harnais extrait
+    //    (src/lib/backtest/coachGateHarness.ts, chantier W2 — à l'identique).
+    const detector = buildFearlessDetector(records);
+    const foldFor = makeFoldProvider(records, generatedAt);
 
     const coverage: CorpusCoverage = {
         input,
@@ -535,9 +420,9 @@ for (const { input, records } of corpora) {
         adverseActive: 0,
         realInCt: 0,
         anomalies: 0,
-        detectorReused,
-        detectorExamined,
-        lockoutsOn,
+        detectorReused: detector.reused,
+        detectorExamined: detector.examined,
+        lockoutsOn: detector.lockoutsOn,
         evaluatedNodes: 0,
         seconds: 0
     };
@@ -564,68 +449,16 @@ for (const { input, records } of corpora) {
         }
         coverage.eligible += 1;
 
-        // Disponibilité : univers (clés tags ∪ train ∪ game) − lockouts ; les
-        // révélés sont soustraits par la lib, le pick réel ré-ajouté par elle.
-        const locked = lockedFor(record);
-        const universe = new Set<string>(tagsKeys);
-        for (const key of fold.trainKeys) universe.add(key);
-        for (const action of record.actions) {
-            if (action.championKey !== '') universe.add(action.championKey);
-        }
-        for (const key of locked) universe.delete(key);
+        // Univers − lockouts, caches par tour, deps modèle (navigate
+        // racine-forcée) : moteur du harnais, à l'identique du code v1.
+        const engine = makeCoachTurnEngine(record, {
+            fold,
+            locked: detector.lockedFor(record),
+            tagsKeys,
+            evaluate
+        });
 
-        // Caches par tour : ctx (table adverse réelle), liste shippée, memo
-        // navigate partagé entre les ≤ 5 racines forcées du même tour.
-        interface TurnEntry {
-            ctx: CoachContext;
-            shipped6: string[];
-            memo: Map<string, NavigatorMemoEntry>;
-        }
-        const turnEntries = new Map<number, TurnEntry>();
-        const turnEntryOf = (state: DraftState, slot: NavigatorSlot): TurnEntry => {
-            let entry = turnEntries.get(slot.seq);
-            if (entry === undefined) {
-                const enemyTeam = slot.side === 'blue' ? record.redTeam : record.blueTeam;
-                const ctx: CoachContext = {
-                    ourSide: slot.side,
-                    evaluate,
-                    table: fold.tableFor(enemyTeam),
-                    fallbackCandidates: fold.top15,
-                    depth: 2,
-                    topK: 4,
-                    candidateCount: 6
-                };
-                entry = { ctx, shipped6: rankOurCandidates(ctx, state, 6), memo: new Map() };
-                turnEntries.set(slot.seq, entry);
-            }
-            return entry;
-        };
-
-        const availableOf = (): Set<string> => universe;
-        const candidatesOf = (state: DraftState, slot: NavigatorSlot): string[] =>
-            turnEntryOf(state, slot).shipped6.slice(0, 4);
-
-        const modelDeps: ScoreGameDeps = {
-            availableOf,
-            candidatesOf,
-            valueOf: (state, slot, championKey) => {
-                const entry = turnEntryOf(state, slot);
-                const result = navigate(state, {
-                    ourSide: slot.side,
-                    ourCandidates: (s) =>
-                        s.actions.length === state.actions.length ? [championKey] : entry.shipped6,
-                    enemyDistribution: (s, enemySlot) => enemyDistributionOf(entry.ctx, s, enemySlot),
-                    evaluate,
-                    depth: 2,
-                    topK: 4,
-                    memo: entry.memo
-                });
-                coverage.evaluatedNodes += result.evaluatedNodes;
-                return result.candidates[0]?.value ?? Number.NaN;
-            }
-        };
-
-        const modelResult = scoreGameForGate(record, modelDeps);
+        const modelResult = scoreGameForGate(record, engine.modelDeps);
         for (const turn of modelResult.discarded) {
             if (turn.reason === 'template-mismatch') coverage.templateMismatch += 1;
             else coverage.fewComparators += 1;
@@ -639,14 +472,14 @@ for (const { input, records } of corpora) {
 
         // Baselines : mêmes games, mêmes tours, mêmes C_t — purs lookups.
         const b1Result = scoreGameForGate(record, {
-            availableOf,
-            candidatesOf,
+            availableOf: engine.availableOf,
+            candidatesOf: engine.candidatesOf,
             valueOf: (_state, _slot, championKey) =>
                 fold.presenceValue.get(championKey) ?? -fold.presenceOrder.length
         });
         const b2Result = scoreGameForGate(record, {
-            availableOf,
-            candidatesOf,
+            availableOf: engine.availableOf,
+            candidatesOf: engine.candidatesOf,
             valueOf: (_state, _slot, championKey) => echoValueOf(championKey)
         });
         if ('skipped' in b1Result || 'skipped' in b2Result) {
@@ -656,38 +489,16 @@ for (const { input, records } of corpora) {
 
         // Couverture par tour scoré : distribution adverse active (premier nœud
         // du lookahead après le pick réel) + pick réel déjà dans C_t.
-        const resolvedActions = record.actions
-            .filter((a) => a.championKey !== '')
-            .sort((a, b) => a.seq - b.seq);
-        const realKeyAt = new Map<number, string>();
-        for (const action of resolvedActions) {
-            if (action.type === 'pick' && !realKeyAt.has(action.seq)) {
-                realKeyAt.set(action.seq, action.championKey);
-            }
-        }
-        const adverseActiveAt = (seq: number, side: DraftSide): boolean => {
-            const actions = resolvedActions.filter((a) => a.seq <= seq);
-            const used = new Set<string>(actions.map((a) => a.championKey));
-            const available = new Set<string>();
-            for (const key of universe) {
-                if (!used.has(key)) available.add(key);
-            }
-            const state: DraftState = { actions, firstPickSide: record.firstPickSide, available };
-            const slot = nextSlotOf(state);
-            if (slot === null || slot.side === side) return false;
-            const entry = turnEntries.get(seq);
-            if (entry === undefined) return false;
-            return enemyDistributionOf(entry.ctx, state, slot).length > 0;
-        };
         for (const turn of modelResult.score.turns) {
             coverage.scoredTurns += 1;
-            const realKey = realKeyAt.get(turn.seq);
-            const entry = turnEntries.get(turn.seq);
-            if (realKey !== undefined && entry !== undefined && entry.shipped6.slice(0, 4).includes(realKey)) {
+            const realKey = engine.realPickKeyAt(turn.seq);
+            const ct = engine.ctOf(turn.seq);
+            if (realKey !== undefined && ct !== undefined && ct.includes(realKey)) {
                 coverage.realInCt += 1;
             }
-            if (adverseActiveAt(turn.seq, turn.side)) coverage.adverseActive += 1;
+            if (engine.adverseActiveAt(turn.seq, turn.side)) coverage.adverseActive += 1;
         }
+        coverage.evaluatedNodes += engine.evaluatedNodes;
 
         // Tranche S4 : équipes à ≥ 5 games de train et écart de WR ≤ 0,10.
         const wrBlue = fold.wrTrain.get(record.blueTeam);

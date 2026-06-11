@@ -1,0 +1,1944 @@
+{
+    "version": "fixture-f4-1",
+    "date": "2026-06-11",
+    "championData": {
+        "901": {
+            "key": "901",
+            "name": "Champ901",
+            "statsByRole": {
+                "0": {
+                    "games": 200,
+                    "wins": 120,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "902": {
+            "key": "902",
+            "name": "Champ902",
+            "statsByRole": {
+                "1": {
+                    "games": 200,
+                    "wins": 112,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "903": {
+            "key": "903",
+            "name": "Champ903",
+            "statsByRole": {
+                "2": {
+                    "games": 200,
+                    "wins": 104,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "906": {
+            "key": "906",
+            "name": "Champ906",
+            "statsByRole": {
+                "0": {
+                    "games": 200,
+                    "wins": 100,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "911": {
+            "key": "911",
+            "name": "Champ911",
+            "statsByRole": {
+                "0": {
+                    "games": 200,
+                    "wins": 100,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "921": {
+            "key": "921",
+            "name": "Champ921",
+            "statsByRole": {
+                "0": {
+                    "games": 200,
+                    "wins": 110,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "922": {
+            "key": "922",
+            "name": "Champ922",
+            "statsByRole": {
+                "1": {
+                    "games": 200,
+                    "wins": 108,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "923": {
+            "key": "923",
+            "name": "Champ923",
+            "statsByRole": {
+                "2": {
+                    "games": 200,
+                    "wins": 106,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "924": {
+            "key": "924",
+            "name": "Champ924",
+            "statsByRole": {
+                "3": {
+                    "games": 200,
+                    "wins": 104,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "925": {
+            "key": "925",
+            "name": "Champ925",
+            "statsByRole": {
+                "4": {
+                    "games": 200,
+                    "wins": 102,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "926": {
+            "key": "926",
+            "name": "Champ926",
+            "statsByRole": {
+                "0": {
+                    "games": 200,
+                    "wins": 90,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "927": {
+            "key": "927",
+            "name": "Champ927",
+            "statsByRole": {
+                "1": {
+                    "games": 200,
+                    "wins": 92,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "928": {
+            "key": "928",
+            "name": "Champ928",
+            "statsByRole": {
+                "2": {
+                    "games": 200,
+                    "wins": 94,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "929": {
+            "key": "929",
+            "name": "Champ929",
+            "statsByRole": {
+                "3": {
+                    "games": 200,
+                    "wins": 96,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "930": {
+            "key": "930",
+            "name": "Champ930",
+            "statsByRole": {
+                "4": {
+                    "games": 200,
+                    "wins": 98,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "931": {
+            "key": "931",
+            "name": "Champ931",
+            "statsByRole": {
+                "0": {
+                    "games": 200,
+                    "wins": 100,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "932": {
+            "key": "932",
+            "name": "Champ932",
+            "statsByRole": {
+                "1": {
+                    "games": 200,
+                    "wins": 101,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "933": {
+            "key": "933",
+            "name": "Champ933",
+            "statsByRole": {
+                "2": {
+                    "games": 200,
+                    "wins": 102,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "934": {
+            "key": "934",
+            "name": "Champ934",
+            "statsByRole": {
+                "3": {
+                    "games": 200,
+                    "wins": 103,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "935": {
+            "key": "935",
+            "name": "Champ935",
+            "statsByRole": {
+                "4": {
+                    "games": 200,
+                    "wins": 104,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "936": {
+            "key": "936",
+            "name": "Champ936",
+            "statsByRole": {
+                "0": {
+                    "games": 200,
+                    "wins": 99,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "937": {
+            "key": "937",
+            "name": "Champ937",
+            "statsByRole": {
+                "1": {
+                    "games": 200,
+                    "wins": 98,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "938": {
+            "key": "938",
+            "name": "Champ938",
+            "statsByRole": {
+                "2": {
+                    "games": 200,
+                    "wins": 97,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "939": {
+            "key": "939",
+            "name": "Champ939",
+            "statsByRole": {
+                "3": {
+                    "games": 200,
+                    "wins": 96,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "940": {
+            "key": "940",
+            "name": "Champ940",
+            "statsByRole": {
+                "4": {
+                    "games": 200,
+                    "wins": 95,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "941": {
+            "key": "941",
+            "name": "Champ941",
+            "statsByRole": {
+                "3": {
+                    "games": 200,
+                    "wins": 96,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "942": {
+            "key": "942",
+            "name": "Champ942",
+            "statsByRole": {
+                "4": {
+                    "games": 200,
+                    "wins": 88,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "943": {
+            "key": "943",
+            "name": "Champ943",
+            "statsByRole": {
+                "0": {
+                    "games": 200,
+                    "wins": 80,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "1101": {
+            "key": "1101",
+            "name": "Champ1101",
+            "statsByRole": {
+                "0": {
+                    "games": 200,
+                    "wins": 105,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "1102": {
+            "key": "1102",
+            "name": "Champ1102",
+            "statsByRole": {
+                "1": {
+                    "games": 200,
+                    "wins": 103,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "1103": {
+            "key": "1103",
+            "name": "Champ1103",
+            "statsByRole": {
+                "2": {
+                    "games": 200,
+                    "wins": 101,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "1104": {
+            "key": "1104",
+            "name": "Champ1104",
+            "statsByRole": {
+                "3": {
+                    "games": 200,
+                    "wins": 99,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "1105": {
+            "key": "1105",
+            "name": "Champ1105",
+            "statsByRole": {
+                "4": {
+                    "games": 200,
+                    "wins": 97,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "1106": {
+            "key": "1106",
+            "name": "Champ1106",
+            "statsByRole": {
+                "0": {
+                    "games": 200,
+                    "wins": 95,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "1107": {
+            "key": "1107",
+            "name": "Champ1107",
+            "statsByRole": {
+                "1": {
+                    "games": 200,
+                    "wins": 97,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "1108": {
+            "key": "1108",
+            "name": "Champ1108",
+            "statsByRole": {
+                "2": {
+                    "games": 200,
+                    "wins": 99,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "1109": {
+            "key": "1109",
+            "name": "Champ1109",
+            "statsByRole": {
+                "3": {
+                    "games": 200,
+                    "wins": 101,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        },
+        "1110": {
+            "key": "1110",
+            "name": "Champ1110",
+            "statsByRole": {
+                "4": {
+                    "games": 200,
+                    "wins": 103,
+                    "matchup": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "synergy": {
+                        "0": {},
+                        "1": {},
+                        "2": {},
+                        "3": {},
+                        "4": {}
+                    },
+                    "damageProfile": {
+                        "magic": 0,
+                        "physical": 0,
+                        "true": 0
+                    },
+                    "statsByTime": [
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        },
+                        {
+                            "wins": 0,
+                            "games": 0
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

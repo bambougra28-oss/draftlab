@@ -1,0 +1,542 @@
+[
+    {
+        "gameId": "T1",
+        "tournament": "Ligue Synthétique W1",
+        "league": "syn",
+        "patch": "16.1",
+        "blueTeam": "AZUR",
+        "redTeam": "ROUGE",
+        "winner": "blue",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "101",
+                "championName": "Champ101",
+                "role": 0
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "201",
+                "championName": "Champ201",
+                "role": 0
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "202",
+                "championName": "Champ202",
+                "role": 1
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "102",
+                "championName": "Champ102",
+                "role": 1
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "103",
+                "championName": "Champ103",
+                "role": 2
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "203",
+                "championName": "Champ203",
+                "role": 2
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "204",
+                "championName": "Champ204",
+                "role": 3
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "104",
+                "championName": "Champ104",
+                "role": 3
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "105",
+                "championName": "Champ105",
+                "role": 4
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "205",
+                "championName": "Champ205",
+                "role": 4
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        }
+    },
+    {
+        "gameId": "T2",
+        "tournament": "Ligue Synthétique W1",
+        "league": "syn",
+        "patch": "16.1",
+        "blueTeam": "AZUR",
+        "redTeam": "ROUGE",
+        "winner": "blue",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "101",
+                "championName": "Champ101",
+                "role": 0
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "201",
+                "championName": "Champ201",
+                "role": 0
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "202",
+                "championName": "Champ202",
+                "role": 1
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "102",
+                "championName": "Champ102",
+                "role": 1
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "103",
+                "championName": "Champ103",
+                "role": 2
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "203",
+                "championName": "Champ203",
+                "role": 2
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "204",
+                "championName": "Champ204",
+                "role": 3
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "104",
+                "championName": "Champ104",
+                "role": 3
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "105",
+                "championName": "Champ105",
+                "role": 4
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "205",
+                "championName": "Champ205",
+                "role": 4
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        }
+    },
+    {
+        "gameId": "T3",
+        "tournament": "Ligue Synthétique W1",
+        "league": "syn",
+        "patch": "16.1",
+        "blueTeam": "AZUR",
+        "redTeam": "ROUGE",
+        "winner": "blue",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "101",
+                "championName": "Champ101",
+                "role": 0
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "201",
+                "championName": "Champ201",
+                "role": 0
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "202",
+                "championName": "Champ202",
+                "role": 1
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "102",
+                "championName": "Champ102",
+                "role": 1
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "103",
+                "championName": "Champ103",
+                "role": 2
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "203",
+                "championName": "Champ203",
+                "role": 2
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "204",
+                "championName": "Champ204",
+                "role": 3
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "104",
+                "championName": "Champ104",
+                "role": 3
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "105",
+                "championName": "Champ105",
+                "role": 4
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "205",
+                "championName": "Champ205",
+                "role": 4
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        }
+    },
+    {
+        "gameId": "T4",
+        "tournament": "Ligue Synthétique W1",
+        "league": "syn",
+        "patch": "16.1",
+        "blueTeam": "AZUR",
+        "redTeam": "ROUGE",
+        "winner": "blue",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "101",
+                "championName": "Champ101",
+                "role": 0
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "201",
+                "championName": "Champ201",
+                "role": 0
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "202",
+                "championName": "Champ202",
+                "role": 1
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "102",
+                "championName": "Champ102",
+                "role": 1
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "103",
+                "championName": "Champ103",
+                "role": 2
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "203",
+                "championName": "Champ203",
+                "role": 2
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "204",
+                "championName": "Champ204",
+                "role": 3
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "104",
+                "championName": "Champ104",
+                "role": 3
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "105",
+                "championName": "Champ105",
+                "role": 4
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "205",
+                "championName": "Champ205",
+                "role": 4
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        }
+    },
+    {
+        "gameId": "G-TEST",
+        "tournament": "Ligue Synthétique W1",
+        "league": "syn",
+        "patch": "16.2",
+        "blueTeam": "AZUR",
+        "redTeam": "ROUGE",
+        "winner": "blue",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "101",
+                "championName": "Champ101",
+                "role": 0
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "201",
+                "championName": "Champ201",
+                "role": 0
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "202",
+                "championName": "Champ202",
+                "role": 1
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "102",
+                "championName": "Champ102",
+                "role": 1
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "103",
+                "championName": "Champ103",
+                "role": 2
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "205",
+                "championName": "Champ205",
+                "role": 4
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "204",
+                "championName": "Champ204",
+                "role": 3
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "104",
+                "championName": "Champ104",
+                "role": 3
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "999",
+                "championName": "Inconnu999",
+                "role": 4
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "203",
+                "championName": "Champ203",
+                "role": 2
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        }
+    }
+]
