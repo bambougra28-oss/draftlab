@@ -75,14 +75,22 @@
         type CorpusLeagueStatus
     } from '$lib/intel/corpusStore';
     import { fitTagCounterCells, fitTagPairCells, type TagPairFit } from '$lib/estimators/tagPairs';
-    import { fitRolePriors, layerRolePriors, rolePriorsOf } from '$lib/aggregates/rolePriors';
+    import { fitRolePriors, layerRolePriors, rolePriorsOf, type RolePriorsFit } from '$lib/aggregates/rolePriors';
+    import type { RolePriors } from '$lib/strategic/fogReveal';
     import {
         draftStateFromActions,
         draftStateFromRoleEntry,
         rankOurCandidates,
         readEnemyRoles,
-        recommendNext
+        recommendNext,
+        type EnemyRoleReport,
+        type RoleEntryDraft
     } from '$lib/intel/liveDraft';
+    import {
+        detectLiveSurpriseTriggers,
+        uniformizeTriggeredPriors,
+        type LiveSurpriseTrigger
+    } from '$lib/intel/surpriseDefense';
     import {
         assignRole,
         bannedKeys,
@@ -140,7 +148,7 @@
     import { compilePlanTree, type CompileContext, type PlanTree } from '$lib/strategic/planTree';
     import { trackPlan } from '$lib/strategic/planTracker';
     import { getPlanTree } from '$lib/storage/planTrees';
-    import { predict, slotGroupOf } from '$lib/aggregates/tendency';
+    import { predict, slotGroupOf, type TendencyTable } from '$lib/aggregates/tendency';
     import { banRotationOf, rotationOf } from '$lib/aggregates/rotations';
     import { comparePatches } from '$lib/backtest/walkforward';
 
@@ -1102,44 +1110,97 @@
             .map(([key]) => key);
     });
 
-    /** Enemy role read — team-first priors, league fallback (I2 hypotheses) — ligue ADVERSE (B). */
-    const enemyRoleReads = $derived.by(() => {
+    /**
+     * Fits de priors de rôle ADVERSES (équipe-d'abord, repli ligue B) —
+     * extraits en $derived qui ne dépend QUE du corpus, jamais des picks :
+     * garde de coût F-c, aucun fit ne tourne à la frappe (le range model,
+     * lui, vit dans `intel`/`intelA` — fitté au sync uniquement).
+     */
+    const roleFitB = $derived.by((): { league: RolePriorsFit; priors: RolePriors } | null => {
         if (leagueRecordsB === null && corpusTeamB.length === 0) return null;
         const league = fitRolePriors(leagueRecordsB ?? []);
         const priors =
             corpusTeamB.length > 0 ? layerRolePriors(fitRolePriors(corpusTeamB), league) : rolePriorsOf(league);
-        return readEnemyRoles(
-            {
-                allyPicks,
-                enemyPicks,
-                allyBans: [null, null, null, null, null],
-                enemyBans: [null, null, null, null, null],
-                allySide
-            },
-            priors
+        return { league, priors };
+    });
+
+    /** Le symétrique côté A (simulation deux camps) — ligue A + corpus équipe A. */
+    const roleFitA = $derived.by((): { league: RolePriorsFit; priors: RolePriors } | null => {
+        if (leagueRecordsA === null && corpusTeamA.length === 0) return null;
+        const league = fitRolePriors(leagueRecordsA ?? []);
+        const priors =
+            corpusTeamA.length > 0 ? layerRolePriors(fitRolePriors(corpusTeamA), league) : rolePriorsOf(league);
+        return { league, priors };
+    });
+
+    /**
+     * Lecture de rôles + défense F-c BRANCHÉE (F2 verte Δ_contamination
+     * −82,5 pp ; non-régression défense active 95,3 % ≥ plancher gelé 94,5 % —
+     * docs/calibration/role-inference-surprise-defense.md) : lecture de BASE,
+     * détection des déclencheurs (mécanique W1 sur les données live), puis
+     * relecture avec les priors du déclencheur SEUL passés à l'uniforme.
+     * Sans table (équipe non synchronisée) : pas de modèle public, défense
+     * inactive — la lecture de base est rendue telle quelle.
+     */
+    function readRolesWithDefense(
+        entry: RoleEntryDraft,
+        fit: { league: RolePriorsFit; priors: RolePriors },
+        table: TendencyTable | undefined
+    ): { report: EnemyRoleReport; triggers: LiveSurpriseTrigger[] } {
+        const base = readEnemyRoles(entry, fit.priors);
+        if (table === undefined) return { report: base, triggers: [] };
+        const triggers = detectLiveSurpriseTriggers({
+            entry,
+            baseReport: base,
+            table,
+            // Compte train équipe+ligue : la ligue contient l'équipe — un seul
+            // compteur suffit (doctrine §3.2), depuis les MÊMES records que les priors.
+            trainRoleCountOf: (championKey, role) => fit.league.byChampion.get(championKey)?.[role] ?? 0
+        });
+        if (triggers.length === 0) return { report: base, triggers };
+        const defended = readEnemyRoles(
+            entry,
+            uniformizeTriggeredPriors(fit.priors, new Set(triggers.map((t) => t.championKey)))
+        );
+        return { report: defended, triggers };
+    }
+
+    /**
+     * Enemy role read — team-first priors, league fallback (I2 hypotheses) —
+     * ligue ADVERSE (B), défense F-c active. Les bans saisis passent dans
+     * l'entrée comme EXCLUSIONS de la range du déclencheur (readEnemyRoles
+     * les ignore — la lecture elle-même est inchangée).
+     */
+    const enemyRoleReads = $derived.by(() => {
+        const fit = roleFitB;
+        if (fit === null) return null;
+        return readRolesWithDefense(
+            { allyPicks, enemyPicks, allyBans, enemyBans, allySide },
+            fit,
+            intel?.table
         );
     });
 
     /**
      * Le SYMÉTRIQUE pour le camp A (simulation deux camps) : quand le coach
      * conseille le camp B, « ses adversaires » sont les picks de l'équipe A —
-     * lus avec les priors de rôle de LA ligue A + le corpus de l'équipe A.
+     * lus avec les priors de rôle de LA ligue A + le corpus de l'équipe A, et
+     * la défense F-c mesurée contre le modèle public de l'équipe A (intelA).
      * $derived paresseux : calculé seulement quand la simulation l'affiche.
      */
     const allyRoleReads = $derived.by(() => {
-        if (leagueRecordsA === null && corpusTeamA.length === 0) return null;
-        const league = fitRolePriors(leagueRecordsA ?? []);
-        const priors =
-            corpusTeamA.length > 0 ? layerRolePriors(fitRolePriors(corpusTeamA), league) : rolePriorsOf(league);
-        return readEnemyRoles(
+        const fit = roleFitA;
+        if (fit === null) return null;
+        return readRolesWithDefense(
             {
                 allyPicks: enemyPicks,
                 enemyPicks: allyPicks, // « adverse » du point de vue du camp B = équipe A
-                allyBans: [null, null, null, null, null],
-                enemyBans: [null, null, null, null, null],
+                allyBans: enemyBans,
+                enemyBans: allyBans,
                 allySide: enemySide
             },
-            priors
+            fit,
+            intelA?.table
         );
     });
 
@@ -1214,6 +1275,14 @@
         });
         return { advice, side: coachSide };
     });
+
+    /**
+     * Lecture de rôles affichée par le coach — celle du camp au trait en
+     * simulation (report défendu F-c + déclencheurs pour l'alerte FR).
+     */
+    const coachRoleReads = $derived(
+        simulationActive && coach.side !== allySide ? allyRoleReads : enemyRoleReads
+    );
 
     const intelTendencyBlocks = $derived(intel === null ? [] : tendencyBlocksOf(intel.table));
 
@@ -1881,7 +1950,8 @@
             </div>
             <CoachPanel
                 advice={coach.advice}
-                roleReads={simulationActive && coach.side !== allySide ? allyRoleReads : enemyRoleReads}
+                roleReads={coachRoleReads?.report ?? null}
+                surpriseTriggers={coachRoleReads?.triggers ?? null}
                 calibration={defaultWinCalibrationConfig()}
                 {picksLocked}
                 ourSide={coach.side}

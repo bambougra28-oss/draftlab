@@ -14,6 +14,7 @@
 -->
 <script lang="ts">
     import type { CoachAdvice, CoachCandidate, EnemyRoleReport } from '$lib/intel/liveDraft';
+    import type { LiveSurpriseTrigger } from '$lib/intel/surpriseDefense';
     import type { DraftSide } from '$lib/data/types';
     import { calibrateAllyWin, type WinCalibrationConfig } from '$lib/estimators/winCalibration';
     import { championNameByKey } from '$lib/dataDragon/version';
@@ -27,6 +28,13 @@
         noteFr?: string | null;
         /** Enemy role read (I2 hypotheses) — mismatch warnings + ambiguity. */
         roleReads?: EnemyRoleReport | null;
+        /**
+         * Déclencheurs F-c actifs (défense « pick préparé », chantier F) —
+         * l'alerte FR s'affiche près des lectures de rôles. La lecture passée
+         * dans `roleReads` est alors DÉJÀ la lecture défendue (priors du
+         * déclencheur à l'uniforme avant ré-énumération).
+         */
+        surpriseTriggers?: LiveSurpriseTrigger[] | null;
         title?: string;
         /** Carte de calibration shippée (chantier E) — null = % bruts. */
         calibration?: WinCalibrationConfig | null;
@@ -47,6 +55,7 @@
         unavailableReason = null,
         noteFr = null,
         roleReads = null,
+        surpriseTriggers = null,
         title = 'Coach — explorateur de lignes',
         calibration = null,
         picksLocked = 0,
@@ -206,6 +215,32 @@
             </ol>
         {/if}
 
+        {#if surpriseTriggers !== null && surpriseTriggers.length > 0}
+            <!-- Défense F-c branchée (chantier F) : alerte pick préparé, provenance en tooltip. -->
+            <div class="mt-3 rounded-lg border border-rose-900/60 bg-rose-950/30 p-2">
+                <p class="flex flex-wrap items-center gap-1.5 text-[11px] uppercase tracking-wide text-rose-400">
+                    Alerte pick préparé
+                    <span
+                        class="cursor-help rounded bg-rose-900/60 px-1.5 py-0.5 text-[9px] font-medium normal-case tracking-normal text-rose-300"
+                        title="Défense branchée derrière deux preuves : gate F2 VERTE — un pick surprise hors-rôle contamine la lecture des rôles de ses voisins (Δ_contamination −82,5 pp, IC 95 % [−87,7 ; −77,7], docs/calibration/role-surprise-f2.md) — puis non-régression re-jouée avec la défense ACTIVE : lecture des rôles k=3 à 95,3 % ≥ plancher gelé 94,5 % (docs/calibration/role-inference-surprise-defense.md). Effet : les priors de rôle du champion déclencheur passent à l'uniforme avant ré-énumération — sa lecture s'élargit au lieu de piéger celle de ses voisins."
+                    >
+                        F2 verte −82,5 pp · non-régression 95,3 %
+                    </span>
+                </p>
+                <ul class="mt-1 space-y-0.5 text-xs text-rose-200">
+                    {#each surpriseTriggers as trigger (trigger.championKey)}
+                        <li class="flex items-center gap-1.5">
+                            <ChampionIcon championKey={trigger.championKey} size={18} />
+                            <span>
+                                Pick préparé détecté ({trigger.bits.toFixed(1).replace('.', ',')} bits de
+                                surprise) — lecture de rôles élargie sur {nameOf(trigger.championKey)} :
+                                leur prep est profonde, attendez un plan dédié.
+                            </span>
+                        </li>
+                    {/each}
+                </ul>
+            </div>
+        {/if}
         {#if mismatches.length > 0}
             <div class="mt-3 rounded-lg border border-amber-900/60 bg-amber-950/30 p-2">
                 <p class="text-[11px] uppercase tracking-wide text-amber-400">Lecture des rôles adverses</p>
@@ -275,6 +310,14 @@
                     profils (le vôtre contre chacun des leurs) dans les games pros — le même signal qui guide
                     les bans de phase 2, validé sur 4 ligues. Positif = ce profil bat historiquement ce
                     qu'ils ont montré ; négatif = il se fait punir.
+                </p>
+                <p>
+                    <strong class="text-rose-300">Alerte pick préparé</strong> : leur pick porte au moins
+                    5 bits de surprise (moins de ~3 % de chance dans leur range publique) ET ce couple
+                    champion-rôle n'apparaît dans aucune de leurs games connues. Le système élargit alors la
+                    lecture de rôles de CE champion seul (tous les rôles redeviennent possibles) pour ne pas
+                    contaminer la lecture de ses voisins — mesuré : sans cette défense, un tel pick coûte
+                    ~82 pp de précision sur les voisins (gate F2) ; avec, la précision globale tient (95,3 %).
                 </p>
                 <p>
                     <strong class="text-amber-300">Expérimental — non calibré</strong> : la doctrine du projet

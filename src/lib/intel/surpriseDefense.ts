@@ -2,12 +2,15 @@
  * Chantier F (F-c) — Le correctif du trou de lecture des rôles
  * (docs/run2/F-pocket-picks.md §2 F-c et §3.2 « GARDE DE BRANCHEMENT », gelé).
  *
- * ⚠ CODE PRÊT MAIS DÉBRANCHÉ — AUCUN APPELANT. Branchement conditionné :
- * F2 VERTE (hi < 0 du Δ_contamination, scripts/backtest/roleSurprise.ts)
- * PUIS re-run OBLIGATOIRE de scripts/backtest/roleInference.ts avec
- * non-régression accuracy pooled k=3 ≥ 94,5 % exigée — sinon F-c est
- * débranché et le rouge documenté : le système VERT pré-enregistré (95,0 %)
- * prime sur toute défense nouvelle.
+ * ✅ BRANCHÉ LIVE (2026-06-11) — les deux conditions gelées sont passées :
+ *  - F2 VERTE : Δ_contamination = −82,49 pp, IC bootstrap 95 % cluster
+ *    [−87,7 ; −77,7] (docs/calibration/role-surprise-f2.md) ;
+ *  - non-régression re-jouée DÉFENSE ACTIVE : accuracy pooled k=3 = 95,3 %
+ *    ≥ plancher gelé 94,5 % (docs/calibration/role-inference-surprise-defense.md,
+ *    mode --surprise-defense de scripts/backtest/roleInference.ts, chantier W1).
+ * Appelants : le harnais W1 (déclencheur par fold) et la page draft
+ * (+page.svelte) via `detectLiveSurpriseTriggers` ci-dessous — la version
+ * LIVE de la même mécanique sur les données de la page.
  *
  * Mécanisme SANS nouveau paramètre :
  *  - DÉCLENCHEUR (live) : `surpriseOf(pick).bits ≥ surpriseAlarmBits = 5`
@@ -22,12 +25,17 @@
  *    leurs priors. La ré-énumération des hypothèses
  *    (`roleAssignmentHypotheses`) est LAISSÉE À L'APPELANT.
  *
- * L'avertissement FR (« pick préparé — leur prep est profonde ») et le dark
- * pool adverse restent de la LECTURE côté UI (PocketPanel) — aucun claim.
+ * L'avertissement FR (« pick préparé — leur prep est profonde ») est de la
+ * LECTURE côté UI (CoachPanel, près des alertes de rôles) — aucun claim ; le
+ * dark pool adverse reste de la lecture (PocketPanel).
  *
  * Module pur : zéro I/O, zéro horloge.
  */
+import { slotGroupOf, type TendencyTable } from '$lib/aggregates/tendency';
+import type { DraftSide } from '$lib/data/types';
+import { draftStateFromRoleEntry, type EnemyRoleReport, type RoleEntryDraft } from '$lib/intel/liveDraft';
 import type { RolePriors } from '$lib/strategic/fogReveal';
+import { predictEnemyRange, surpriseOf } from '$lib/strategic/rangeModel';
 import { DEFAULT_RANGE_MODEL_CONFIG, type RangeModelConfig } from '$lib/strategic/rangeModelConfig';
 import type { Role } from '$lib/types';
 
@@ -88,4 +96,97 @@ export function uniformizeTriggeredPriors(
         triggeredKeys.has(championKey)
             ? { ...UNIFORM_ROLE_WEIGHTS }
             : base(championKey);
+}
+
+// ---- branchement LIVE (page draft) ------------------------------------------
+
+/** Un déclencheur F-c actif sur la draft en cours (alerte « pick préparé »). */
+export interface LiveSurpriseTrigger {
+    championKey: string;
+    /** `surpriseOf(pick).bits` — lecture I1 du slot reconstruit (≤ ~9,97). */
+    bits: number;
+    /** Rôle le plus probable de la lecture de BASE au moment du déclenchement. */
+    role: Role;
+}
+
+export interface LiveSurpriseDefenseInput {
+    /**
+     * La MÊME entrée role-keyed que `readEnemyRoles` : les picks LUS sont
+     * `entry.enemyPicks` ; les bans saisis servent d'exclusions de range
+     * (readEnemyRoles les ignore — aucun effet sur la lecture elle-même).
+     */
+    entry: RoleEntryDraft;
+    /**
+     * La lecture de BASE (priors non défendus) — source du rôle le plus
+     * probable (marginal I2, même sémantique que `marginalTopRole` du
+     * harnais W1 : égalité ⇒ rôle d'indice le plus bas, lecture vide ⇒ null).
+     */
+    baseReport: EnemyRoleReport;
+    /**
+     * Table de tendances de l'ÉQUIPE LUE — le « modèle public » dont les bits
+     * mesurent l'écart. GARDE DE COÛT : fittée sur corpus/équipe uniquement
+     * (au sync — `buildOpponentIntel` côté page), JAMAIS à la frappe.
+     */
+    table: TendencyTable;
+    /** Compte train ÉQUIPE+LIGUE du couple (champion, rôle) — injecté. */
+    trainRoleCountOf: (championKey: string, role: Role) => number;
+    /** Config commitée — seule source du seuil (surpriseAlarmBits = 5). */
+    config?: RangeModelConfig;
+}
+
+/**
+ * Déclencheurs F-c sur les données LIVE — la mécanique du harnais W1
+ * (scripts/backtest/roleInference.ts --surprise-defense) reproduite sur la
+ * saisie de la page : chaque pick révélé du camp LU est replacé sur le
+ * template (l'approximation d'ordre documentée de `draftStateFromRoleEntry`),
+ * la range tenue AVANT lui est `predictEnemyRange` (exclude = tout champion
+ * sorti à un seq strictement antérieur — picks ET bans saisis), et le
+ * déclencheur gelé `shouldTriggerSurpriseDefense` décide. Pick hors-template :
+ * jamais évalué, jamais déclenché (doctrine W1). La transformation
+ * (`uniformizeTriggeredPriors`) et la ré-énumération restent À L'APPELANT.
+ *
+ * Différence assumée avec W1 (saisie par rôle oblige) : le seq de chaque pick
+ * est l'approximation template par ordre de rôle, pas l'ordre réel — en mode
+ * séquence la projection role-keyed de la page porte le même ordre approché.
+ */
+export function detectLiveSurpriseTriggers(input: LiveSurpriseDefenseInput): LiveSurpriseTrigger[] {
+    const state = draftStateFromRoleEntry(input.entry);
+    const readSide: DraftSide = input.entry.allySide === 'blue' ? 'red' : 'blue';
+    const topRoleOf = new Map<string, Role | null>();
+    for (const read of input.baseReport.reads) topRoleOf.set(read.championKey, read.topRole);
+
+    const triggers: LiveSurpriseTrigger[] = [];
+    for (const action of state.actions) {
+        if (action.type !== 'pick' || action.side !== readSide || action.championKey === '') continue;
+        const group = slotGroupOf(action);
+        if (group === undefined) continue; // hors template : jamais évalué, jamais déclenché
+        // La range tenue pour le slot AVANT le pick : exclude = tout champion
+        // déjà sorti (picks/bans, seq strictement antérieur) — patron W1.
+        const exclude = new Set<string>();
+        for (const other of state.actions) {
+            if (other.championKey !== '' && other.seq < action.seq) exclude.add(other.championKey);
+        }
+        const range = predictEnemyRange({
+            table: input.table,
+            slotGroup: group,
+            side: action.side,
+            exclude,
+            ...(input.config !== undefined ? { config: input.config } : {})
+        });
+        const { bits } = surpriseOf(action.championKey, range, input.config ?? DEFAULT_RANGE_MODEL_CONFIG);
+        const mostProbableRole = topRoleOf.get(action.championKey) ?? null;
+        const triggered = shouldTriggerSurpriseDefense(
+            action.championKey,
+            { bits, mostProbableRole },
+            {
+                trainRoleCountOf: input.trainRoleCountOf,
+                ...(input.config !== undefined ? { config: input.config } : {})
+            }
+        );
+        if (triggered) {
+            // mostProbableRole non-null garanti : le déclencheur l'exige.
+            triggers.push({ championKey: action.championKey, bits, role: mostProbableRole as Role });
+        }
+    }
+    return triggers;
 }

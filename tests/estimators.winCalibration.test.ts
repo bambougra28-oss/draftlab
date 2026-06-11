@@ -387,11 +387,18 @@ describe('winCalibrationByLeague — smoke mode --pooled (porte de validité)', 
             expect(report).toContain('## Verdicts (réplication v1 — aucun artefact params)');
             expect(report).not.toContain('## Ligue ');
             expect(report).toContain('Override de hash');
-            // Double verrou : le smoke n'a RIEN écrit dans l'artefact shippé du repo.
+            // Double verrou : le smoke n'a RIEN écrit dans l'artefact shippé du
+            // repo. L'artefact est ce que le DERNIER run a écrit (v1 poolée puis
+            // v2 par ligue depuis le run E3 du 2026-06-11) — le contrat épinglé :
+            // le smoke ne le modifie pas, et rien n'y est validé tant qu'aucune
+            // cellule n'a de verdict VERT.
             const shipped = JSON.parse(
                 readFileSync(resolve(repoRoot, 'data', 'calibration', 'winCalibration.json'), 'utf8')
             ) as WinCalibrationConfig;
-            expect(shipped.version).toBe(1);
+            expect([1, 2]).toContain(shipped.version);
+            for (const card of Object.values(shipped.positions)) {
+                if (card !== null) expect(card.validated).toBe(false);
+            }
         },
         240000
     );
