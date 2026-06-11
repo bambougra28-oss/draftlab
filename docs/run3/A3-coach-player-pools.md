@@ -1,8 +1,16 @@
 # Gate COACH v2 — candidats par POOLS JOUEURS RÉELS — Design run #3 (chantier A3)
 
-> DESIGN soumis à revue adversariale — gel au commit qui suit la revue. Après
-> gel : UNE règle, UN run, aucun paramètre ne bouge après lecture du moindre
-> résultat.
+> GELÉ post-revue adversariale (2026-06-11) — règle définitive, aucun
+> paramètre ne bouge après ce commit.
+> Amendements appliqués : A1 (réconciliation harnais W2 committé `b9aa6d4` —
+> seam additif `coachGateHarness.ts`, référence du repli pinnée, citations de
+> ctx corrigées), A2 (B1 : absents du train à ÉGALITÉ via `percentileAmong`,
+> aucun départage clé asc — cas vide en v2), A3 (argv VERBATIM du replay de
+> validité gelée), A4 (sonde anti-inertie restreinte aux PICKS — les bans ne
+> portent jamais de rôle ; compteur `pick-sans-role` distinct des `anomalies`
+> v1), A5 (mécanique des sondes filtre de rôle gelée — fonctions exportées
+> seules), A6 (appariement S6 par `${corpus}::${gameId}`), A7 (équivalence
+> chaîne PILOTÉE par `navigate`, pas le seul panier).
 
 > La v1 (`docs/run2/A-coach-gate.md`, gelée 2026-06-11) est **CONSOMMÉE** —
 > verdict ROUGE publié tel quel (`docs/calibration/coach-gate-2026.md`) :
@@ -94,12 +102,33 @@ section par section au lieu de la réécrire ; en cas de doute, le texte v1 fait
   décimales, l'exigence minimale. Diff non vide ⇒ bug du runner v2 ou dérive
   d'environnement : corriger, re-passer la porte ; le run v2 ne démarre
   qu'après un diff vide.
+- **Argv gelée (amendement A3)** : le replay `--chain v1` reprend la ligne de
+  commande du run v1 VERBATIM — mêmes 7 chemins de corpus, MÊME ORDRE, même
+  orthographe (les clusters sont préfixés par le chemin tel que tapé et
+  l'ordre des observations conditionne les tirages bootstrap du critère 2 et
+  de S5) : `static/corpus/lck-2026.json static/corpus/lec-2026.json
+  static/corpus/lfl-2026.json static/corpus/lpl-2026.json
+  data/corpus/lec-2025.json data/corpus/lfl-2025.json
+  data/corpus/lpl-2025.json --dataset data/datasets/current-patch.json
+  --full-dataset data/datasets/30-days.json --seed 42 --generated-at
+  2026-06-11T11:55:20.989Z` (l'architecte vérifie cette ligne contre son
+  historique du run v1 avant gel ; tout écart consigné ; à défaut l'ordre du
+  rapport fait foi : lck-2026, lec-2026, lfl-2026, lpl-2026, lec-2025,
+  lfl-2025, lpl-2025 — vérifié conforme aux tables publiées).
 - Repli documenté : si le diff échoue pour une cause d'ENVIRONNEMENT prouvée
   et étrangère au runner (ex. dérive de corpus consignée par un amendement
   postérieur), l'architecte ré-exécute le script v1 CONSOMMÉ
-  (`scripts/backtest/coachGate.ts`, inchangé) sur l'état courant ; sa sortie
-  devient la référence v1 du run #3 (publiée en annexe du rapport v2) et
-  `--chain v1` doit LA reproduire byte-identique.
+  (`scripts/backtest/coachGate.ts` TEL QUE COMMITTÉ à `b9aa6d4` — post-W2 :
+  il importe le harnais `src/lib/backtest/coachGateHarness.ts`, équivalence
+  byte-prouvée par `tests/coachGateHarness.test.ts`) sur l'état courant ; sa
+  sortie devient la référence v1 du run #3 (publiée en annexe du rapport v2)
+  et `--chain v1` doit LA reproduire byte-identique.
+- **Pré-requis de gel (amendement A1 — SATISFAIT)** : le chantier W2
+  (extraction harnais) est COMMITTÉ à `b9aa6d4`, son test d'équivalence vert
+  (`tests/coachGateHarness.test.ts` : le runner v1 re-rend byte-identique
+  `tests/fixtures/coachgate/expected-report.md` sur la fixture synthétique) ;
+  `scripts/backtest/coachGate.ts` AU COMMIT `b9aa6d4` est la référence unique
+  du repli ci-dessus.
 - Cette porte ne lit AUCUN résultat nouveau : tous les chiffres du replay
   sont déjà publiés. Le replay émet aussi `--credits-out` (crédits v1 par
   game) — l'entrée de la secondaire S6 (§1.6).
@@ -158,8 +187,11 @@ MÊME corpus, identique v1** :
    passé, vide inclus.
 2. `ctx_t = { ourSide: s, evaluate, table: tables_k(enemyTeam),
    allyPlayers, fallbackCandidates: top15_k, rolePriors: leaguePriors_k,
-   depth: 2, topK: 4, candidateCount: 6 }` — le ctx v1 (runner v1, l. 590-597)
-   PLUS exactement deux injections : `allyPlayers` et `rolePriors`.
+   depth: 2, topK: 4, candidateCount: 6 }` — le ctx v1 (ctx du moteur de tour :
+   HEAD pré-W2 `scripts/backtest/coachGate.ts` l. 589-597 ; depuis `b9aa6d4`
+   (W2) `src/lib/backtest/coachGateHarness.ts` l. 249-257,
+   `makeCoachTurnEngine`) PLUS exactement deux injections : `allyPlayers` et
+   `rolePriors`.
    `roleCoverageFloor` non passé ⇒ défaut committé
    `DEFAULT_ROLE_COVERAGE_FLOOR = 0.15`.
 3. `C_t = rankOurCandidates(ctx_t, S_t, 6).slice(0, 4)` — la fonction shippée
@@ -208,9 +240,20 @@ Attendue à déclarer (rien n'est mesuré avant le run — aucun chiffre ici) :
    v2 ≡ v1 modulo filtre de rôle — la zone où le levier ne s'applique pas).
 4. **Sondes filtre de rôle** : part des tours où `filterByOpenRoles` a
    retranché ≥ 1 candidat ; part des tours garde-fou (liste vidée ⇒ non
-   filtrée) ; sonde anti-inertie : le runner VÉRIFIE que les actions de S_t
-   portent `role` (sinon le filtre serait silencieusement inerte — anomalie
-   comptée, run invalide si > 0).
+   filtrée) ; sonde anti-inertie : le runner VÉRIFIE que chaque action de
+   PICK résolue de S_t porte `role` (les bans n'en portent jamais —
+   `DraftAction.role` est committé picks-only, `src/lib/data/types.ts` ;
+   sinon le filtre serait silencieusement inerte) ; compteur dédié
+   `pick-sans-role`, DISTINCT des `anomalies` v1 (qui restent byte-identiques
+   en `--chain v1`) ; > 0 ⇒ run invalide.
+   **Mécanique des sondes (fonctions exportées seulement — zéro appel
+   évaluateur, zéro réplication)** : liste pré-filtre du tour =
+   `rankOurCandidates({ ...ctx_t, rolePriors: undefined }, S_t,
+   Number.POSITIVE_INFINITY)` (le `out` shippé complet, filtre inerte sans
+   priors) ; `kept = filterByOpenRoles(préFiltre, S_t, s, leaguePriors_k,
+   0.15)` ; « retranché » ssi 0 < |kept| < |préFiltre| ; « garde-fou » ssi
+   |kept| = 0 ; « tour 100 % repli » ssi C_t ∩ {championKey des pools de
+   `allyPlayers`} = ∅.
 5. **Part des picks réels ∈ C_t** — le diagnostic v1 (18,4 % poolé) : la
    stat que le levier doit faire bouger, publiée en regard de la valeur v1.
 6. Héritées v1 : games éligibles/scorées, tours écartés par cause (dont
@@ -234,8 +277,11 @@ Identiques v1 §1.4, verbatim. Précision d'application : B1 et B2 rejouent
 « mêmes games, mêmes tours, mêmes C_t » — donc les **C_t v2**. B1 reste « le
 coach qui ne sait que suivre la méta » À CANDIDATS ÉGAUX : battre B1 = montrer
 que l'ORDRE du coach vaut mieux que l'ordre de présence sur le même panier
-(les champions de pool sortent du train : leur rang de présence est défini ;
-absent du top = présence 0, clé asc départage — la règle v1 couvre le cas).
+(les champions de pool et du repli sortent tous du train : leur rang de
+présence est toujours défini — le cas « absent du train » est VIDE en v2 par
+construction ; pour mémoire, le runner v1 lui donnerait la valeur partagée
+−|ordre de présence| : tous les absents à ÉGALITÉ, traitée à ½ par
+`percentileAmong` — aucun départage clé asc n'existe en B1).
 
 ### 1.5 Critères de verdict (gelés — recopiés verbatim de v1 §1.5)
 
@@ -270,8 +316,10 @@ couverture faible sortira « non significatif » et sera publié tel quel.
   18,4 %) — comparaison descriptive du levier.
 - **S6 — delta apparié v2 − v1 (NOUVELLE, descriptive)** : crédit v2 − crédit
   v1 par game, sur l'INTERSECTION des games scorées par les deux chaînes
-  (appariement par gameId ; crédits v1 = le `--credits-out` du replay de la
-  porte de validité, passé au run v2 via `--v1-credits`) ;
+  (appariement par `${corpus}::${gameId}` — même convention de préfixe que
+  les clusters, collision inter-fichiers exclue par construction ; crédits
+  v1 = le `--credits-out` du replay de la porte de validité, passé au run v2
+  via `--v1-credits`) ;
   `clusterBootstrapDeltaCI`, mêmes 1000 resamples, même seed 42. C'est
   l'attribution chiffrée du bloc candidats — descriptive : elle ne peut ni
   sauver un rouge ni invalider un vert.
@@ -287,15 +335,20 @@ couverture faible sortira « non significatif » et sera publié tel quel.
 |---|---|---|
 | `src/lib/backtest/coachPlayerChain.ts` | **nouveau** (pur) | `championPoolOf` (agrégat carrière → `ChampionPoolEntry[]` par champion), `lineupProPlayers` (lineup → `ProPlayer[]`) — zéro I/O, zéro logique de classement (elle reste dans `rankOurCandidates`) |
 | `src/lib/backtest/coachGate.ts` | **existant, inchangé** | percentile/crédit/`scoreGameForGate` — seams `candidatesOf`/`valueOf` consommés tels quels |
+| `src/lib/backtest/coachGateHarness.ts` | **existant (W2 committé à `b9aa6d4`, test d'équivalence vert), modifié (seam additif)** | `buildFearlessDetector`/`makeFoldProvider`/`makeCoachTurnEngine` — le ctx v1 vit ici (l. 249-257) ; v2 ajoute à `CoachTurnEngineOptions` deux champs OPTIONNELS `allyPlayersFor?: (side: DraftSide) => ProPlayer[]` et `rolePriors?: RolePriors`, recopiés tels quels dans le ctx du tour ; absents ⇒ ctx v1 byte-identique (le chemin `--chain v1`) |
 | `src/lib/intel/liveDraft.ts` | **existant, inchangé** | `rankOurCandidates` (chaîne shippée, filtre de rôle inclus), `enemyDistributionOf` — déjà exportées (run #2) |
 | `src/lib/estimators/playerPockets.ts` | **existant, inchangé** | `fitPlayerHistory`, `currentLineup` |
 | `src/lib/aggregates/rolePriors.ts` | **existant, inchangé** | `fitRolePriors`, `rolePriorsOf` |
 | `tests/coachPlayerChain.test.ts` | **nouveau** | tests à la main (§2.3) |
 | `scripts/backtest/coachGateV2.ts` | **nouveau** | runner : copie du patron v1 + seam `--chain`, règle §1 en en-tête, folds enrichis (playerFit, lineups, priors), rapport |
-| `scripts/backtest/coachGate.ts` | **consommé, INTANGIBLE** | l'artefact v1 — référence du repli de la porte de validité, jamais modifié |
+| `scripts/backtest/coachGate.ts` | **consommé, INTANGIBLE** | l'artefact v1 — référence du repli de la porte de validité = le blob AU COMMIT `b9aa6d4` (post-W2 : importe le harnais, équivalence byte-prouvée), jamais modifié après ce commit |
 | `docs/calibration/coach-gate-v2-2026.md` | **généré** | le rapport v2 (patron v1 + bloc couverture §1.2 + S6) |
 
-Zéro modification de `src/lib` existant : le changement vit dans ce que le
+UNE seule modification de `src/lib` : le seam additif optionnel de
+`coachGateHarness.ts` (deux clés de ctx ; absentes ⇒ comportement v1
+inchangé, prouvé par `tests/coachGateHarness.test.ts` — le runner v1 re-rend
+byte-identique `tests/fixtures/coachgate/expected-report.md` — ET par la
+porte de validité `--chain v1`). Le reste du changement vit dans ce que le
 runner INJECTE (deux helpers purs nouveaux + deux clés de ctx).
 
 ### 2.2 Lib pure — `src/lib/backtest/coachPlayerChain.ts`
@@ -321,10 +374,13 @@ lineup `{top: A, mid: B}` → 2 ProPlayer dans l'ordre des rôles.
 2. **Anti-fuite lineup** : un fit construit sur train SANS la game testée ne
    contient pas le joueur qui n'apparaît que dans la game testée (le test
    matérialise la discipline du runner).
-3. **Équivalence chaîne shippée** (patron v1 étape 2, OBLIGATOIRE) : sur un
-   état synthétique, ctx avec `allyPlayers`/`rolePriors` posés — la chaîne du
-   runner (`rankOurCandidates` importée) reproduit exactement les
-   `candidates[].championKey` de `recommendNext` avec le même ctx.
+3. **Équivalence chaîne shippée** (patron v1 étape 2, OBLIGATOIRE) : sur
+   l'état synthétique, ctx avec `allyPlayers`/`rolePriors` posés — le runner
+   pilote `navigate` avec la liste `rankOurCandidates(ctx, S, 6)` et
+   reproduit exactement les `candidates[].championKey` (ORDRE PAR VALEUR —
+   c'est `navigate` qui classe, pas la chaîne) ET `enemyExpectation` de
+   `recommendNext` appelé avec le même ctx — l'équivalence porte sur la
+   chaîne entière pilotée, pas sur le seul panier (patron v1 §2.1-étape-2).
 4. **Équivalence chain v1** : le ctx `--chain v1` (sans
    `allyPlayers`/`rolePriors`) reproduit le C_t v1 attendu sur le même état
    synthétique (filtre de rôle inerte vérifié).
@@ -362,21 +418,24 @@ Structure interne, par corpus (copie v1, deltas en gras) :
    train, patron v1.
 3. Par game éligible, par seq de pick t : état S_t identique v1 (actions
    réelles résolues < t — **qui portent `role`/`playerId` du corpus ;
-   vérification runtime sinon anomalie**) ; **ctx selon `--chain`** (v1 :
+   vérification runtime des PICKS résolus, compteur dédié `pick-sans-role`
+   (§1.2-4), jamais les `anomalies` v1**) ; **ctx selon `--chain`** (v1 :
    le ctx v1 exact ; v2 : + `allyPlayers` via `lineupProPlayers`, +
    `rolePriors`, §1.1) ; `C_t = rankOurCandidates(ctx, S_t, 6).slice(0, 4)` ;
    racines forcées + memo partagé + `enemyDistributionOf` identiques v1.
 4. Baselines B1/B2 : lookups identiques v1 sur les C_t du chain courant.
 5. Agrégation : `wilson95`, critère 2 par `clusterBootstrapDeltaCI`
    (obs appariées, seed) ; S5 baseline nulle ; **S6 si `--v1-credits`**
-   (intersection par gameId, même bootstrap) ; **bloc couverture §1.2** ;
+   (intersection par `${corpus}::${gameId}`, même bootstrap) ; **bloc
+   couverture §1.2** ;
    rapport markdown byte-stable à seed/`--generated-at` fixés. **En
    `--chain v1`, le writer v1 est réutilisé à l'octet près** (la porte de
    validité en dépend) ; le writer v2 = v1 + sections nouvelles.
 6. `--smoke` : un corpus, timing + couverture uniquement, AUCUN taux —
    identique v1.
-7. `--credits-out` : crédits par game `{gameId, cluster, credit, creditB1,
-   creditB2}` — sortie mécanique, sans lecture.
+7. `--credits-out` : crédits par game `{corpus, gameId, cluster, credit,
+   creditB1, creditB2}` — appariement S6 par `${corpus}::${gameId}` ; sortie
+   mécanique, sans lecture.
 
 ### 2.5 Coût (ordre de grandeur)
 
@@ -552,8 +611,10 @@ tours de pick, `DEFAULT_ROLE_COVERAGE_FLOOR = 0.15`, garde-fou liste vide) ;
 `ProPlayer`/`ChampionPoolEntry` (`pro/types.ts` : pool par champion, sans
 recence) ; `classifyPoolTier` (seuils 20/10/3, recence non fournie ⇒ games
 bruts) ; `fitRolePriors`/`rolePriorsOf` (`aggregates/rolePriors.ts` ; la page
-passe des priors de LIGUE au coach) ; runner v1 (`scripts/backtest/coachGate.ts`
-l. 590-598 : ctx sans `allyPlayers` ni `rolePriors` ; S_t bâti sur les
+passe des priors de LIGUE au coach) ; ctx du moteur de tour v1 (HEAD pré-W2 :
+`scripts/backtest/coachGate.ts` l. 589-597 ; depuis `b9aa6d4` (W2) :
+`src/lib/backtest/coachGateHarness.ts` l. 249-257 — ctx sans `allyPlayers` ni
+`rolePriors` ; S_t bâti sur les
 `DraftAction` complets du corpus — `role`/`playerId` portés ; rapport
 byte-stable à seed/`--generated-at` fixés) ; rapport v1
 (`docs/calibration/coach-gate-2026.md` : TD 51,6 %, Δ +0,92 pp ns, S1 5,7 %,

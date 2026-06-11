@@ -1,6 +1,13 @@
 # Chantier E3 — Calibration Platt PAR LIGUE × position de séquence — Design run #3
 
-> PROPOSÉ (2026-06-11) — à geler post-revue ; aucun paramètre ne bougera après le commit de gel.
+> GELÉ post-revue adversariale (2026-06-11) — règle définitive, aucun paramètre ne bouge après ce commit.
+> Amendements appliqués : A1 (`leagueCardOf` → carte RÉSOLUE unique `{nGames, fittedThroughPatch, positions}`,
+> renommage propagé), A2 (attendus lck complétés : ΔBrier side-only −0,0045 ns cité, détection BORDERLINE ;
+> base de MDE déclarée PAR POSITION — fullDraft 0,002375, afterBans 0,001525), A3 (LIMITE corrélation
+> intra-série déclarée + IC clusterisé secondaire publié par cellule), A4 (verrou signature corrigé :
+> `+page.svelte:588` ne passe que 3 arguments), A5 (`--pooled` : écriture params désactivée par défaut ET
+> abort sur `--params-out`), A6 (le rapport imprime « override de hash : aucun »), A7 (l'ORDRE des 7
+> fichiers de la commande `--pooled` fait partie de la porte).
 
 > Objectif : reprendre l'enjeu du chantier E (rendre honnêtes les % affichés —
 > WinrateBar « Win % estimé (draft) », `winAfter` du coach) avec des cartes
@@ -92,6 +99,9 @@ data/datasets/SNAPSHOT.md), JAMAIS re-tirés. Le script ABORT avant toute métri
 (hashes attendus = DÉFAUTS du script ; le smoke sur fixtures synthétiques les surcharge via
 --expected-sha256-current/--expected-sha256-full — flags INTERDITS sur corpus réels : la porte de
 validité et LE run ne les passent pas, c'est vérifiable dans la commande publiée du rapport).
+Le rapport imprime explicitement « override de hash : aucun » (ou les valeurs surchargées) —
+l'interdiction des flags sur corpus réels est ainsi auditable dans l'artefact lui-même, pas
+seulement dans la commande publiée.
 
 PROTOCOLE : QUATRE timelines, une PAR LIGUE (= l'union des 2 fichiers de la ligue, ordonnée
 groupByPatch/comparePatches), walkForward (src/lib/backtest/walkforward.ts) avec minTrainSize = 50
@@ -137,17 +147,33 @@ Brier, after3Picks logLoss, fullDraft Brier, fullDraft logLoss.
 MULTIPLICITÉ DÉCLARÉE : sous le nul global, ~0,3 faux vert attendu sur 12 cellules
 (P(≥1 faux vert) ≈ 26 %) — aucun ajustement (chaque cellule porte une décision produit LOCALE et
 réversible au re-run) ; le rapport publie les 12 verdicts ensemble et chaque claim cite SA cellule.
+LIMITE DÉCLARÉE — corrélation intra-série : les games d'une même série (Bo3/Bo5, mêmes équipes) sont
+corrélées ; le bootstrap apparié PAR GAME (convention v1, conservée pour la comparabilité et la porte
+de validité) est anticonservateur sous cette corrélation — les ~0,3 faux verts attendus sont une
+borne basse. SECONDAIRE PUBLIÉ, sans pouvoir de verdict : pour chacune des 12 cellules, IC 95 % du
+même ΔBrier par clusterBootstrapDeltaCI (src/lib/backtest/clusterBootstrap.ts, cluster =
+series.matchId, une game sans série = son propre cluster ; observations appariées
+model = (p_cal − y)², baseline = (p_raw − y)² par game ; 1000 resamples), consommé sur le MÊME flux
+mulberry32(seed 42) APRÈS les 24 IC primaires, dans l'ordre gelé des cellules (lck → lec → lfl → lpl
+× afterBans → after3Picks → fullDraft). Toute cellule VERTE dont l'IC clusterisé recouvre 0 cite cet
+écart verbatim dans son claim produit.
 GARDE SUPPLÉMENTAIRE : validated(ligue, position) = (verdict VERT) ∧ (b > 0 au fit final DE LA LIGUE).
 
 ATTENDUS DÉCLARÉS D'AVANCE :
 - afterBans dégénère en side-only PAR LIGUE (p_raw ≡ 0,5 ⇒ b sans information, a = logit du taux blue
   du train de la ligue). Le run #2 a publié : side-only lec/lfl/lpl ≈ pile-ou-face ⇒ rouges probables,
   qui seraient des CONFIRMATIONS d'honnêteté (le 50 % post-bans y est déjà honnête) ; side-only LCK
-  2026 +8,4 pp SIGNIFICATIF ⇒ l'effet attendu vaut ≈ −(q − 0,5)² (q = taux blue walk-forward lck) —
+  2026 : accuracy +8,4 pp SIGNIFICATIVE ([+2,8 ; +14,0], scorecard lck-2026-26.11) MAIS, sur l'échelle
+  MÊME du verdict E3, ΔBrier side-only vs pièce = −0,0045 [−0,0101 ; +0,0012] (n = 286, NON
+  significatif, même scorecard). L'effet attendu vaut ≈ −(q − 0,5)² (q = taux blue walk-forward lck) ;
+  au point estimé 2026 (≈ −0,0045) et au MDE afterBans-lck (≈ 0,0027, voir PUISSANCE), la détection
+  est attendue BORDERLINE —
   un VERT lck/afterBans signifierait « en LCK, afficher ~q % après bans est plus honnête que 50 % » ;
   un ROUGE, que l'avantage blue ne tient pas sur 2025-2026 au niveau requis. LES DEUX lectures sont
   écrites ici, avant le run.
-- PUISSANCE (déclarée d'avance, demi-largeur d'IC v1 × √(2567/n)) : MDE ΔBrier ≈ 0,0042 (lck, 818
+- PUISSANCE (déclarée d'avance, demi-largeur de l'IC v1 de la position FULLDRAFT (0,002375) × √(2567/n) ;
+  pour les cellules afterBans, la base v1 afterBans (0,001525) donne des MDE ≈ ×0,64 (lck ≈ 0,0027) —
+  base déclarée par position, jamais re-choisie après lecture) : MDE ΔBrier ≈ 0,0042 (lck, 818
   paires) · 0,0056 (lec, 470) · 0,0057 (lfl, 450) · 0,0035 (lpl, 1172). Un effet de la taille du
   pooled v1 (≈ 0,002) sortira ROUGE par construction dans chaque cellule : le pari pré-enregistré est
   un effet PAR LIGUE plus grand que la moyenne poolée (le (a) de side lck ; la dérive lfl vue dans les
@@ -168,14 +194,18 @@ REPLI TRANCHÉ ET GELÉ : ligue sans carte (lcs, cblol, lcp, internationaux, id 
 derrière elle (v1 ROUGE consommé) et les ligues hors corpus sont hors claim par construction.
 APPLICATION : la carte appliquée est celle de la LIGUE DU CAMP AFFICHÉ — barre globale : leagueIdA ;
 coach : la ligue du camp conseillé (leagueIdA, ou leagueIdB quand la simulation fait conseiller le
-camp B). Une config v1 chargée par l'estimateur v2 garde la sémantique v1 (rétro-compatibilité).
+camp B). Résolution UNIQUE par leagueCardOf (carte résolue {nGames, fittedThroughPatch, positions}
+de la ligue — UI et estimateur, jamais deux sémantiques de repli). Une config v1 chargée par
+l'estimateur v2 garde la sémantique v1 (rétro-compatibilité).
 
 PORTE DE VALIDITÉ (bloquante, AVANT le run E3) : le runner v2 en mode --pooled, lancé sur les 7 corpus
 v1 et les mêmes snapshots (seed 42), reproduit À 5 DÉCIMALES les six Δ et IC publiés dans
 docs/calibration/win-calibration-2026.md (table d'acceptation au §2.6 du design ; contrôles
 secondaires : Brier des bras à 4 décimales, fits finals à 6 décimales, n = 2567, 26 groupes, 24 folds).
 Tout écart ⇒ bug du runner v2, AUCUN run E3 avant égalité. Le mode --pooled n'écrit JAMAIS l'artefact
-params (abort si --params-out lui est passé).
+params (abort si --params-out lui est passé). L'ORDRE des 7 fichiers de la commande --pooled est celui
+de la commande v1 publiée et fait partie de la porte (l'ordre d'entrée fixe l'ordre des paires dans
+les groupes, donc les sommes flottantes et la consommation du rng).
 
 LIMITE DOCUMENTÉE (reprise verbatim dans le rapport) : le snapshot SoloQ est
 « d'aujourd'hui » et évalue des games 2025-2026 (fuite de features M3.x connue).
@@ -222,7 +252,7 @@ scripts/backtest/winCalibrationByLeague.ts (NOUVEAU, I/O) → rapport + params J
 scripts/backtest/winCalibration.ts          (existant, CONSOMMÉ — non modifié)
 src/lib/backtest/sequencePositions.ts       (existant, INCHANGÉ)
 src/lib/estimators/platt.ts                 (existant, GELÉ)
-src/lib/estimators/winCalibration.ts        (MODIFIÉ, pur) → type v2 + leaguePositionsOf + leagueId
+src/lib/estimators/winCalibration.ts        (MODIFIÉ, pur) → type v2 + leagueCardOf + leagueId
 data/calibration/winCalibration.json        (existant v1 tout validated:false ; ÉCRASÉ en v2 par LE run)
 UI : +page.svelte (threading leagueIdA/coachLeagueId), CoachPanel.svelte (prop leagueId),
      WinrateBar (libellés — affichage pur inchangé), help/+page.svelte
@@ -255,18 +285,25 @@ export interface WinCalibrationConfig {
     leagues?: Record<string, LeagueCalibration>;
 }
 
+/** v2 — carte résolue (l'objet UNIQUE que consomment calibrateAllyWin ET les badges UI). */
+export interface ResolvedCalibrationCard {
+    nGames: number;
+    fittedThroughPatch?: string;
+    positions: Record<CalibrationPosition, PositionParams | null>;
+}
+
 /**
- * Résolution UNIQUE des cartes (consommée par calibrateAllyWin ET par l'UI
- * pour les badges — aucune duplication de la sémantique de repli) :
+ * Résolution UNIQUE des cartes (aucune duplication de la sémantique de repli) :
  *   config null                      → null (passthrough)
- *   version 1                        → config.positions (sémantique v1, leagueId IGNORÉ)
- *   version 2, leagueId avec carte   → config.leagues[leagueId].positions
+ *   version 1                        → { nGames: config.nGames, fittedThroughPatch: config.fittedThroughPatch,
+ *                                        positions: config.positions } (sémantique v1, leagueId IGNORÉ)
+ *   version 2, leagueId avec carte   → config.leagues[leagueId] (nGames et fittedThroughPatch DE LA LIGUE)
  *   version 2, sinon                 → null (passthrough — repli TRANCHÉ, jamais config.positions)
  */
-export function leaguePositionsOf(
+export function leagueCardOf(
     config: WinCalibrationConfig | null,
     leagueId?: string
-): Record<CalibrationPosition, PositionParams | null> | null;
+): ResolvedCalibrationCard | null;
 
 export function calibrateAllyWin(
     pAllyRaw: number,
@@ -278,9 +315,11 @@ export function calibrateAllyWin(
 ```
 
 Rétro-compatibilité, trois verrous :
-- **signature** : `leagueId` est ajouté en 5ᵉ position (les deux call-sites
-  existants — `+page.svelte:588`, `CoachPanel.svelte:70` — passent `config` en
-  4ᵉ : aucun cassé) ;
+- **signature** : `leagueId` est ajouté en 5ᵉ position. `CoachPanel.svelte:70`
+  passe déjà `config` en 4ᵉ (aucun cassé) ; `+page.svelte:588` n'en passe que
+  3 (le défaut s'applique) — il compile inchangé, et l'étape UI le porte à
+  5 arguments en passant explicitement `defaultWinCalibrationConfig()` en 4ᵉ
+  (comportement identique au défaut) ;
 - **données** : une config `version: 1` (dont l'actuelle, tout
   `validated:false`) garde exactement la sémantique v1 — les tests v1 de
   `tests/estimators.winCalibration.test.ts` restent VERBATIM et doivent rester
@@ -346,16 +385,22 @@ Déroulé interne (mode ligue) :
    tête), tables des 4 bras × 3 positions, Δ + IC + verdict par cellule,
    fiabilité 10 bacs (calibré et brut) par (ligue × position), bloc ATTENDUS
    afterBans recopié ; table récapitulative des 12 cellules
-   (| ligue | position | ΔBrier | IC | verdict | a | b | validated |) ; note
-   de multiplicité ; caveat M3.x et les trois approximations verbatim.
+   (| ligue | position | ΔBrier | IC | IC clusterisé (secondaire, §1 LIMITE
+   DÉCLARÉE) | verdict | a | b | validated |) ; note de multiplicité ; caveat
+   M3.x et les trois approximations verbatim.
 
 Mode `--pooled` (porte de validité) : ignore le groupement par ligue — UNE
 timeline poolée des fichiers passés, minTrainSize 50, les 4 bras, SIX IC dans
 l'ordre v1 exact (afterBans Brier, afterBans logLoss, after3Picks Brier,
 after3Picks logLoss, fullDraft Brier, fullDraft logLoss) sur un flux
 `mulberry32(seed)` neuf — la consommation du rng reproduit la v1 à
-l'identique ; rapport au format v1 ; AUCUN params écrit (abort si
-`--params-out`). Par construction (mêmes modules gelés, même éligibilité,
+l'identique ; rapport au format v1 ; AUCUN params écrit. En mode `--pooled`,
+l'écriture des params est DÉSACTIVÉE PAR DÉFAUT (aucun chemin par défaut,
+contrairement au runner v1 dont `paramsOutPath` vaut
+`data/calibration/winCalibration.json` par défaut — hériter ce comportement
+écrirait l'artefact silencieusement) ET le flag `--params-out` fait abort —
+les deux verrous, pas seulement le second. Par construction (mêmes modules
+gelés, même éligibilité,
 même cache p_raw, même ordre rng), la sortie doit égaler la v1 — la porte le
 VÉRIFIE au lieu de le supposer.
 
@@ -378,7 +423,7 @@ qu'assembler (patron postdiction explicitement permissif là-dessus).
   simulation, le coach conseille le camp au trait). `winShown` ajoute
   `leagueId` à l'appel `calibrateAllyWin` ; `pctCalibrated` cesse de lire
   `calibration.positions` directement et passe par
-  `leaguePositionsOf(calibration, leagueId)` (sinon il lirait le champ
+  `leagueCardOf(calibration, leagueId)` (sinon il lirait le champ
   provenance v2, qui est tout `validated:false` — le helper est l'UNIQUE point
   de résolution). Tri du navigator et `liveDraft.ts` : toujours inchangés
   (calibration à l'affichage, b > 0 garantit l'ordre à position égale).
@@ -394,9 +439,11 @@ qu'assembler (patron postdiction explicitement permissif là-dessus).
 
 - `tests/estimators.winCalibration.test.ts` — ÉTENDU, les tests v1 restent
   VERBATIM (leur vert = la porte de rétro-compat) ; nouveaux cas :
-  - `leaguePositionsOf` : config null → null ; v1 → `positions` (leagueId
-    ignoré) ; v2 + ligue connue → la carte de la ligue ; v2 + ligue inconnue /
+  - `leagueCardOf` : config null → null ; v1 → la carte v1
+    (`nGames`/`fittedThroughPatch`/`positions` du config, leagueId ignoré) ;
+    v2 + ligue connue → la carte de la ligue ; v2 + ligue inconnue /
     `leagueId` absent → null ; v2 ne renvoie JAMAIS `config.positions` ;
+    `nGames` de la carte = celui de la LIGUE ;
   - `calibrateAllyWin` v2 : carte lck (a = 0,2, b = 0,7) validée, ally rouge,
     `pAllyRaw = 0,6` ⇒ `pAlly ≈ 0,520944` (la valeur à la main v1, inchangée —
     même carte, résolution par ligue) ; même config interrogée avec
@@ -450,12 +497,13 @@ b = 0,675449 · fullDraft a = 0,159408, b = 0,549009 (nTrain 2659).
 | 7 | **Asymétrie de side à l'application** | Aller-retour espace bleu inchangé dans `calibrateAllyWin` — et re-testé : le `a` par ligue est PLUS grand (cas lck), l'inversion serait plus visible, pas moins. |
 | 8 | **Inversion du tri** (b ≤ 0) | `validated` exige b > 0 au fit final DE LA LIGUE ; tri du coach toujours sur valeurs brutes (calibration à l'affichage). |
 | 9 | **Cherry-picking d'éligibilité** | Une seule règle `isCalibrationEligible` (inchangée v1), un seul ensemble par ligue partagé par les 3 positions, écartés comptés par fichier. |
-| 10 | **Mauvaise carte à l'application** (fuite de ligue) | La ligue vient d'un état UI explicite (`leagueIdA`/`leagueIdB`, vérifiés dans `+page.svelte`) ; côté mesure, l'appariement fichier→ligue est asserté par regex sur le basename (abort sinon) ; résolution UNIQUE par `leaguePositionsOf` (UI et estimateur — pas deux sémantiques de repli). Cas inter-ligues = approximation (c) déclarée, hors claim. |
+| 10 | **Mauvaise carte à l'application** (fuite de ligue) | La ligue vient d'un état UI explicite (`leagueIdA`/`leagueIdB`, vérifiés dans `+page.svelte`) ; côté mesure, l'appariement fichier→ligue est asserté par regex sur le basename (abort sinon) ; résolution UNIQUE par `leagueCardOf` (UI et estimateur — pas deux sémantiques de repli). Cas inter-ligues = approximation (c) déclarée, hors claim. |
 | 11 | **Fishing de repli** (« passer au poolé si les ligues sortent rouges ») | Le repli passthrough est TRANCHÉ et gelé dans la règle (D3) ; le full-fit poolé de l'artefact est `validated:false` FORCÉ par construction — le promouvoir exigerait une NOUVELLE règle gelée, pas une retouche. |
 | 12 | **Contamination par la porte de validité** (un run sur données réelles AVANT le run E3) | Le mode --pooled ne peut produire que des nombres DÉJÀ publiés (v1) : il ne révèle rien de nouveau et ne peut informer aucun paramètre (la règle est gelée avant qu'il tourne) ; il n'écrit aucun params ; son rapport est publié (`docs/run3/E3-validite-poolee.md`). |
 | 13 | **Petits trains Platt** (50 records, 2 paramètres) | Assumé : ridge 1e-6 + clamp du module gelé ; premiers folds bruités mais honnêtes (le walk-forward pèse par paires, micro-average) ; minTrain re-posé AVANT le run (D2) avec les tailles de premiers trains mesurées (74/84/58/88). |
 | 14 | **Hétérogénéité INTRA-ligue** (2025 vs 2026, formats, First Selection) | Assumé et déclaré : la carte par ligue moyenne encore 2025-2026 ; le walk-forward refit à chaque fold (la carte de test suit la dérive avec un patch de retard) ; fenêtres de patch locales avec décroissance = candidat run ultérieur, jamais une retouche de ce run. |
 | 15 | **Drift après le run** | Doctrine §6.8 : re-run du script à chaque refresh corpus ; `fittedThroughPatch` PAR LIGUE dans le JSON ; b qui s'effondre après un gros patch = signal documenté. |
+| 16 | **Corrélation intra-série** (Bo3/Bo5, mêmes équipes, même patch) | LIMITE DÉCLARÉE dans la règle et le rapport : bootstrap apparié PAR GAME anticonservateur sous cette corrélation — ~0,3 faux verts = borne basse ; SECONDAIRE publié sans pouvoir de verdict : IC clusterisé `clusterBootstrapDeltaCI` (cluster = `series.matchId`) par cellule, sur le même flux rng APRÈS les 24 IC primaires ; toute cellule VERTE dont l'IC clusterisé recouvre 0 cite l'écart verbatim dans son claim. |
 
 ---
 
@@ -466,7 +514,8 @@ teste AVANT tout run réel ; ensuite la porte de validité (architecte), puis LE
 run (architecte) qui ne change que deux fichiers de données.
 
 1. **Estimateur v2** : types union dans `src/lib/estimators/winCalibration.ts`
-   (`leagues?`, `LeagueCalibration`), `leaguePositionsOf`, 5ᵉ paramètre
+   (`leagues?`, `LeagueCalibration`, `ResolvedCalibrationCard`),
+   `leagueCardOf`, 5ᵉ paramètre
    `leagueId` de `calibrateAllyWin` ; tests v2 ajoutés, tests v1 INTACTS.
    Vert quand : valeurs à la main (0,520944 via carte lck ; passthrough lcs),
    tests v1 verbatim verts, `svelte-check` 0 erreur.
@@ -478,7 +527,7 @@ run (architecte) qui ne change que deux fichiers de données.
    corpus réel.
 3. **Intégration UI** : `+page.svelte` (5ᵉ arg `leagueIdA` ; `coachLeagueId`
    vers CoachPanel), `CoachPanel.svelte` (prop `leagueId`,
-   `pctCalibrated` via `leaguePositionsOf`), libellés badge avec ligue, aide.
+   `pctCalibrated` via `leagueCardOf`), libellés badge avec ligue, aide.
    Vert quand : `pnpm test`, `svelte-check`, `pnpm build` verts ; smoke
    navigateur : badge « Non calibré » présent, % inchangés (config v1
    tout-false ⇒ passthrough — threading inerte).
