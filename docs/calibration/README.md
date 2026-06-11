@@ -83,9 +83,10 @@ significatif) » — pas de victoire au point près.
 
 Extensions prévues par la roadmap (mêmes règles, mêmes gardes) : postdiction
 des win conditions (porte G1), log loss du prochain pick et ranges I1 (porte
-G2), corrélation de rétention Fearless (G3), rétrospective fog × counters
-(G4), accord navigator stratifié (G5), courbes de réponse du Patch Oracle et
-hit rate de watchlist (G6).
+G2), demande par rôle Fearless (porte G3-demande, amendée 2026-06-11 ;
+rétention = S3 à enjeu badge ; jauge d'intégrité reportée en G3b), rétrospective
+fog × counters (G4), accord navigator stratifié (G5), courbes de réponse du
+Patch Oracle et hit rate de watchlist (G6).
 
 ## Limites connues du runner actuel
 
