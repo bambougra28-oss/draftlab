@@ -114,8 +114,19 @@
     } from '$lib/exports/prepPack';
     import { listDraftPlans, type DraftPlan } from '$lib/storage/draftPlans';
     import PlanTreePanel from '$lib/components/PlanTreePanel.svelte';
-    import PocketPanel from '$lib/components/PocketPanel.svelte';
-    import { fitPublicSelfModel } from '$lib/estimators/publicSelfModel';
+    import PocketPanel, {
+        type EnemyPlayerPocketRow,
+        type PlayerPocketRow
+    } from '$lib/components/PocketPanel.svelte';
+    import { fitPublicSelfModel, type PublicSelfModel } from '$lib/estimators/publicSelfModel';
+    import {
+        anticipateEnemyPockets,
+        currentLineup,
+        fitPlayerHistory,
+        playerReservoir,
+        publicMassOf,
+        type PlayerHistoryFit
+    } from '$lib/estimators/playerPockets';
     import { advisePocketPicks, type PocketCandidate } from '$lib/strategic/pocketAdvisor';
     import { loadDefaultTags } from '$lib/tags';
     import type { BanEvEntry } from '$lib/strategic/banEv';
@@ -754,6 +765,12 @@
     let pairFit = $state<TagPairFit | null>(null);
     /** Ordered counter cells (same corpus) — coach counter-the-comp axis. */
     let counterFit = $state<TagPairFit | null>(null);
+    /**
+     * Carrière corpus PAR JOUEUR sur TOUTES les ligues chargées (extension
+     * par-joueur de F-a) — fit une fois par refresh corpus, même mécanisme que
+     * pairFit : jamais recalculé à la frappe.
+     */
+    let playerFit = $state<PlayerHistoryFit | null>(null);
 
     async function refreshCorpus(): Promise<void> {
         corpusBusy = true;
@@ -765,6 +782,7 @@
             const allRecords = await loadAllCorpusRecords();
             pairFit = allRecords.length > 0 ? fitTagPairCells(allRecords) : null;
             counterFit = allRecords.length > 0 ? fitTagCounterCells(allRecords) : null;
+            playerFit = allRecords.length > 0 ? fitPlayerHistory(allRecords) : null;
         } catch (error) {
             corpusWarnings = [error instanceof Error ? error.message : String(error)];
         } finally {
@@ -788,6 +806,15 @@
     const corpusTeamB = $derived.by((): DraftRecord[] => {
         if (teamB === null || leagueRecords === null) return [];
         const canonical = canonicalTeamName(teamB.name);
+        return leagueRecords.filter(
+            (r) => canonicalTeamName(r.blueTeam) === canonical || canonicalTeamName(r.redTeam) === canonical
+        );
+    });
+
+    /** Team A's both-sided corpus games (même mécanisme) — source du lineup corpus A. */
+    const corpusTeamA = $derived.by((): DraftRecord[] => {
+        if (teamA === null || leagueRecords === null) return [];
+        const canonical = canonicalTeamName(teamA.name);
         return leagueRecords.filter(
             (r) => canonicalTeamName(r.blueTeam) === canonical || canonicalTeamName(r.redTeam) === canonical
         );
@@ -826,20 +853,40 @@
 
     // ---- Tes pockets (chantier F : F1 ROUGE ⇒ panneau en LECTURE seule, F-c débranché) ----
     /**
-     * Réservoir F-a (fitPublicSelfModel sur le corpus ligue, équipe A = NOTRE
-     * modèle public) + conseiller F-b. Null tant que corpus/équipe A/fits de
-     * tags manquent — le panneau affiche alors le placeholder, jamais un
-     * réservoir inventé. `viableOnPatch` est un SEAM assumé : aucune source de
-     * viabilité patch n'est branchée, tout passe (documenté, pas deviné).
+     * Modèle public F-a d'une équipe (fitPublicSelfModel sur le corpus ligue,
+     * consommés Fearless retirés). Extrait en $derived PARTAGÉ : réutilisé par
+     * le conseiller équipe (F-b) ET par la lecture par joueur — il ne dépend
+     * pas des picks en cours, donc plus AUCUN refit à la frappe.
      */
-    const pocketCandidates = $derived.by((): PocketCandidate[] | null => {
-        if (leagueRecords === null || teamA === null || pairFit === null || counterFit === null) return null;
-        const consumed = new Set(fearlessLocked);
-        const model = fitPublicSelfModel(
+    const publicModelA = $derived.by((): PublicSelfModel | null => {
+        if (leagueRecords === null || teamA === null) return null;
+        return fitPublicSelfModel(
             leagueRecords,
             { team: teamA.name, now: new Date(nowTick).toISOString() },
-            consumed
+            new Set(fearlessLocked)
         );
+    });
+
+    /** Le symétrique pour l'équipe B (anticipation adverse par joueur). */
+    const publicModelB = $derived.by((): PublicSelfModel | null => {
+        if (leagueRecords === null || teamB === null) return null;
+        return fitPublicSelfModel(
+            leagueRecords,
+            { team: teamB.name, now: new Date(nowTick).toISOString() },
+            new Set(fearlessLocked)
+        );
+    });
+
+    /**
+     * Réservoir F-a (modèle public de l'équipe A) + conseiller F-b. Null tant
+     * que corpus/équipe A/fits de tags manquent — le panneau affiche alors le
+     * placeholder, jamais un réservoir inventé. `viableOnPatch` est un SEAM
+     * assumé : aucune source de viabilité patch n'est branchée, tout passe
+     * (documenté, pas deviné).
+     */
+    const pocketCandidates = $derived.by((): PocketCandidate[] | null => {
+        const model = publicModelA;
+        if (model === null || pairFit === null || counterFit === null) return null;
         return advisePocketPicks({
             surprises: [...model.byRole.values()].flat(),
             tagsFile: loadDefaultTags(),
@@ -848,8 +895,59 @@
             counterFit,
             pairFit,
             viableOnPatch: () => true, // SEAM patch : tout passe tant qu'aucune source n'est branchée.
-            consumed
+            consumed: new Set(fearlessLocked)
         });
+    });
+
+    /**
+     * Extension PAR JOUEUR (directive 2026-06-11) — PROPOSER : réservoir
+     * carrière cross-ligues (playerFit) de chaque joueur du lineup CORPUS de
+     * l'équipe A (currentLineup — aucune dépendance au roster gol.gg), bits vs
+     * le modèle public de NOTRE équipe. null ⇒ section absente du panneau ;
+     * [] ⇒ placeholder honnête (corpus sans attribution playerId). Les
+     * consommés Fearless sont retirés de l'affichage : un pocket mort ne se
+     * propose ni ne s'anticipe.
+     */
+    const ourPlayerPockets = $derived.by((): PlayerPocketRow[] | null => {
+        const fit = playerFit;
+        const model = publicModelA;
+        if (fit === null || model === null || teamA === null || corpusTeamA.length === 0) return null;
+        const lineup = currentLineup(corpusTeamA, teamA.name);
+        const mass = publicMassOf(model);
+        const consumed = new Set(fearlessLocked);
+        const rows: PlayerPocketRow[] = [];
+        for (const role of ROLES) {
+            const playerId = lineup.get(role);
+            if (playerId === undefined) continue;
+            rows.push({
+                role,
+                playerId,
+                reservoir: playerReservoir(fit, playerId, mass).filter((e) => !consumed.has(e.championKey))
+            });
+        }
+        return rows;
+    });
+
+    /** Le symétrique défensif — ANTICIPER les pockets des joueurs adverses (équipe B). */
+    const enemyPlayerPockets = $derived.by((): EnemyPlayerPocketRow[] | null => {
+        const fit = playerFit;
+        const model = publicModelB;
+        if (fit === null || model === null || teamB === null || corpusTeamB.length === 0) return null;
+        const lineup = currentLineup(corpusTeamB, teamB.name);
+        const consumed = new Set(fearlessLocked);
+        const reads = anticipateEnemyPockets(fit, lineup, publicMassOf(model));
+        const rows: EnemyPlayerPocketRow[] = [];
+        for (const role of ROLES) {
+            const read = reads.get(role);
+            if (read === undefined) continue;
+            rows.push({
+                role,
+                playerId: read.playerId,
+                reservoir: read.reservoir.filter((e) => !consumed.has(e.championKey)),
+                deceptions: read.deceptions.filter((e) => !consumed.has(e.championKey))
+            });
+        }
+        return rows;
     });
 
     // ---- Coach en direct (liveDraft + navigator) ----
@@ -1580,9 +1678,17 @@
 
             <!-- Chantier F — Tes pockets : F1 ROUGE ⇒ lecture seule (badge du composant) ;
                  F2 VERTE citée en provenance par l'alerte ; F-c reste débranché (aucun
-                 appel à surpriseDefense). -->
+                 appel à surpriseDefense). Extension par-joueur (2026-06-11) : PROPOSER
+                 (nos joueurs) / ANTICIPER (joueurs adverses) — sections absentes sans
+                 lineup corpus, placeholder honnête sans attribution playerId. -->
             {#if pocketCandidates !== null}
-                <PocketPanel candidates={pocketCandidates} />
+                <PocketPanel
+                    candidates={pocketCandidates}
+                    ourPlayers={ourPlayerPockets}
+                    enemyPlayers={enemyPlayerPockets}
+                    ourTeamName={teamA?.name ?? null}
+                    enemyTeamName={teamB?.name ?? null}
+                />
             {:else}
                 <div class="rounded-lg border border-dashed border-slate-800 bg-slate-900/40 p-4 text-xs text-slate-500">
                     Tes pockets : synchronisez l'Équipe A (votre équipe) et importez le corpus ligue pour

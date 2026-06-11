@@ -22,11 +22,40 @@
  * corrélation, jamais causalité. « Comment lire ? » pédagogique avec le cas
  * fondateur G2-Nasus (Skewmond, finale LEC 2026, G5, séquence corrigée
  * KC-G2-KC-G2-G2).
+ *
+ * Extension PAR JOUEUR (directive 2026-06-11, F-pocket-picks §5) : deux
+ * sections OPTIONNELLES pilotées par props — absentes par défaut, le rendu
+ * historique est inchangé :
+ *  - `ourPlayers` (PROPOSER) : top 3 du réservoir carrière de chaque joueur
+ *    de NOTRE lineup corpus (bits vs le modèle public de NOTRE équipe,
+ *    équipes sources si la main vient d'ailleurs — « main ramenée de LFL ») ;
+ *  - `enemyPlayers` (ANTICIPER) : idem côté adverse + décalages de rôle déjà
+ *    montrés (« X a déjà joué Nasus JUNGLE — décalage de rôle possible »),
+ *    en alerte visuelle discrète.
+ * [] ⇒ placeholder honnête (corpus sans attribution playerId). LIMITE
+ * honnête affichée dans « Comment lire ? » : un pocket jamais montré dans
+ * AUCUNE game corpus reste invisible — répétitions et décalages de rôle
+ * seulement, jamais l'inédit absolu.
  */
 -->
 <script module lang="ts">
     import type { PocketCandidate } from '$lib/strategic/pocketAdvisor';
+    import type { PlayerPocketEntry } from '$lib/estimators/playerPockets';
     import type { Role } from '$lib/types';
+
+    /** Ligne par joueur de NOTRE équipe (PROPOSER) — réservoir carrière trié bits desc. */
+    export interface PlayerPocketRow {
+        /** Rôle du joueur dans le lineup corpus (currentLineup). */
+        role: Role;
+        /** Nom de page Leaguepedia (DraftAction.playerId). */
+        playerId: string;
+        reservoir: PlayerPocketEntry[];
+    }
+
+    /** Ligne par joueur ADVERSE (ANTICIPER) — réservoir + décalages de rôle montrés. */
+    export interface EnemyPlayerPocketRow extends PlayerPocketRow {
+        deceptions: PlayerPocketEntry[];
+    }
 
     /** Lecture du dark pool adverse : viable au patch − pool montré, pondéré par rôle. */
     export interface DarkPoolEntry {
@@ -50,6 +79,7 @@
 <script lang="ts">
     import { PUBLIC_SURPRISE_LABEL_FR } from '$lib/estimators/publicSelfModel';
     import { championNameByKey } from '$lib/dataDragon/version';
+    import { canonicalTeamName } from '$lib/data/normalize';
     import ChampionIcon from '$lib/components/ChampionIcon.svelte';
 
     interface Props {
@@ -58,9 +88,24 @@
         darkPool?: DarkPoolEntry[];
         preparedAlert?: PreparedPickAlertView | null;
         title?: string;
+        /** Sections PAR JOUEUR (null = absentes, rendu historique inchangé ; [] = placeholder honnête). */
+        ourPlayers?: PlayerPocketRow[] | null;
+        enemyPlayers?: EnemyPlayerPocketRow[] | null;
+        /** Noms d'équipe courants — signalent les mains ramenées d'ailleurs. */
+        ourTeamName?: string | null;
+        enemyTeamName?: string | null;
     }
 
-    let { candidates, darkPool = [], preparedAlert = null, title = 'Tes pockets' }: Props = $props();
+    let {
+        candidates,
+        darkPool = [],
+        preparedAlert = null,
+        title = 'Tes pockets',
+        ourPlayers = null,
+        enemyPlayers = null,
+        ourTeamName = null,
+        enemyTeamName = null
+    }: Props = $props();
 
     const ROLE_FR: readonly string[] = ['Top', 'Jungle', 'Mid', 'Bot', 'Support'];
 
@@ -68,6 +113,16 @@
     const fmtBits = (bits: number): string => `${bits.toFixed(1).replace('.', ',')} bits`;
     const fmtPp = (x: number): string => `${x >= 0 ? '+' : ''}${(100 * x).toFixed(1).replace('.', ',')} pp`;
     const fmtNum = (x: number, digits = 2): string => x.toFixed(digits).replace('.', ',');
+    /** Jour d'une date ISO de record corpus (« 2026-01-12 08:15:00 » → « 2026-01-12 »). */
+    const fmtDay = (iso: string): string => iso.slice(0, 10);
+    const fmtGames = (entry: PlayerPocketEntry): string =>
+        `${entry.games} game${entry.games > 1 ? 's' : ''}, ${entry.wins} gagnée${entry.wins > 1 ? 's' : ''}`;
+    /** Équipes sources ≠ équipe courante (comparaison canonique) — « main ramenée de X ». */
+    const foreignTeams = (teams: string[], current: string | null): string[] => {
+        if (current === null) return [];
+        const canonical = canonicalTeamName(current);
+        return teams.filter((team) => canonicalTeamName(team) !== canonical);
+    };
 </script>
 
 <section class="panel p-3">
@@ -190,6 +245,67 @@
         </ul>
     {/if}
 
+    {#snippet reservoirLine(entry: PlayerPocketEntry, currentTeam: string | null)}
+        <li class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px]">
+            <ChampionIcon championKey={entry.championKey} size={18} />
+            <span class="text-slate-300">{nameOf(entry.championKey)}</span>
+            <span class="text-[10px] text-slate-600">{ROLE_FR[entry.role]}</span>
+            <span class="rounded bg-violet-500/15 px-1.5 py-0.5 font-mono text-[10px] text-violet-300">
+                {fmtBits(entry.bits)}
+            </span>
+            <span class="text-[10px] text-slate-500">{fmtGames(entry)}</span>
+            {#if entry.lastDate !== undefined}
+                <span class="text-[10px] text-slate-600">dernier : {fmtDay(entry.lastDate)}</span>
+            {/if}
+            {#each foreignTeams(entry.teams, currentTeam) as team (team)}
+                <span class="rounded bg-sky-500/15 px-1.5 py-0.5 text-[10px] text-sky-300">
+                    main ramenée de {team}
+                </span>
+            {/each}
+        </li>
+    {/snippet}
+
+    <!-- Bloc 1bis — PAR JOUEUR, notre équipe : PROPOSER (extension de F-a au joueur) -->
+    {#if ourPlayers !== null}
+        <h3 class="flex items-center gap-2 pt-1 pb-1 text-xs font-semibold text-slate-300">
+            Par joueur — proposer
+            <span class="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-amber-400">
+                Expérimental
+            </span>
+        </h3>
+        {#if ourPlayers.length === 0}
+            <p class="pb-2 text-xs text-slate-600">
+                Aucune attribution joueur lisible dans le corpus (champ playerId absent des picks de cette
+                équipe) — la lecture par joueur exige un corpus avec attribution Leaguepedia.
+            </p>
+        {:else}
+            <ul class="space-y-2 pb-1">
+                {#each ourPlayers as row (row.role)}
+                    <li class="rounded-md border border-slate-800 p-2">
+                        <p class="text-xs text-slate-200">
+                            <span class="font-semibold">{row.playerId}</span>
+                            <span class="text-slate-500">— {ROLE_FR[row.role]} (lineup lu du corpus)</span>
+                        </p>
+                        {#if row.reservoir.length === 0}
+                            <p class="pt-1 text-[11px] text-slate-600">Aucune main corpus pour ce joueur.</p>
+                        {:else}
+                            <ul class="space-y-0.5 pt-1">
+                                {#each row.reservoir.slice(0, 3) as entry (`${entry.championKey}|${entry.role}`)}
+                                    {@render reservoirLine(entry, ourTeamName)}
+                                {/each}
+                            </ul>
+                        {/if}
+                    </li>
+                {/each}
+            </ul>
+            <p class="pb-2 text-[10px] text-slate-600">
+                Réservoir CARRIÈRE cross-ligues du joueur (une main montrée ailleurs reste une main) classé par
+                {PUBLIC_SURPRISE_LABEL_FR} de TON équipe : bits hauts = pick que le modèle public n'attend pas
+                d'elle aujourd'hui. Lecture, jamais un claim de pool privé.
+            </p>
+        {/if}
+    {/if}
+
     <!-- Bloc 3 — côté adverse -->
     <h3 class="pt-1 pb-1 text-xs font-semibold text-slate-300">Côté adverse</h3>
     {#if preparedAlert !== null}
@@ -207,6 +323,56 @@
             </span>
         </p>
     {/if}
+
+    <!-- Bloc 3bis — PAR JOUEUR adverse : ANTICIPER (répétitions de pocket + décalages de rôle) -->
+    {#if enemyPlayers !== null}
+        <h4 class="flex items-center gap-2 pb-1 text-[11px] font-semibold text-slate-400">
+            Par joueur adverse — anticiper
+            <span class="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-semibold text-amber-400">
+                Expérimental
+            </span>
+        </h4>
+        {#if enemyPlayers.length === 0}
+            <p class="pb-2 text-xs text-slate-600">
+                Aucune attribution joueur lisible dans le corpus adverse (champ playerId absent) — la lecture
+                par joueur exige un corpus avec attribution Leaguepedia.
+            </p>
+        {:else}
+            <ul class="space-y-2 pb-1">
+                {#each enemyPlayers as row (row.role)}
+                    <li class="rounded-md border border-slate-800 p-2">
+                        <p class="text-xs text-slate-200">
+                            <span class="font-semibold">{row.playerId}</span>
+                            <span class="text-slate-500">— {ROLE_FR[row.role]} (lineup lu du corpus)</span>
+                        </p>
+                        {#if row.reservoir.length === 0}
+                            <p class="pt-1 text-[11px] text-slate-600">Aucune main corpus pour ce joueur.</p>
+                        {:else}
+                            <ul class="space-y-0.5 pt-1">
+                                {#each row.reservoir.slice(0, 3) as entry (`${entry.championKey}|${entry.role}`)}
+                                    {@render reservoirLine(entry, enemyTeamName)}
+                                {/each}
+                            </ul>
+                        {/if}
+                        {#each row.deceptions as entry (`${entry.championKey}|${entry.role}`)}
+                            <p class="mt-1 rounded border border-amber-500/20 bg-amber-500/5 px-2 py-1 text-[11px] text-amber-200/90">
+                                ⚠ {row.playerId} a déjà joué {nameOf(entry.championKey)}
+                                <strong>{ROLE_FR[entry.role].toUpperCase()}</strong>
+                                ({fmtGames(entry)}{entry.lastDate !== undefined ? `, dernier : ${fmtDay(entry.lastDate)}` : ''}{entry.teams.length > 0
+                                    ? `, chez ${entry.teams.join(', ')}`
+                                    : ''}) — décalage de rôle possible.
+                            </p>
+                        {/each}
+                    </li>
+                {/each}
+            </ul>
+            <p class="pb-2 text-[10px] text-slate-600">
+                Anticipation = répétitions de pocket (réservoir carrière vs LEUR modèle public) et décalages de
+                rôle déjà montrés. Corrélation, jamais une connaissance de leur prep.
+            </p>
+        {/if}
+    {/if}
+
     {#if darkPool.length === 0}
         <p class="text-xs text-slate-600">Dark pool : aucune lecture (pools et patch non injectés).</p>
     {:else}
@@ -253,6 +419,11 @@
                 GARDER / DÉPENSER : les composants restent séparés — le prix de série dit ce que tu brûles pour la
                 suite, la révélation dit ce que l'adversaire apprend, l'appât dit ce que rapporte le laisser ouvert.
                 Aucun score fusionné : c'est à toi d'arbitrer, comme un staff le fait.
+            </p>
+            <p>
+                Limite honnête de la lecture par joueur : un pocket jamais montré dans AUCUNE game corpus
+                (préparé en scrims ou en soloq seulement) reste invisible — on anticipe les répétitions de
+                pocket et les décalages de rôle, pas l'inédit absolu.
             </p>
             <p>
                 Rappel : la gate F1 a été jouée (2026-06-11) et n'a PAS démontré de premium du pocket (verdict
