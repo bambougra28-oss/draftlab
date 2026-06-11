@@ -1,0 +1,1612 @@
+[
+    {
+        "gameId": "CG-T1",
+        "tournament": "Ligue Synthétique CoachGate",
+        "league": "syn",
+        "date": "2026-01-07",
+        "patch": "1.1",
+        "blueTeam": "Azur",
+        "redTeam": "Carmin",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 1,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "941",
+                "championName": "Champ941"
+            },
+            {
+                "seq": 2,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "946",
+                "championName": "Champ946"
+            },
+            {
+                "seq": 3,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "942",
+                "championName": "Champ942"
+            },
+            {
+                "seq": 4,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "947",
+                "championName": "Champ947"
+            },
+            {
+                "seq": 5,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "943",
+                "championName": "Champ943"
+            },
+            {
+                "seq": 6,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "948",
+                "championName": "Champ948"
+            },
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "901",
+                "championName": "Champ901"
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "906",
+                "championName": "Champ906"
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "907",
+                "championName": "Champ907"
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "902",
+                "championName": "Champ902"
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "903",
+                "championName": "Champ903"
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "908",
+                "championName": "Champ908"
+            },
+            {
+                "seq": 13,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "949",
+                "championName": "Champ949"
+            },
+            {
+                "seq": 14,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "944",
+                "championName": "Champ944"
+            },
+            {
+                "seq": 15,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "950",
+                "championName": "Champ950"
+            },
+            {
+                "seq": 16,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "945",
+                "championName": "Champ945"
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "909",
+                "championName": "Champ909"
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "904",
+                "championName": "Champ904"
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "905",
+                "championName": "Champ905"
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "910",
+                "championName": "Champ910"
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        },
+        "winner": "blue"
+    },
+    {
+        "gameId": "CG-T2",
+        "tournament": "Ligue Synthétique CoachGate",
+        "league": "syn",
+        "date": "2026-01-08",
+        "patch": "1.1",
+        "blueTeam": "Carmin",
+        "redTeam": "Azur",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 1,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "946",
+                "championName": "Champ946"
+            },
+            {
+                "seq": 2,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "941",
+                "championName": "Champ941"
+            },
+            {
+                "seq": 3,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "947",
+                "championName": "Champ947"
+            },
+            {
+                "seq": 4,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "942",
+                "championName": "Champ942"
+            },
+            {
+                "seq": 5,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "948",
+                "championName": "Champ948"
+            },
+            {
+                "seq": 6,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "943",
+                "championName": "Champ943"
+            },
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "911",
+                "championName": "Champ911"
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "901",
+                "championName": "Champ901"
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "902",
+                "championName": "Champ902"
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "912",
+                "championName": "Champ912"
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "913",
+                "championName": "Champ913"
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "903",
+                "championName": "Champ903"
+            },
+            {
+                "seq": 13,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "944",
+                "championName": "Champ944"
+            },
+            {
+                "seq": 14,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "949",
+                "championName": "Champ949"
+            },
+            {
+                "seq": 15,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "945",
+                "championName": "Champ945"
+            },
+            {
+                "seq": 16,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "950",
+                "championName": "Champ950"
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "916",
+                "championName": "Champ916"
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "914",
+                "championName": "Champ914"
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "915",
+                "championName": "Champ915"
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "917",
+                "championName": "Champ917"
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        },
+        "winner": "red"
+    },
+    {
+        "gameId": "CG-G1",
+        "tournament": "Ligue Synthétique CoachGate",
+        "league": "syn",
+        "date": "2026-02-01",
+        "patch": "1.2",
+        "blueTeam": "Azur",
+        "redTeam": "Carmin",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 1,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "951",
+                "championName": "Champ951"
+            },
+            {
+                "seq": 2,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "956",
+                "championName": "Champ956"
+            },
+            {
+                "seq": 3,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "952",
+                "championName": "Champ952"
+            },
+            {
+                "seq": 4,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "957",
+                "championName": "Champ957"
+            },
+            {
+                "seq": 5,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "953",
+                "championName": "Champ953"
+            },
+            {
+                "seq": 6,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "958",
+                "championName": "Champ958"
+            },
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "921",
+                "championName": "Champ921"
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "926",
+                "championName": "Champ926"
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "927",
+                "championName": "Champ927"
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "922",
+                "championName": "Champ922"
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "923",
+                "championName": "Champ923"
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "928",
+                "championName": "Champ928"
+            },
+            {
+                "seq": 13,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "959",
+                "championName": "Champ959"
+            },
+            {
+                "seq": 14,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "954",
+                "championName": "Champ954"
+            },
+            {
+                "seq": 15,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "960",
+                "championName": "Champ960"
+            },
+            {
+                "seq": 16,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "955",
+                "championName": "Champ955"
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "929",
+                "championName": "Champ929"
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "924",
+                "championName": "Champ924"
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "925",
+                "championName": "Champ925"
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "930",
+                "championName": "Champ930"
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        },
+        "winner": "blue",
+        "series": {
+            "gameNumber": 1,
+            "matchId": "SER-1"
+        }
+    },
+    {
+        "gameId": "CG-G2",
+        "tournament": "Ligue Synthétique CoachGate",
+        "league": "syn",
+        "date": "2026-02-02",
+        "patch": "1.2",
+        "blueTeam": "Carmin",
+        "redTeam": "Azur",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 1,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "961",
+                "championName": "Champ961"
+            },
+            {
+                "seq": 2,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "966",
+                "championName": "Champ966"
+            },
+            {
+                "seq": 3,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "962",
+                "championName": "Champ962"
+            },
+            {
+                "seq": 4,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "967",
+                "championName": "Champ967"
+            },
+            {
+                "seq": 5,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "963",
+                "championName": "Champ963"
+            },
+            {
+                "seq": 6,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "968",
+                "championName": "Champ968"
+            },
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "931",
+                "championName": "Champ931"
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "936",
+                "championName": "Champ936"
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "937",
+                "championName": "Champ937"
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "932",
+                "championName": "Champ932"
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "933",
+                "championName": "Champ933"
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "938",
+                "championName": "Champ938"
+            },
+            {
+                "seq": 13,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "969",
+                "championName": "Champ969"
+            },
+            {
+                "seq": 14,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "964",
+                "championName": "Champ964"
+            },
+            {
+                "seq": 15,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "970",
+                "championName": "Champ970"
+            },
+            {
+                "seq": 16,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "965",
+                "championName": "Champ965"
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "939",
+                "championName": "Champ939"
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "934",
+                "championName": "Champ934"
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "935",
+                "championName": "Champ935"
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "940",
+                "championName": "Champ940"
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        },
+        "winner": "blue",
+        "series": {
+            "gameNumber": 2,
+            "matchId": "SER-1"
+        }
+    },
+    {
+        "gameId": "CG-G3",
+        "tournament": "Ligue Synthétique CoachGate",
+        "league": "syn",
+        "date": "2026-02-03",
+        "patch": "1.2",
+        "blueTeam": "Azur",
+        "redTeam": "Topaze",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 1,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "951",
+                "championName": "Champ951"
+            },
+            {
+                "seq": 2,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "961",
+                "championName": "Champ961"
+            },
+            {
+                "seq": 3,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "952",
+                "championName": "Champ952"
+            },
+            {
+                "seq": 4,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "962",
+                "championName": "Champ962"
+            },
+            {
+                "seq": 5,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "953",
+                "championName": "Champ953"
+            },
+            {
+                "seq": 6,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "963",
+                "championName": "Champ963"
+            },
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "921",
+                "championName": "Champ921"
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "931",
+                "championName": "Champ931"
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "932",
+                "championName": "Champ932"
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "922",
+                "championName": "Champ922"
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "923",
+                "championName": "Champ923"
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "933",
+                "championName": "Champ933"
+            },
+            {
+                "seq": 13,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "964",
+                "championName": "Champ964"
+            },
+            {
+                "seq": 14,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "954",
+                "championName": "Champ954"
+            },
+            {
+                "seq": 15,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "965",
+                "championName": "Champ965"
+            },
+            {
+                "seq": 16,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "955",
+                "championName": "Champ955"
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "934",
+                "championName": "Champ934"
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "924",
+                "championName": "Champ924"
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "925",
+                "championName": "Champ925"
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "935",
+                "championName": "Champ935"
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        },
+        "winner": "red"
+    },
+    {
+        "gameId": "CG-G4",
+        "tournament": "Ligue Synthétique CoachGate",
+        "league": "syn",
+        "date": "2026-02-04",
+        "patch": "1.2",
+        "blueTeam": "Azur",
+        "redTeam": "Carmin",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 1,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "951",
+                "championName": "Champ951"
+            },
+            {
+                "seq": 2,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "956",
+                "championName": "Champ956"
+            },
+            {
+                "seq": 3,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "952",
+                "championName": "Champ952"
+            },
+            {
+                "seq": 4,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "957",
+                "championName": "Champ957"
+            },
+            {
+                "seq": 5,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "953",
+                "championName": "Champ953"
+            },
+            {
+                "seq": 6,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "958",
+                "championName": "Champ958"
+            },
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "921",
+                "championName": "Champ921"
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "926",
+                "championName": "Champ926"
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "927",
+                "championName": "Champ927"
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "922",
+                "championName": "Champ922"
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "923",
+                "championName": "Champ923"
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "928",
+                "championName": "Champ928"
+            },
+            {
+                "seq": 13,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "959",
+                "championName": "Champ959"
+            },
+            {
+                "seq": 14,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "954",
+                "championName": "Champ954"
+            },
+            {
+                "seq": 15,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "960",
+                "championName": "Champ960"
+            },
+            {
+                "seq": 16,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "955",
+                "championName": "Champ955"
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "929",
+                "championName": "Champ929"
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "924",
+                "championName": "Champ924"
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "925",
+                "championName": "Champ925"
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "930",
+                "championName": "Champ930"
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        }
+    },
+    {
+        "gameId": "CG-G5",
+        "tournament": "Ligue Synthétique CoachGate",
+        "league": "syn",
+        "date": "2026-02-05",
+        "patch": "1.2",
+        "blueTeam": "Azur",
+        "redTeam": "Carmin",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 1,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "951",
+                "championName": "Champ951"
+            },
+            {
+                "seq": 2,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "956",
+                "championName": "Champ956"
+            },
+            {
+                "seq": 3,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "952",
+                "championName": "Champ952"
+            },
+            {
+                "seq": 4,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "957",
+                "championName": "Champ957"
+            },
+            {
+                "seq": 5,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "953",
+                "championName": "Champ953"
+            },
+            {
+                "seq": 6,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "958",
+                "championName": "Champ958"
+            },
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "921",
+                "championName": "Champ921"
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "926",
+                "championName": "Champ926"
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "927",
+                "championName": "Champ927"
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "922",
+                "championName": "Champ922"
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "923",
+                "championName": "Champ923"
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "928",
+                "championName": "Champ928"
+            },
+            {
+                "seq": 13,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "959",
+                "championName": "Champ959"
+            },
+            {
+                "seq": 14,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "954",
+                "championName": "Champ954"
+            },
+            {
+                "seq": 15,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "960",
+                "championName": "Champ960"
+            },
+            {
+                "seq": 16,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "955",
+                "championName": "Champ955"
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "929",
+                "championName": "Champ929"
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "924",
+                "championName": "Champ924"
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "925",
+                "championName": "Champ925"
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "",
+                "championName": "Inconnu"
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        },
+        "winner": "blue"
+    },
+    {
+        "gameId": "CG-G6",
+        "tournament": "Ligue Synthétique CoachGate",
+        "league": "syn",
+        "date": "2026-02-06",
+        "patch": "1.2",
+        "blueTeam": "Carmin",
+        "redTeam": "Azur",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 1,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "971",
+                "championName": "Champ971"
+            },
+            {
+                "seq": 2,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "974",
+                "championName": "Champ974"
+            },
+            {
+                "seq": 3,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "972",
+                "championName": "Champ972"
+            },
+            {
+                "seq": 4,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "975",
+                "championName": "Champ975"
+            },
+            {
+                "seq": 5,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "973",
+                "championName": "Champ973"
+            },
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "936",
+                "championName": "Champ936"
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "926",
+                "championName": "Champ926"
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "927",
+                "championName": "Champ927"
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "937",
+                "championName": "Champ937"
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "938",
+                "championName": "Champ938"
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "928",
+                "championName": "Champ928"
+            },
+            {
+                "seq": 13,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "977",
+                "championName": "Champ977"
+            },
+            {
+                "seq": 14,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "976",
+                "championName": "Champ976"
+            },
+            {
+                "seq": 15,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "979",
+                "championName": "Champ979"
+            },
+            {
+                "seq": 16,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "978",
+                "championName": "Champ978"
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "929",
+                "championName": "Champ929"
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "939",
+                "championName": "Champ939"
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "940",
+                "championName": "Champ940"
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "930",
+                "championName": "Champ930"
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        },
+        "winner": "red"
+    },
+    {
+        "gameId": "CG-G7",
+        "tournament": "Ligue Synthétique CoachGate",
+        "league": "syn",
+        "date": "2026-02-07",
+        "patch": "preseason",
+        "blueTeam": "Azur",
+        "redTeam": "Carmin",
+        "firstPickSide": "blue",
+        "orderConfidence": "exact",
+        "actions": [
+            {
+                "seq": 1,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "951",
+                "championName": "Champ951"
+            },
+            {
+                "seq": 2,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "956",
+                "championName": "Champ956"
+            },
+            {
+                "seq": 3,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "952",
+                "championName": "Champ952"
+            },
+            {
+                "seq": 4,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "957",
+                "championName": "Champ957"
+            },
+            {
+                "seq": 5,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "blue",
+                "championKey": "953",
+                "championName": "Champ953"
+            },
+            {
+                "seq": 6,
+                "type": "ban",
+                "phase": "ban1",
+                "side": "red",
+                "championKey": "958",
+                "championName": "Champ958"
+            },
+            {
+                "seq": 7,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "921",
+                "championName": "Champ921"
+            },
+            {
+                "seq": 8,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "926",
+                "championName": "Champ926"
+            },
+            {
+                "seq": 9,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "927",
+                "championName": "Champ927"
+            },
+            {
+                "seq": 10,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "922",
+                "championName": "Champ922"
+            },
+            {
+                "seq": 11,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "blue",
+                "championKey": "923",
+                "championName": "Champ923"
+            },
+            {
+                "seq": 12,
+                "type": "pick",
+                "phase": "pick1",
+                "side": "red",
+                "championKey": "928",
+                "championName": "Champ928"
+            },
+            {
+                "seq": 13,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "959",
+                "championName": "Champ959"
+            },
+            {
+                "seq": 14,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "954",
+                "championName": "Champ954"
+            },
+            {
+                "seq": 15,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "red",
+                "championKey": "960",
+                "championName": "Champ960"
+            },
+            {
+                "seq": 16,
+                "type": "ban",
+                "phase": "ban2",
+                "side": "blue",
+                "championKey": "955",
+                "championName": "Champ955"
+            },
+            {
+                "seq": 17,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "929",
+                "championName": "Champ929"
+            },
+            {
+                "seq": 18,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "924",
+                "championName": "Champ924"
+            },
+            {
+                "seq": 19,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "blue",
+                "championKey": "925",
+                "championName": "Champ925"
+            },
+            {
+                "seq": 20,
+                "type": "pick",
+                "phase": "pick2",
+                "side": "red",
+                "championKey": "930",
+                "championName": "Champ930"
+            }
+        ],
+        "warnings": [],
+        "provenance": {
+            "source": "fixture",
+            "fetchedAt": "2026-06-11T00:00:00Z"
+        },
+        "winner": "blue"
+    }
+]

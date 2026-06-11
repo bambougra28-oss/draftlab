@@ -116,6 +116,29 @@ export type ScoreGameResult =
     | { skipped: SkipReason; discarded: DiscardedTurn[]; anomalies: number };
 
 /**
+ * Éligibilité côté lib, dans l'ordre de la règle (§1.2) : vainqueur connu,
+ * puis 10 picks résolus sur les seqs template. Exportée pour le runner : il
+ * la consulte AVANT de construire le fold (cause `no-fold` ensuite), ce qui
+ * préserve l'ordre d'attribution des causes de skip sans répliquer la règle.
+ */
+export function eligibilitySkipOf(
+    record: DraftRecord
+): Extract<SkipReason, 'no-winner' | 'unresolved-picks'> | null {
+    if (record.winner === undefined) return 'no-winner';
+    const bySeq = new Map<number, DraftAction>();
+    for (const action of record.actions) {
+        if (!bySeq.has(action.seq)) bySeq.set(action.seq, action);
+    }
+    for (const seq of TEMPLATE_PICK_SEQS) {
+        const action = bySeq.get(seq);
+        if (action === undefined || action.type !== 'pick' || action.championKey === '') {
+            return 'unresolved-picks';
+        }
+    }
+    return null;
+}
+
+/**
  * Scoring d'une game : tours → sides → crédit. Pure, déterministe — mêmes
  * (record, candidatesOf, availableOf) ⇒ mêmes tours scorés, quel que soit
  * `valueOf` : les baselines B1/B2 rejouent EXACTEMENT les mêmes tours et les
@@ -126,7 +149,8 @@ export function scoreGameForGate(record: DraftRecord, deps: ScoreGameDeps): Scor
     let anomalies = 0;
 
     // Éligibilité côté lib, dans l'ordre de la règle : vainqueur, 10 picks.
-    if (record.winner === undefined) return { skipped: 'no-winner', discarded, anomalies };
+    const skip = eligibilitySkipOf(record);
+    if (skip !== null) return { skipped: skip, discarded, anomalies };
 
     const bySeq = new Map<number, DraftAction>();
     for (const action of record.actions) {
@@ -138,9 +162,6 @@ export function scoreGameForGate(record: DraftRecord, deps: ScoreGameDeps): Scor
             ? action
             : undefined;
     };
-    for (const seq of TEMPLATE_PICK_SEQS) {
-        if (resolvedPickAt(seq) === undefined) return { skipped: 'unresolved-picks', discarded, anomalies };
-    }
 
     // Actions réelles RÉSOLUES, triées par seq — la matière des états S_t.
     const resolvedActions = record.actions
@@ -208,6 +229,8 @@ export function scoreGameForGate(record: DraftRecord, deps: ScoreGameDeps): Scor
 
     const mean = (xs: number[]): number => xs.reduce((sum, x) => sum + x, 0) / xs.length;
     const winner = record.winner;
+    // Eligibility filtered no-winner records already — this narrows the type.
+    if (winner === undefined) return { skipped: 'no-winner', discarded, anomalies };
     const loser: DraftSide = winner === 'blue' ? 'red' : 'blue';
     const winnerMean = mean(turnsOf(winner).map((t) => t.percentile));
     const loserMean = mean(turnsOf(loser).map((t) => t.percentile));
