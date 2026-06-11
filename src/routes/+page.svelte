@@ -250,6 +250,12 @@
         return rolePriorsOf(fitRolePriors(leagueRecordsA));
     });
 
+    /** Priors de rôle de la ligue B — pour le filtre de couverture quand le coach conseille le camp B. */
+    const leaguePriorsFnB = $derived.by(() => {
+        if (leagueRecordsB === null) return null;
+        return rolePriorsOf(fitRolePriors(leagueRecordsB));
+    });
+
     const seqRoleResolver = $derived.by(() => {
         const priors = leaguePriorsFn;
         if (priors === null) return undefined;
@@ -654,7 +660,9 @@
                 slot,
                 entries: [] as ChampionPoolEntry[],
                 label: 'Tous les champions',
-                title: `${info.type === 'ban' ? 'Ban' : 'Pick'} ${board.label} — côté ${info.side === 'blue' ? 'bleu' : 'rouge'}`
+                title: `${info.type === 'ban' ? 'Ban' : 'Pick'} ${board.label} — côté ${info.side === 'blue' ? 'bleu' : 'rouge'}`,
+                // Pick séquence : le choix Flex/rôle est offert AU MOMENT du pick.
+                roleChoice: info.type === 'pick'
             };
         }
         const team = slot.team === 'ally' ? teamA : teamB;
@@ -668,7 +676,19 @@
             }
         }
         const title = `${slot.team === 'ally' ? 'Pick allié' : 'Pick adverse'} — ${ROLE_LABELS[slot.role]}`;
-        return { slot, entries, label, title };
+        return { slot, entries, label, title, roleChoice: false };
+    });
+
+    /**
+     * Rôle choisi AU MOMENT du pick (séquence) — défaut FLEX (rôle non
+     * engagé, le modèle le supporte depuis toujours) ; pré-rempli avec le
+     * rôle committé quand on rouvre un slot déjà posé, pour ne pas le perdre
+     * silencieusement en remplaçant le champion.
+     */
+    let pickerRole = $state<Role | undefined>(undefined);
+    $effect(() => {
+        const slot = pickerSlot;
+        pickerRole = slot !== null && 'seq' in slot ? draftSeq.entries.get(slot.seq)?.role : undefined;
     });
 
     function assignPick(championKey: string | null): void {
@@ -676,7 +696,8 @@
         if (slot === null) return;
         if ('seq' in slot) {
             // Sequence target: fill/replace in place; « Retirer » only undoes the tail.
-            if (championKey !== null) draftSeq = replaceAt(draftSeq, slot.seq, championKey, undefined, draftFormat);
+            // pickerRole porte le choix Flex/rôle du picker (undefined = flex).
+            if (championKey !== null) draftSeq = replaceAt(draftSeq, slot.seq, championKey, pickerRole, draftFormat);
             else if (lastFilledSeq(draftSeq, draftFormat) === slot.seq) draftSeq = removeLast(draftSeq, draftFormat);
             pickerSlot = null;
             return;
@@ -1170,11 +1191,18 @@
         const forAlly = coachSide === allySide;
         const table = forAlly ? intel?.table : intelA?.table;
         const players = contextActive ? (forAlly ? teamA?.players : teamB?.players) : undefined;
+        // Contrainte de couverture de rôle (post-gate-A) : priors de la ligue
+        // du CAMP CONSEILLÉ si dispo, sinon l'autre ligue — champion → rôle
+        // varie peu entre ligues, mieux vaut des priors approchés que pas de
+        // contrainte (choix documenté). La fonction lit state + ourSide : en
+        // simulation côté B, les rôles ouverts sont bien LES SIENS.
+        const rolePriors = forAlly ? (leaguePriorsFn ?? leaguePriorsFnB) : (leaguePriorsFnB ?? leaguePriorsFn);
         const advice = recommendNext(state, {
             ourSide: coachSide,
             evaluate,
             ...(table !== undefined ? { table } : {}),
             ...(players !== undefined ? { allyPlayers: players } : {}),
+            ...(rolePriors !== null ? { rolePriors } : {}),
             fallbackCandidates: forAlly ? coachFallback : coachFallbackB,
             ...(datasets !== null ? { dataset: datasets.fullDataset } : {}),
             ...(pairFit !== null ? { pairFit } : {}),
@@ -1584,6 +1612,41 @@
                                 </button>
                             </div>
                         </div>
+                        {#if pickerInfo.roleChoice}
+                            <!-- Choix Flex/rôle AU MOMENT du pick (séquence) : Flex est le
+                                 défaut et reste toujours accessible au même endroit. -->
+                            <div class="flex flex-wrap items-center gap-1 pb-1.5">
+                                <button
+                                    type="button"
+                                    onclick={() => (pickerRole = undefined)}
+                                    aria-pressed={pickerRole === undefined}
+                                    class="rounded-md px-2 py-1 text-[11px] font-bold transition-colors {pickerRole ===
+                                    undefined
+                                        ? 'bg-amber-500/20 text-amber-300 ring-1 ring-amber-500/60'
+                                        : 'bg-slate-800 text-slate-400 hover:text-slate-200'}"
+                                >
+                                    FLEX (sans rôle)
+                                </button>
+                                {#each ROLES as role (role)}
+                                    <button
+                                        type="button"
+                                        onclick={() => (pickerRole = role)}
+                                        aria-pressed={pickerRole === role}
+                                        class="rounded-md px-2 py-1 text-[11px] font-semibold transition-colors {pickerRole ===
+                                        role
+                                            ? 'bg-arcane-500/25 text-arcane-300 ring-1 ring-arcane-600/50'
+                                            : 'bg-slate-800 text-slate-500 hover:text-slate-300'}"
+                                    >
+                                        {ROLE_LABELS[role]}
+                                    </button>
+                                {/each}
+                            </div>
+                            <p class="pb-2 text-[11px] text-slate-500">
+                                <span class="font-semibold text-amber-300">Flex</span> : gardez le rôle ouvert —
+                                l'adversaire doit couvrir plusieurs hypothèses. Le rôle reste modifiable après
+                                coup via les puces du plateau.
+                            </p>
+                        {/if}
                         <ChampionPicker
                             poolEntries={pickerInfo.entries}
                             poolLabel={pickerInfo.label}

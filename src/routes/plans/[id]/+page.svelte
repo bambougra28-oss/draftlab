@@ -36,6 +36,7 @@
     import { comparePatches } from '$lib/backtest/walkforward';
     import { compilePlanTree, massByEnemyDepth, type CompileContext } from '$lib/strategic/planTree';
     import { deletePlanTree, getPlanTree, savePlanTree, type StoredPlanTree } from '$lib/storage/planTrees';
+    import PlanDrillPanel from '$lib/components/PlanDrillPanel.svelte';
 
     let plan = $state<DraftPlan | null>(null);
     let loading = $state(true);
@@ -493,6 +494,14 @@
                 </div>
             {/if}
         </section>
+
+        <!-- Entraînement de prépa : drill de répertoire sur l'arbre compilé.
+             {#key builtAt} : recompiler réinitialise la session en cours. -->
+        {#if tree !== null}
+            {#key tree.builtAt}
+                <PlanDrillPanel tree={tree} planName={plan.name} />
+            {/key}
+        {/if}
 
         <!-- Champion picker overlay -->
         {#if target !== null}
