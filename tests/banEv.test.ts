@@ -97,7 +97,13 @@ describe('banEV — expected damage against the field', () => {
         const result = banEV(['c', 'd'], ctx({ fearlessConsumed: new Set(['c']) }));
         expect(result.map((e) => e.championKey)).toEqual(['d', 'c']);
         expect(result[1].ev).toBe(0);
-        expect(result[1].components).toEqual({ takeProbability: 0, damage: 0, structural: 0, threat: 0 });
+        expect(result[1].components).toEqual({
+            takeProbability: 0,
+            banAttraction: 0,
+            damage: 0,
+            structural: 0,
+            threat: 0
+        });
         expect(result[1].rationaleFr).toEqual(['Déjà consommé en Fearless — un ban serait gaspillé']);
     });
 
@@ -156,6 +162,75 @@ describe('banEV — expected damage against the field', () => {
         const result = banEV(['c', 'd'], ctx({ upcomingSlotGroups: [] }));
         expect(result.map((e) => e.ev)).toEqual([0, 0]);
         expect(result.map((e) => e.championKey)).toEqual(['c', 'd']);
+    });
+});
+
+describe('banEV — demand floor from suffered bans (B-ban-history §1.2)', () => {
+    it('the floor binds: demand = γ·attraction when it beats the take probability', () => {
+        // d: takeP 0.35 (RANGES), provider 0.6, γ 1 → demand 0.6 → ev = 0.6·1.5 = 0.9.
+        const result = banEV(['d'], ctx({ banAttraction: () => 0.6 }));
+        expect(result[0].ev).toBeCloseTo(0.9, 12);
+        expect(result[0].components.takeProbability).toBeCloseTo(0.35, 12);
+        expect(result[0].components.banAttraction).toBe(0.6);
+    });
+
+    it('pure censoring (takeP 0): the suffered-ban channel alone carries the ban', () => {
+        // z sits outside every range — the perma-ban shape picks cannot see.
+        // demand = max(0, 1·0.6) = 0.6 → ev = 0.6·1.5 = 0.9 ; the demand line
+        // leads, the exit cost shows (demand > 0), no « Aucune sortie attendue ».
+        const result = banEV(['z'], ctx({ banAttraction: () => 0.6 }));
+        expect(result[0].ev).toBeCloseTo(0.9, 12);
+        expect(result[0].components.takeProbability).toBe(0);
+        expect(result[0].components.banAttraction).toBe(0.6);
+        expect(result[0].rationaleFr).toEqual([
+            'Demande révélée par les bans subis : banni contre eux ~60 % des games',
+            'Si pris : −1.5 pp vers leur remplaçant'
+        ]);
+    });
+
+    it('the floor does not bind: tendency demand wins, evs and order unchanged', () => {
+        // Provider 0.2 for both: c max(0.7, 0.2) = 0.7 → 1.05 ; d max(0.35, 0.2)
+        // = 0.35 → 0.525 ; order stays c > d.
+        const result = banEV(['c', 'd'], ctx({ banAttraction: () => 0.2 }));
+        expect(result.map((e) => e.championKey)).toEqual(['c', 'd']);
+        expect(result[0].ev).toBeCloseTo(1.05, 12);
+        expect(result[1].ev).toBeCloseTo(0.525, 12);
+        expect(result[0].components.banAttraction).toBe(0.2);
+    });
+
+    it('γ scales the floor through the config (DA-V2-6)', () => {
+        // γ 0.5, provider 0.6 on d → max(0.35, 0.3) = 0.35 → ev = 0.35·1.5 = 0.525.
+        const config = { ...DEFAULT_BAN_EV_CONFIG, banAttractionGamma: 0.5 };
+        const result = banEV(['d'], ctx({ banAttraction: () => 0.6, config }));
+        expect(result[0].ev).toBeCloseTo(0.525, 12);
+        // Reported raw, unweighted by γ.
+        expect(result[0].components.banAttraction).toBe(0.6);
+    });
+
+    it('composition regime reports the raw provider value but its EV ignores it', () => {
+        // Same numbers as the no-provider composition case: ev = 0.3·3 = 0.9.
+        const result = banEV(
+            ['z'],
+            ctx({ regime: 'composition', threatPp: () => 3, banAttraction: () => 0.4 })
+        );
+        expect(result[0].ev).toBeCloseTo(0.9, 10);
+        expect(result[0].components.banAttraction).toBe(0.4);
+        expect(result[0].components.threat).toBe(3);
+    });
+
+    it('the « Demande révélée » line appears iff the floor binds, in first position', () => {
+        const bound = banEV(['d'], ctx({ banAttraction: () => 0.6 }));
+        expect(bound[0].rationaleFr).toEqual([
+            'Demande révélée par les bans subis : banni contre eux ~60 % des games',
+            'Sortie attendue : 35 % cumulés sur les slots à venir',
+            'Si pris : −1.5 pp vers leur remplaçant'
+        ]);
+        // Floor not binding (0.2 < takeP 0.7): no demand line at all.
+        const unbound = banEV(['c'], ctx({ banAttraction: () => 0.2 }));
+        expect(unbound[0].rationaleFr).toEqual([
+            'Sortie attendue : 70 % cumulés sur les slots à venir',
+            'Si pris : −1.5 pp vers leur remplaçant'
+        ]);
     });
 });
 
