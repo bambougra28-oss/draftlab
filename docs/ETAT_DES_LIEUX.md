@@ -4,6 +4,14 @@
 > à plat : ce qui est validé, ce qui est construit sans preuve, la data, les
 > trous produit, et les cibles proposées. Référence : `ARCHITECTURE_V2.md`
 > (V2.1, DA-V2-1..13), `STATUS.md`, `STEP_UP.md`, `docs/calibration/`.
+>
+> **⚑ RUN #2 JOUÉE (2026-06-11)** — ce document reste l'entrée HISTORIQUE de
+> la run ; l'état courant vit dans `STATUS.md`. Verdicts : D vert (plans à
+> branches ship), F2 verte (−82,5 pp de contamination), A/B/C/E/F1 rouges
+> honnêtes, G1 fermée (l'ancien penchant était un artefact de données
+> corrompues — 56 % des games 2026 réalignées, voir
+> `docs/run2/AMENDEMENT-corpus-20260611.md`). La cible #1 (« mesurer le
+> COACH ») est jouée : rouge, levier identifié (pools joueurs réels, run #3).
 
 ## A. Validé — claims mesurés, gates vertes
 

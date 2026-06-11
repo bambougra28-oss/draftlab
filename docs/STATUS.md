@@ -1,124 +1,89 @@
 # DraftLab — Status
 
-Updated: 2026-06-11 (run #2 EN PAUSE — vague 2 interrompue proprement)
+Updated: 2026-06-11 (run #2 JOUÉE — verdicts publiés, état de corpus corrigé)
 
-## ⏸ RUN #2 EN PAUSE (état exact et reprise)
+## ⚡ RUN #2 — RÉSULTAT (2026-06-11)
 
-**Fait et committé sur main** : les 5 designs gelés post-revue adversariale
-(`docs/run2/`), le module statistique commun (`clusterBootstrap`),
-l'amendement de gouvernance G3→G3-demande, les snapshots DraftGap hashés
-(`data/datasets/SNAPSHOT.md`).
+**L'événement central : la leçon Nasus menée au bout.** Le protocole « re-pull
+avant tout run de gate » a découvert que **56 % des games 2026 (677/1219)
+avaient le MAUVAIS vainqueur et les 20 actions inversées** — pas des erreurs
+wiki : un bug de NOTRE provider (PB.Team1 = équipe du match, SG.Team1 = côté
+bleu ; les deux divergent à l'ère First Selection). Prouvé sur la finale LEC,
+corrigé par réalignement par noms, re-pull des 8 corpora (lck-2025 enfin
+rentré : 555 drafts via Special:CargoExport — le chemin hors-throttle), 0
+violation d'intégrité Bo, audit C reproduit AU CHIFFRE PRÈS. Détail :
+`docs/run2/AMENDEMENT-corpus-20260611.md`. **Sans ce re-pull, on validait des
+gates sur des données fausses et on branchait un faux signal G1 dans I3.**
 
-**Interrompu en vol** : la vague 2 (implémentation, 5 agents) — l'état
-intermédiaire vit sur la branche **`run2-vague2-wip`** (poussée, NE PAS
-merger tel quel). Le workflow est resumable : runId `wf_f38f2531-86a`
-(les agents terminés reviennent du cache).
+### Verdicts des gates (règles gelées, UN run chacune, rapports publiés tels quels)
 
-**Reprise** : dire « reprends la run #2 » →
-1. repartir de la branche WIP (ou resume du workflow) pour finir la vague 2 ;
-2. vague 3 = gates complètes puis les RUNS de validation one-shot, dans
-   l'ordre A (gate coach), B, C, D, E — snapshots et gouvernance déjà prêts ;
-3. en heures creuses : pull `lck-2025` (commande au §reste) → réplication G1
-   → enrichissement joueurs (`enrichPlayers.ts`).
+| Gate | Verdict | Chiffre | Conséquence appliquée |
+|---|---|---|---|
+| **A — coach « conseil suivi »** | ROUGE | TD 51,6 % [49,5 ; 53,7] ; Δ vs méta +0,92 pp ns | Copy « explorateur de lignes », badge conservé ; levier : candidats par pools joueurs réels (run #3) — accord top-1 5,7 %, ~20 % des picks réels dans C_t |
+| **B — ban-history phase 1** | ROUGE (règle) | lec/lfl battent, lck égalité, **LPL −0,064** | Ranking répertoire retiré de l'UI ; module `banAttraction` conservé (I4/scouting) ; 2025 descriptif : 3/3 battent |
+| **C — G3-demande Fearless** | ROUGE | +0,36 pp [−0,20 ; +0,87] | Déni non chiffré maintenu ; découvertes : S2 ρ≈−0,02 (déni précoce ⊥ issue de série), S3 AUC 0,503 (ordre de rétention = hasard) |
+| **D — plans à branches** | **VERT** | **0,725 vs 0,588, Δ +0,137 [0,111 ; 0,162]** | **Le claim « arbre contre CET adversaire » ship** — couverture mesurée affichée, K=4/E=6 gelés |
+| **E — calibration Platt** | ROUGE | ΔBrier −0,001/−0,002, IC effleurent 0 | % bruts conservés, JSON tout `validated:false` ; run #3 par ligue bien placé |
+| **F1 — premium du pocket** | ROUGE | WR lo 43,6 % ; premium +4,3 pp ns | « Tes pockets » = outil de LECTURE badgé |
+| **F2 — surprise casse les rôles** | **VERTE** | **Δ_contamination −82,5 pp [−87,7 ; −77,7]** | F-c justifié empiriquement — branchement derrière le re-run de non-régression (file post-run) |
+| G1 — réplication durée (8 corpus) | fermée | compo-niveau 50,1 % (n=2934) | **Le 52,1 % de juin-10 était un artefact des données corrompues** — piste retirée |
+| Rôles (re-mesure, 8 corpus) | confirmé | **95,3 % [95,0 ; 95,6]** k=3 | Le claim tient sur données propres |
 
-## State
+### Claims qui SURVIVENT à la correction (scorecards régénérés, timestamps épinglés)
 
-**V2.1 « Sommet » — CONSTRUITE.** Les vagues A/B/C (13 agents orchestrés, 12
-commits de jalons) ont livré tout le code de la roadmap R1→R8 : data backbone
-multi-sources, scraper gol.gg (bug original corrigé), UI complète (8 routes,
-21 composants), et les six moteurs inédits — ranges adverses avec information
-négative (I1), fog & reveal (I2), win conditions bilatéral (I3), series solver
-Fearless avec déni et First Selection (I4), revue annotée + prep pack
-imprimable (I5), patch oracle (I6) — plus estimateurs bayésiens, agrégats/
-tendances, harnais de backtest et runner de scorecards.
+- **pick-in-range@8 bat la baseline 4/4 ligues** (0,29-0,35 vs 0,25-0,30) ✓
+- **bans phase 2 contre-compo : 3 beats + 1 tie** ✓ (lck ×2,7, lec ×2,5, lpl ×7,2)
+- **Inférence de rôles 95,3 %** ✓ (et F2 explique exactement QUAND elle casse)
+- Nouveau : **side-only LCK 2026 +8,4 pp significatif** (l'avantage blue était
+  masqué par les vainqueurs faux) ; lec/lfl/lpl ≈ pile-ou-face.
 
-## Les 4 portes (vérifiées)
+## Construit pendant la run (tout committé, 4 portes vertes)
 
-- vitest : **809 passed / 5 skipped** (57 fichiers)
-- svelte-check : **465 fichiers, 0 erreur, 0 warning**
-- eslint : clean · vite build : **exit 0** (adapter Cloudflare)
-- Note machine : `adapter.emulate` désactivé sur win32 (workerd#4668) — CI Linux non affectée.
+Vague 2 (7 agents) + intégration : les 5 gates pré-enregistrées complètes
+(libs pures + runners + ~280 tests à la main), outillage intégrité data
+(validateur Bo format-aware dans pullCorpus, quarantaine fraîcheur,
+validateCorpus/diffCorpus), provider : split-join + **Special:CargoExport**
+(pulls hors bucket API) + réalignement PB→sides + patches flottants + entités
+HTML. Produit : **arbre de prep compilé contre un adversaire** (compile côté
+/plans, suivi de déviation live en mode séquence, recompile-en-séance,
+section répertoire du prep pack), **calibration** (infra complète pilotée par
+JSON, badge deux états), **panneau « Tes pockets »** (lecture de surprise en
+bits, checklists depuis les tags, GARDER/DÉPENSER composants séparés),
+moteurs F (publicSelfModel, pocketAdvisor, surpriseDefense débranché,
+fearlessEndgame ≤10⁶ nœuds), storage v3 (planTrees). enrichPlayers réparé
+(SP par GameId IN — l'attribution joueur tourne).
 
-## Acceptation R1 — VALIDÉE SUR DONNÉES LIVE (2026-06-10)
+## Les 4 portes (vérifiées en fin de run)
 
-- ✅ **Bot Leaguepedia opérationnel** (le piège email-non-confirmé a été vécu et documenté).
-- ✅ **774 drafts 2026 tirés et normalisés** (`static/corpus/` : LCK 337, LFL 191, LEC 246), 100 % de résolution des champions, ordre + patch + gameNumber sur chaque record.
-- ✅ **Concordance gol.gg ⇄ Leaguepedia : 95,2 % critique** (20/21 ; side, vainqueur, bans à 100 % — l'unique écart est un trou de données amont chez gol.gg, détecté par le parser à la capture).
-- ✅ **Premier scorecard réel** (`docs/calibration/scorecard-lck-2026-26.11.md`, walk-forward 337 drafts) : le modèle de tendances **bat la baseline** en pick-in-range@8 (0,318 vs 0,271) ; side-only ≈ pile-ou-face sur LCK 2026.
+- vitest : **~1124 passed / 5 skipped** · svelte-check : **513 fichiers, 0/0**
+- eslint clean · vite build : exit 0 (adapter Cloudflare ; `adapter.emulate`
+  toujours désactivé sur win32 — workerd#4668)
 
-## Science de la draft intégrée (2026-06-10, après-midi)
-
-Le corpus a parlé (`docs/research/2026-06_draft_science_corpus.md`), les
-moteurs ont bougé — trois branchements mesurés le jour même :
-
-1. **banEV à deux régimes** (`$lib/strategic/banEv.ts`) : phase 1 =
-   répertoire (priver de ce qu'ils veulent jouer), phase 2 = **contre-compo**
-   (retirer le profil qui bat NOTRE compo révélée, menace `counterThreat`
-   des cellules ordonnées de `tagPairs`, la tendance ne fait que pondérer la
-   plausibilité, plancher 0,3).
-2. **Axe paire dans le coach** (`$lib/intel/liveDraft.ts` + CoachPanel) :
-   cellules de traits ajustées sur les 774 drafts (`fitTagPairCells`),
-   raison FR + badge `pairWith` quand un candidat forme une paire éprouvée
-   (plancher 1 pp), rappel « pensez la paire » à l'ouverture des doubles
-   slots (8-9, 10-11, 18-19) où les pros posent 46 %/43 % de leurs duos.
-3. **Axe scaling data-primaire** (STEP_UP #15, `winConditionGraph.ts`) : la
-   courbe de puissance observée porte l'axe (tags amortis ×0,25 dessous) ;
-   sans courbe, repli tags-seuls plafonné à confiance `low` (r ≈ 0,006 avec
-   la durée réelle — le signal mort à l'origine du G1 hasard).
-4. **Axe contre-compo au pick** (soir, `liveDraft.counterVs`) : les cellules
-   ordonnées validées par le banEV phase 2 parlent aussi au moment du pick —
-   « Profil qui contre leur compo révélée : +X pp », badge violet, plancher
-   1 pp.
-5. **Lecture des rôles adverses** (soir, I2 enfin branché) : priors de rôles
-   corpus (cascade équipe → ligue, `aggregates/rolePriors`) →
-   `roleAssignmentHypotheses` → alertes de désaccord (« 82 % mid chez eux —
-   slotté top », plancher 0,6) + ambiguïté en bits. **Validé pré-enregistré**
-   (`docs/calibration/role-inference-2026.md`, walk-forward, 7 corpus) :
-   top-hypothèse **95,0 %** à 3 picks révélés [94,7 ; 95,4], 93,4 % à 5 —
-   bat l'argmax indépendant, écrase le 20 % aléatoire.
-
-## Verdicts du harnais (4 ligues, seed 42, 2026-06-10)
-
-Corpus étendu le soir même : **LPL 2026 tiré (445 drafts, 100 % résolus,
-durées et rôles complets)** → 1219 drafts au total.
-
-| Piste | LCK 337 | LEC 246 | LFL 191 | LPL 445 | Enseignement |
-|---|---|---|---|---|---|
-| pick-in-range@8 (tendances) | **beats** 0,318/0,271 | **beats** 0,340/0,290 | **beats** 0,353/0,299 | **beats** 0,287/0,252 | premier claim mesuré, robuste sur 4 ligues |
-| ban-hit@5 par side (banEV répertoire) | loses 0,94/1,30 | loses 1,11/1,20 | **beats** 1,26/1,07 | loses 1,04/1,25 | les ranges de pick ne voient pas la demande contrefactuelle des perma-bans → terme ban-history à ajouter |
-| **ban-hit@2 phase 2 (contre-compo)** | **beats** 0,042/0,016 | **beats** 0,086/0,033 | ties 0,042/0,022 | **beats** 0,080/0,011 (×7,3) | **la nature deux-régimes des bans est validée** : 3 beats + 1 tie, jamais perdant |
-| Postdiction G1 — piste tags | hasard 49,3 % [46,5 ; 52,1] (n=1226) | | | | confirmé sur 4 ligues : les tags ne portent pas le signal de durée |
-| Postdiction G1 — piste **courbes pro** (walk-forward, priors 12/50 pré-enregistrés) | hasard 48,1 % [43,8 ; 52,5] (n=511) | | | | **rouge honnête** : les courbes EB-shrunk aplatissent l'axe (statements « late » 423→72) — gelée, pas de retuning |
-| Postdiction G1 — piste **compo-niveau** (cellules paires de traits × durée, priorN 200, poids nL·nS/(nL+nS), pré-enregistrée) | **52,1 % [49,1 ; 55,1]** (n=1059) | | | | la PREMIÈRE piste qui penche : 4 ligues ≥ 51 %, deux directions cohérentes — mais IC touche 50 % ET la tranche haute-confiance fait 49,9 % (la magnitude ne prédit pas le hit). Verdict : non significatif. Suite propre : réplication à règle GELÉE sur les corpus 2025 (puissance n≈2400) |
-
-Le Summit Gate fonctionne : chaque rouge est un problème d'optimisation bien
-posé, et la découverte §E (bans phase 2 = contre-compo) est passée de
-l'observation au moteur validé en une journée. Les courbes de puissance PRO
-existent désormais comme module (`$lib/estimators/proPowerCurves`, Dataset
-overlay compatible M4.3) — le mécanisme #15 est en place, le signal G1 reste
-à trouver.
-
-## Ce qui reste
+## File post-run (par priorité)
 
 | # | Item | Note |
 |---|---|---|
-| 1 | Terme de demande contrefactuelle (ban-history) dans I1/banEV **phase 1** → re-passer la piste répertoire | évolution moteur, cible : « beats » (la phase 2 est déjà verte) |
-| 2 | **G1 : réplication compo-niveau EN ATTENTE DU SEUL LCK 2025.** LEC 308 / LFL 317 / LPL 817 (2025) déjà dans `data/corpus/` ; le pull LCK est bloqué par un throttle SERVEUR de la jointure PB⋈SG chez Leaguepedia (vérifié par sonde anonyme — ni notre compte ni notre IP). Reprise en heures creuses (matin européen), une commande : `node --experimental-transform-types --no-warnings scripts/data/pullCorpus.ts --like "LCK/2025 Season/Cup%" --like "LCK/2025 Season/Road to MSI%" --like "LCK/2025 Season/Rounds 1-2%" --like "LCK/2025 Season/Rounds 3-5%" --like "LCK/2025 Season/Season Play-In%" --like "LCK/2025 Season/Season Playoffs%" --out data/corpus/lck-2025.json` puis `node --experimental-transform-types --no-warnings scripts/backtest/postdiction.ts static/corpus/lck-2026.json static/corpus/lec-2026.json static/corpus/lfl-2026.json static/corpus/lpl-2026.json data/corpus/lck-2025.json data/corpus/lec-2025.json data/corpus/lfl-2025.json data/corpus/lpl-2025.json --out docs/calibration/postdiction-g1-replication.md` | règle et critères GELÉS dans l'en-tête du script AVANT toute donnée 2025 ; IC poolé exclut 0,5 → gate verte → branchement I3. Ensuite : re-run `roleInference.ts` en 8 corpus + `enrichPlayers.ts` (attribution joueur) |
-| 3 | Portes G3/G4 (rejeu Bo5 rétention, étude fog) | scripts sur le harnais existant |
-| 4 | Recalibrage des priors N₀ / poids ranges sur corpus | avec #1-#2 |
-| 5 | Smoke navigateur réel (clic-through S1) | `pnpm dev` |
-| 6 | Annotation game-plan ~100 drafts (scoring M4.2/M5.1) | session Alain ~2h |
-| 7 | Secrets Cloudflare + `gh workflow enable deploy.yml` | quand Alain veut déployer |
+| 1 | **F-c : re-run de non-régression** (`roleInference` avec défense active, k=3 ≥ 94,5 %) puis branchement live | F2 verte l'exige avant tout branchement |
+| 2 | **F4 : bras exhaustif vs depth-2 sur G4-5** | exige d'extraire les folds du harnais A (consommé) en lib réutilisable — refactor post-run ; issue pré-assumée « non concluant » |
+| 3 | **Gate coach run #3** : candidats = pools joueurs réels (enrichPlayers ✓) + ranges I1 au root — NOUVELLE règle gelée | le levier identifié par le rouge de A |
+| 4 | Calibration run #3 : cartes par ligue (+lck-2025) | E penchait du bon côté partout |
+| 5 | Ban-history : enquête LPL (γ·μ, bans concentrés) — nouvelle règle si re-tenté | B §5 |
+| 6 | Étude science-de-la-draft à re-passer sur données corrigées | les fits tagPairs/counter cells du produit sont re-fittés au chargement (corpus corrigé ⇒ déjà propres) ; le DOCUMENT de recherche reste daté |
+| 7 | Annotation game-plan ~100 drafts (session Alain ~2 h) | vérité terrain M4.2/plans |
+| 8 | Option produit « mon pool » (saisie manuelle) pour le réservoir personnel F-a | décision Alain, non bloquante |
+| 9 | Demande de bot flag Leaguepedia (Discord) | débridage durable ; CargoExport suffit en attendant |
+| 10 | Secrets Cloudflare + `gh workflow enable deploy.yml` | quand Alain veut déployer |
 
 ## Step-ups en attente de sign-off
 
-#9 (seuils pool tier 20/10/3 vs 14/5/1 d'origine) · #11 (promouvoir
-`firstSelection` dans `SeriesGame`) · #12 (mapping ligue→région dans le
-registre) · #13 (low-mobility-vs-pick inversé) · #14 (tag Malphite AD).
-#3/#10 appliqués en R1 ; **#15 appliqué le 2026-06-10**.
+#9 (seuils pool tier) · #11 (firstSelection dans SeriesGame) · #12 (mapping
+ligue→région) · #13 (low-mobility inversé) · #14 (tag Malphite AD) ·
+**nouveau #16 : étendre la formule Bo du validateur à maxWins ≥ 4** (9 séries
+4-0/4-1/5-0 silencieuses sous {2,3} — épinglé par test).
 
 ## Documentation
 
-`docs/ARCHITECTURE_V2.md` (plan directeur V2.1) · `docs/USER_GUIDE.md` (guide
-coach, reconstruit) · `docs/calibration/README.md` (protocole de validation) ·
-`docs/research/` (4 rapports sources) · `journal.txt` (historique complet).
+`docs/ARCHITECTURE_V2.md` (V2.1) · `docs/run2/` (6 designs gelés + amendement
+corpus) · `docs/calibration/` (8 rapports de gates + scorecards corrigés) ·
+`docs/ETAT_DES_LIEUX.md` (document d'entrée de la run, historique) ·
+`journal.txt`.
