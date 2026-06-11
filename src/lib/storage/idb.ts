@@ -4,15 +4,17 @@
  * Schema v1: three object stores keyed by `id` — plans, series, preferences.
  * Schema v2 (R1): + `snapshots` (immutable dated provider payloads, DA-V2-3)
  * and `datasets` (the ~50 MB DraftGap feeds, moved off localStorage —
- * STEP_UP #3). The upgrade path only ever ADDS stores, so bumping the version
+ * STEP_UP #3). Schema v3 (run #2 chantier D, R6): + `planTrees` (compiled
+ * opponent plan trees keyed by planId — a separate artefact, DraftPlan is
+ * untouched). The upgrade path only ever ADDS stores, so bumping the version
  * preserves existing user data. Used only client-side (DV4: no auth, no cloud
  * sync). In tests, the global `indexedDB` is provided by `fake-indexeddb`.
  */
 export const DB_NAME = 'draftlab';
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 
-export type StoreName = 'plans' | 'series' | 'preferences' | 'snapshots' | 'datasets';
-const STORES: StoreName[] = ['plans', 'series', 'preferences', 'snapshots', 'datasets'];
+export type StoreName = 'plans' | 'series' | 'preferences' | 'snapshots' | 'datasets' | 'planTrees';
+const STORES: StoreName[] = ['plans', 'series', 'preferences', 'snapshots', 'datasets', 'planTrees'];
 
 function promisifyRequest<T>(request: IDBRequest<T>): Promise<T> {
     return new Promise((resolve, reject) => {
