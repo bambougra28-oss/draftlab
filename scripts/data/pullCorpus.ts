@@ -74,7 +74,7 @@ type CargoModule = typeof import('../../src/lib/data/providers/leaguepediaCargo'
 type DraftRecord = import('../../src/lib/data/types').DraftRecord;
 type BoIntegrityModule = typeof import('../../src/lib/data/boIntegrity');
 type BoViolation = import('../../src/lib/data/boIntegrity').BoViolation;
-const { MwSession, fetchDraftRecords, LEAGUEPEDIA_ATTRIBUTION } = (await import(
+const { MwSession, fetchDraftRecords, fetchDraftRecordsSplit, LEAGUEPEDIA_ATTRIBUTION } = (await import(
     `${libRootHref}/data/providers/leaguepediaCargo.ts`
 )) as CargoModule;
 const { validateBoIntegrity, countFreshRecords } = (await import(
@@ -86,15 +86,17 @@ const { validateBoIntegrity, countFreshRecords } = (await import(
 const likes: string[] = [];
 let outPath: string | undefined;
 let freshDays = 3;
+let splitJoin = false;
 const argv = process.argv.slice(2);
 for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--like') likes.push(argv[++i]);
     else if (argv[i] === '--out') outPath = argv[++i];
     else if (argv[i] === '--fresh-days') freshDays = Number(argv[++i]);
+    else if (argv[i] === '--split-join') splitJoin = true;
 }
 if (likes.length === 0 || outPath === undefined || !Number.isFinite(freshDays) || freshDays < 0) {
     console.error(
-        'Usage: pnpm corpus -- --like "LCK/2026%" [--like ...] --out static/corpus/<name>.json [--fresh-days 3]'
+        'Usage: pnpm corpus -- --like "LCK/2026%" [--like ...] --out static/corpus/<name>.json [--fresh-days 3] [--split-join]'
     );
     process.exit(1);
 }
@@ -113,16 +115,29 @@ const session = await MwSession.login({ username: user, password: pass });
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
+if (splitJoin) console.log('Mode split-join : SG seul puis PB par chunks IN — le join serveur throttlé est contourné.');
 const all: DraftRecord[] = [];
 for (const like of likes) {
     const safe = like.replace(/'/g, "\\'");
     let records: DraftRecord[] | undefined;
     for (let attempt = 1; attempt <= 5 && records === undefined; attempt++) {
         try {
-            records = await fetchDraftRecords(
-                { where: `SG.OverviewPage LIKE '${safe}'`, orderBy: 'SG.DateTime_UTC ASC' },
-                { transport: session.transport, pageDelayMs: 2500 }
-            );
+            const query = { where: `SG.OverviewPage LIKE '${safe}'`, orderBy: 'SG.DateTime_UTC ASC' };
+            if (splitJoin) {
+                const { records: split, missingDrafts } = await fetchDraftRecordsSplit(query, {
+                    transport: session.transport,
+                    pageDelayMs: 2500
+                });
+                records = split;
+                if (missingDrafts.length > 0) {
+                    console.log(
+                        `  ${like} → ${missingDrafts.length} scoreboard(s) sans table de draft (remakes/forfaits/trous amont) :`
+                    );
+                    for (const gid of missingDrafts) console.log(`      ${gid}`);
+                }
+            } else {
+                records = await fetchDraftRecords(query, { transport: session.transport, pageDelayMs: 2500 });
+            }
         } catch (error) {
             if ((error as { code?: string }).code !== 'ratelimited' || attempt === 5) throw error;
             console.log(`  ${like} → rate-limited (tentative ${attempt}/5), pause 75 s…`);
