@@ -1,10 +1,12 @@
 # F — Pocket picks : maîtrise et au-delà (Fearless d'abord) — Design run #2, v2
 
-> **Statut : RÉÉCRIT post-revue adversariale (2026-06-11) — candidate au gel.**
-> La v1 (sketch théorique) a reçu un verdict À-RETRAVAILLER ; cette v2 intègre
-> les 11 amendements et les deux règles complètes (F1, F2) de la revue. Une
-> re-revue courte du document assemblé précède le gel, puis la règle de chaque
-> gate est recopiée verbatim dans l'en-tête de son script AVANT tout run.
+> **GELÉ post-revue adversariale + re-revue de conformité (2026-06-11) — règle
+> définitive, aucun paramètre ne bouge après ce commit.**
+> La v1 (sketch) a reçu À-RETRAVAILLER ; la v2 intègre les 11 amendements et
+> les deux règles complètes (F1, F2) de la revue ; la re-revue de conformité
+> (4 corrections, appliquées) a vérifié 100 % des symboles de code cités. La
+> règle de chaque gate est recopiée verbatim dans l'en-tête de son script
+> AVANT tout run ; les runs restent BLOQUÉS par les préconditions §0.
 >
 > Directive d'Alain (2026-06-11) : « Il faut que DraftLab maîtrise à la
 > perfection, voire aille encore au-delà concernant cette notion très utile en
@@ -164,7 +166,8 @@ candidats : 8⁴ ≈ 4 096 ✓ ; à 8 slots restants : 8⁸ ≈ 1,7·10⁷ ✗ (
 déclenche naturellement en toute fin de draft, là où l'enjeu est maximal) ;
 memo par état (clé = révélés triés + seq) ; **cible déclarée < 2 s par
 décision** sur la machine d'Alain, mesurée et publiée. Ship Expérimental
-(DA-V2-11) dans tous les cas non-ROUGE de F4.
+(DA-V2-11) dans tous les cas de F4 sauf hi < 0 (exhaustif PIRE ⇒ F-d non
+branché, §3.4).
 
 ## 3. Les gates pré-enregistrées
 
@@ -313,14 +316,19 @@ est publié comme THÉORÈME (l'explication mécanique du trou) et n'entre dans
 AUCUN critère.
 
 MÉTRIQUE PRIMAIRE (l'empirique qui justifie F-c) : à k = 5, acc_contaminée =
-accuracy de la top-hypothèse jointe sur les 4 AUTRES champions des sides
-classe A ; acc_saine = accuracy top-hypothèse k=5 sur les sides sans AUCUN
-événement (ni A ni B) des mêmes corpus ; Δ_contamination = acc_contaminée −
-acc_saine.
+accuracy de la top-hypothèse jointe sur les champions VOISINS des sides
+classe A — voisin = champion du side qui n'est pas lui-même un événement
+classe A (dans les ~3 sides à double événement, les 2 scores mutuels,
+tautologiques à 0 % par théorème, sont EXCLUS : le 0 du théorème n'entre
+ainsi dans aucun critère, mécaniquement) ; acc_saine = accuracy top-hypothèse
+k=5 sur les sides sans AUCUN événement (ni A ni B) des mêmes corpus ;
+Δ_contamination = acc_contaminée − acc_saine.
 
 CRITÈRE DE VERDICT (gelé) : IC bootstrap 95 % de Δ_contamination, resampling
 par CLUSTER de série, statistique recalculée par resample (patron S2 du
-chantier C), 1000 resamples, mulberry32(seed 42). hi < 0 ⇒ F2 VERTE (la
+chantier C), 1000 resamples, mulberry32(seed 42), flux unique en ordre fixe
+(critère primaire puis S3 puis S4 ; une secondaire publiée sans IC ne consomme
+rien). hi < 0 ⇒ F2 VERTE (la
 surprise contamine significativement la lecture des voisins par injectivité).
 IC touchant 0 ⇒ ORANGE (non significatif). lo > 0 ⇒ ROUGE remarquable
 (l'injectivité absorbe la surprise), publié tel quel. PRÉDICTION
@@ -329,7 +337,9 @@ PRÉ-ENREGISTRÉE : Δ < 0, ampleur ≥ 5 pp.
 PUISSANCE DÉCLARÉE (comptes structurels pris le 2026-06-11 AVANT gel, AUCUNE
 accuracy calculée sur ces tranches) : classe A ≈ 146 événements / 143 sides /
 131 clusters de série (par gameNumber : 49/38/37/15/7 ; par index de pick du
-side : 35/26/18/25/42) ⇒ ~584 scores de voisins — un effet ≥ 5 pp sur une base
+side : 35/26/18/25/42) ⇒ ~578 scores de voisins (146×4 = 584 paires moins ~6
+tautologiques des sides doubles ; recompte exact publié par --audit-only) — un
+effet ≥ 5 pp sur une base
 ~93,4 % (k=5 pooled validé) est détectable même avec l'inflation de cluster ;
 classe B ≈ 818 événements / 642 sides. Baselines de contexte publiées :
 accuracy pooled k=5 = 93,4 % [93,0;93,7] et k=3 = 95,0 % [94,7;95,4] (rapport
@@ -351,7 +361,8 @@ pour le champion déclencheur SEUL, priors de rôle remplacés par l'uniforme
 (β = 1 — le chemin classe B déjà testé du système), déclencheur live =
 surpriseOf.bits ≥ surpriseAlarmBits = 5 (rangeModelConfig commitée ; ε = 1e-3
 ⇒ bits ≤ ~9,97) ET rôle-novelté structurelle (compte train équipe+ligue de
-(c, rôle) = 0). Après branchement, RE-RUN OBLIGATOIRE de
+(c, rôle le plus probable de la lecture courante) = 0). Après branchement,
+RE-RUN OBLIGATOIRE de
 scripts/backtest/roleInference.ts : non-régression exigée accuracy pooled
 k=3 ≥ 94,5 %, sinon F-c débranché et le rouge documenté — le système VERT
 pré-enregistré (95,0 %) prime sur toute défense nouvelle.
