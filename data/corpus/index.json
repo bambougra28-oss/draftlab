@@ -2,12 +2,36 @@
  "attribution": "Data from Leaguepedia (lol.fandom.com), CC BY-SA 3.0",
  "files": [
   {
+   "file": "lck-2025.json",
+   "league": "lck",
+   "records": 555,
+   "from": "2025-01-15",
+   "to": "2025-09-28",
+   "pulledAt": "2026-06-11T11:48:07.730Z",
+   "integrity": {
+    "violations": [],
+    "checkedAt": "2026-06-11T11:48:09.567Z"
+   },
+   "freshness": {
+    "withinDays": 3,
+    "count": 0
+   }
+  },
+  {
    "file": "lec-2025.json",
    "league": "lec",
    "records": 308,
    "from": "2025-01-18",
    "to": "2025-09-28",
-   "pulledAt": "2026-06-10T21:34:32.133Z"
+   "pulledAt": "2026-06-11T11:47:58.729Z",
+   "integrity": {
+    "violations": [],
+    "checkedAt": "2026-06-11T11:47:59.722Z"
+   },
+   "freshness": {
+    "withinDays": 3,
+    "count": 0
+   }
   },
   {
    "file": "lfl-2025.json",
@@ -15,7 +39,15 @@
    "records": 317,
    "from": "2024-09-04",
    "to": "2025-09-12",
-   "pulledAt": "2026-06-10T21:35:48.776Z"
+   "pulledAt": "2026-06-11T11:51:33.333Z",
+   "integrity": {
+    "violations": [],
+    "checkedAt": "2026-06-11T11:51:34.149Z"
+   },
+   "freshness": {
+    "withinDays": 3,
+    "count": 0
+   }
   },
   {
    "file": "lpl-2025.json",
@@ -23,7 +55,15 @@
    "records": 817,
    "from": "2025-01-12",
    "to": "2025-09-27",
-   "pulledAt": "2026-06-10T21:35:50.480Z"
+   "pulledAt": "2026-06-11T11:48:02.734Z",
+   "integrity": {
+    "violations": [],
+    "checkedAt": "2026-06-11T11:48:06.753Z"
+   },
+   "freshness": {
+    "withinDays": 3,
+    "count": 0
+   }
   }
  ]
 }

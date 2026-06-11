@@ -7,7 +7,15 @@
    "records": 337,
    "from": "2026-01-14",
    "to": "2026-06-07",
-   "pulledAt": "2026-06-10T13:34:52.598Z"
+   "pulledAt": "2026-06-11T11:47:51.829Z",
+   "integrity": {
+    "violations": [],
+    "checkedAt": "2026-06-11T11:47:52.826Z"
+   },
+   "freshness": {
+    "withinDays": 3,
+    "count": 0
+   }
   },
   {
    "file": "lec-2026.json",
@@ -15,7 +23,15 @@
    "records": 246,
    "from": "2026-01-17",
    "to": "2026-06-07",
-   "pulledAt": "2026-06-10T13:34:55.357Z"
+   "pulledAt": "2026-06-11T11:47:53.820Z",
+   "integrity": {
+    "violations": [],
+    "checkedAt": "2026-06-11T11:47:54.607Z"
+   },
+   "freshness": {
+    "withinDays": 3,
+    "count": 0
+   }
   },
   {
    "file": "lfl-2026.json",
@@ -23,7 +39,15 @@
    "records": 191,
    "from": "2025-09-16",
    "to": "2026-06-03",
-   "pulledAt": "2026-06-10T13:34:53.975Z"
+   "pulledAt": "2026-06-11T11:47:55.619Z",
+   "integrity": {
+    "violations": [],
+    "checkedAt": "2026-06-11T11:47:56.347Z"
+   },
+   "freshness": {
+    "withinDays": 3,
+    "count": 0
+   }
   },
   {
    "file": "lpl-2026.json",
@@ -31,7 +55,15 @@
    "records": 445,
    "from": "2026-01-14",
    "to": "2026-06-08",
-   "pulledAt": "2026-06-10T21:00:51.353Z"
+   "pulledAt": "2026-06-11T11:47:57.338Z",
+   "integrity": {
+    "violations": [],
+    "checkedAt": "2026-06-11T11:47:57.724Z"
+   },
+   "freshness": {
+    "withinDays": 3,
+    "count": 0
+   }
   }
  ]
 }

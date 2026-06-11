@@ -9,9 +9,22 @@
 import { Role } from '$lib/types';
 import { defaultLookup } from '$lib/pro/championLookup';
 
+/**
+ * Minimal HTML-entity decoding for wiki-sourced names: upstream edits
+ * sometimes land HTML-escaped ("Nunu &amp; Willump", observed live 2026-06-11
+ * on lfl-2025) — decode the few entities champion names can carry before the
+ * lookup.
+ */
+function decodeHtmlEntities(name: string): string {
+    return name
+        .replace(/&amp;|&#0*38;/g, '&')
+        .replace(/&apos;|&#0*39;/g, "'")
+        .replace(/&quot;|&#0*34;/g, '"');
+}
+
 /** Resolve a champion display name/slug to its Data Dragon key. */
 export function resolveChampionKey(name: string): string | undefined {
-    return defaultLookup().lookup(name);
+    return defaultLookup().lookup(decodeHtmlEntities(name));
 }
 
 const ROLE_STRINGS: Record<string, Role> = {
