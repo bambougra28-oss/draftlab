@@ -34,6 +34,12 @@
         picksLocked?: number;
         /** Side allié — perspective des winAfter (l'aller-retour espace bleu en dépend). */
         ourSide?: DraftSide;
+        /**
+         * Simulation deux camps : camp conseillé affiché en tête (couleur du
+         * camp + équipe). null = mode normal (conseil allySide uniquement).
+         * Pur affichage — le mapping camp→équipe vit dans la page.
+         */
+        advisedCamp?: { side: DraftSide; teamName: string } | null;
     }
 
     const {
@@ -44,7 +50,8 @@
         title = 'Coach — explorateur de lignes',
         calibration = null,
         picksLocked = 0,
-        ourSide = 'blue'
+        ourSide = 'blue',
+        advisedCamp = null
     }: Props = $props();
 
     const nameOf = (key: string): string => championNameByKey(key) ?? key;
@@ -90,6 +97,16 @@
         >
             {title}
         </h2>
+        {#if advisedCamp !== null}
+            <span
+                class="rounded px-2 py-0.5 text-[11px] font-bold {advisedCamp.side === 'blue'
+                    ? 'bg-blue-500/15 text-blue-300'
+                    : 'bg-red-500/15 text-red-300'}"
+                title="Simulation : l'outil joue les deux chaises avec la data de chaque équipe — le conseil ci-dessous est pour le camp au trait."
+            >
+                Conseil — camp {advisedCamp.side === 'blue' ? 'BLEU' : 'ROUGE'} ({advisedCamp.teamName})
+            </span>
+        {/if}
         <span
             class="cursor-help rounded px-1.5 py-0.5 text-[10px] font-medium {pctCalibrated
                 ? 'bg-emerald-900/60 text-emerald-300'

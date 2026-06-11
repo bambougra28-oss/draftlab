@@ -51,17 +51,32 @@ export interface SequenceSlot {
     seq: number;
     type: 'ban' | 'pick';
     phase: 'ban1' | 'pick1' | 'ban2' | 'pick2';
-    /** Blue-first template (the era assumption used across the app). */
+    /** Side resolved from the template for a given First Selection side. */
     side: DraftSide;
 }
 
-/** The 20 tournament slots in draft order, side resolved blue-first. */
-export const SEQUENCE_SLOTS: readonly SequenceSlot[] = DRAFT_TEMPLATE.map((slot) => ({
-    seq: slot.seq,
-    type: slot.type,
-    phase: slot.phase,
-    side: slot.first ? 'blue' : 'red'
-}));
+/**
+ * Side of a template slot under a given First Selection — the EXACT
+ * convention of `buildDraftActions` ($lib/data/draftRecord), never a second
+ * implementation: the first-pick side acts on `first: true` slots.
+ */
+const sideOfFirst = (first: boolean, firstPickSide: DraftSide): DraftSide =>
+    first === (firstPickSide === 'blue') ? 'blue' : 'red';
+
+function buildSequenceSlots(firstPickSide: DraftSide): readonly SequenceSlot[] {
+    return DRAFT_TEMPLATE.map((slot) => ({
+        seq: slot.seq,
+        type: slot.type,
+        phase: slot.phase,
+        side: sideOfFirst(slot.first, firstPickSide)
+    }));
+}
+
+/** The 20 tournament slots in draft order, blue First Selection (default). */
+export const SEQUENCE_SLOTS: readonly SequenceSlot[] = buildSequenceSlots('blue');
+
+/** Same 20 slots when RED holds the First Selection (2026: décorrélé du side). */
+const SEQUENCE_SLOTS_RED_FIRST: readonly SequenceSlot[] = buildSequenceSlots('red');
 
 /** SoloQ ban slot ids (101-105 blue, 106-110 red) — entry order only. */
 export const SOLOQ_BAN_BASE = 100;
@@ -83,13 +98,24 @@ export const SOLOQ_SLOTS: readonly SequenceSlot[] = [
     ...SEQUENCE_SLOTS.filter((slot) => slot.type === 'pick')
 ];
 
-/** The format's slots in WALK order (cursor order = array order). */
-export function slotsFor(format: DraftFormat): readonly SequenceSlot[] {
-    return format === 'soloq' ? SOLOQ_SLOTS : SEQUENCE_SLOTS;
+/**
+ * The format's slots in WALK order (cursor order = array order).
+ *
+ * `firstPickSide` (First Selection 2026) remaps the PRO sides only — SoloQ
+ * is not concerned: its bans are simultaneous and the snake has no
+ * first-selection rule (client order, blue block first).
+ */
+export function slotsFor(format: DraftFormat, firstPickSide: DraftSide = 'blue'): readonly SequenceSlot[] {
+    if (format === 'soloq') return SOLOQ_SLOTS;
+    return firstPickSide === 'blue' ? SEQUENCE_SLOTS : SEQUENCE_SLOTS_RED_FIRST;
 }
 
-export function slotOf(seq: number, format: DraftFormat = 'pro'): SequenceSlot | undefined {
-    return slotsFor(format).find((slot) => slot.seq === seq);
+export function slotOf(
+    seq: number,
+    format: DraftFormat = 'pro',
+    firstPickSide: DraftSide = 'blue'
+): SequenceSlot | undefined {
+    return slotsFor(format, firstPickSide).find((slot) => slot.seq === seq);
 }
 
 export function emptySequence(): DraftSequence {
@@ -134,6 +160,10 @@ export function bannedKeys(sequence: DraftSequence, format: DraftFormat): Set<st
  * 'pro' — any other slot holding the champion conflicts;
  * 'soloq' — ban×ban conflicts only on the SAME side (cross-team duplicate
  * bans are legal in the client); ban×pick always conflicts.
+ *
+ * No `firstPickSide` here (nor in the placement/role functions below): a
+ * First Selection flip renames blue↔red on EVERY slot at once, so the
+ * same-side groupings these rules read are invariant under the flip.
  */
 function hasConflict(
     sequence: DraftSequence,
@@ -233,10 +263,18 @@ function resolveRoleConflicts(
  * Engine projection. 'pro': every slot becomes an exact DraftAction.
  * 'soloq': PICKS ONLY (the snake shares the template pick seqs); bans are
  * exclusions — read them via `bannedKeys` and feed `excludedKeys`.
+ *
+ * Entries are stored by template seq and the side is DERIVED here: changing
+ * `firstPickSide` mid-draft remaps the sides of every action already entered
+ * (nothing else moves — same seqs, same champions, same roles).
  */
-export function toDraftActions(sequence: DraftSequence, format: DraftFormat = 'pro'): DraftAction[] {
+export function toDraftActions(
+    sequence: DraftSequence,
+    format: DraftFormat = 'pro',
+    firstPickSide: DraftSide = 'blue'
+): DraftAction[] {
     const actions: DraftAction[] = [];
-    for (const slot of slotsFor(format)) {
+    for (const slot of slotsFor(format, firstPickSide)) {
         if (format === 'soloq' && slot.type === 'ban') continue;
         const entry = sequence.entries.get(slot.seq);
         if (entry === undefined) continue;
@@ -271,7 +309,8 @@ export function roleEntryView(
     sequence: DraftSequence,
     allySide: DraftSide,
     resolveRole: (championKey: string, freeRoles: Role[], side: DraftSide) => Role = (_key, free) => free[0],
-    format: DraftFormat = 'pro'
+    format: DraftFormat = 'pro',
+    firstPickSide: DraftSide = 'blue'
 ): RoleEntryView {
     const picksBySide: Record<DraftSide, (string | null)[]> = {
         blue: [null, null, null, null, null],
@@ -285,7 +324,7 @@ export function roleEntryView(
 
     const banCursor: Record<DraftSide, number> = { blue: 0, red: 0 };
     const flexQueue: { entry: SequenceEntry; side: DraftSide }[] = [];
-    for (const slot of slotsFor(format)) {
+    for (const slot of slotsFor(format, firstPickSide)) {
         const entry = sequence.entries.get(slot.seq);
         if (entry === undefined) continue;
         if (slot.type === 'ban') {

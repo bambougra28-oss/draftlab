@@ -106,10 +106,10 @@
         type Series,
         type SeriesFormat
     } from '$lib/storage/series';
-    import { makeAnalyzeDraftEvaluator, navigate } from '$lib/strategic/draftNavigator';
+    import { makeAnalyzeDraftEvaluator, navigate, nextSlotOf } from '$lib/strategic/draftNavigator';
     import { computePresence } from '$lib/aggregates/presence';
     import { canonicalTeamName } from '$lib/data/normalize';
-    import type { DraftRecord } from '$lib/data/types';
+    import type { DraftRecord, DraftSide } from '$lib/data/types';
     import CoachPanel from '$lib/components/CoachPanel.svelte';
     import { classifyPoolTier } from '$lib/strategic/poolTierClassifier';
     import { championNameByKey } from '$lib/dataDragon/version';
@@ -177,6 +177,16 @@
     let draftSeq = $state(emptySequence());
     /** Alain's two real formats: tournament 2026 or SoloQ ranked draft. */
     let draftFormat = $state<DraftFormat>('pro');
+    /**
+     * First Selection (règle 2026) : camp qui picke en premier, DÉCOUPLÉ du
+     * side. Les entrées de `draftSeq` sont stockées par seq template et le
+     * side est DÉRIVÉ — changer ce sélecteur en cours de saisie remappe
+     * l'affichage et toutes les projections (actions, vue par rôle, coach)
+     * sans perdre ni déplacer ce qui est saisi. Pro uniquement ; SoloQ ignore.
+     */
+    let firstPickSide = $state<DraftSide>('blue');
+    /** Simulation deux camps (chantier 2) : le coach joue les deux chaises. */
+    let simulationMode = $state(false);
 
     // ---- series context (Bo1/Bo3/Bo5, ± Fearless — shared store with /series) ----
     let seriesFormatChoice = $state<SeriesFormat>('bo3');
@@ -207,7 +217,7 @@
     /** Close the current game with its result, lock its picks, reset the board. */
     function closeGame(result: 'ally' | 'enemy'): void {
         if (activeSeries === null || seriesOver) return;
-        const view = roleEntryView(draftSeq, allySide, seqRoleResolver, draftFormat);
+        const view = roleEntryView(draftSeq, allySide, seqRoleResolver, draftFormat, firstPickSide);
         const compact = (keys: (string | null)[]): string[] => keys.filter((k): k is string => k !== null);
         const updated = upsertGame(activeSeries, {
             gameNumber: currentGameNumber,
@@ -279,9 +289,11 @@
 
     // Sequence mode writes through to the role-keyed state: every consumer
     // (analyzer, win conditions, intel, exports) keeps reading ONE shape.
+    // firstPickSide is a dependency: flipping the First Selection re-runs
+    // this projection and remaps ally/enemy columns from the same entries.
     $effect(() => {
         if (entryMode !== 'sequence') return;
-        const view = roleEntryView(draftSeq, allySide, seqRoleResolver, draftFormat);
+        const view = roleEntryView(draftSeq, allySide, seqRoleResolver, draftFormat, firstPickSide);
         allyPicks = [...view.allyPicks];
         enemyPicks = [...view.enemyPicks];
         allyBans = [...view.allyBans];
@@ -359,10 +371,16 @@
 
     const planTreeShown = $derived(sessionTree ?? activeTree);
 
-    /** trackPlan PUR en $derived de toDraftActions(draftSeq) — rejoué à chaque action. */
+    /**
+     * trackPlan PUR en $derived de toDraftActions(draftSeq) — rejoué à chaque
+     * action. Limite V1 : les arbres sont compilés en convention bleu-premier
+     * (compilePlanTree, racine firstPickSide 'blue') — First Selection rouge ⇒
+     * null, le template affiche la ligne honnête plutôt qu'un suivi faux.
+     */
     const planTrack = $derived.by(() => {
         const tree = planTreeShown;
-        if (tree === null || entryMode !== 'sequence' || draftFormat !== 'pro') return null;
+        if (tree === null || entryMode !== 'sequence' || draftFormat !== 'pro' || firstPickSide !== 'blue')
+            return null;
         const actions = toDraftActions(draftSeq, 'pro').filter((a) => a.seq > sessionTreeOffset);
         return trackPlan(tree, actions, allySide);
     });
@@ -451,6 +469,9 @@
         const tree = planTreeShown;
         const seams = compileSeams();
         const plan = plans.find((p) => p.id === (tree?.planId ?? activePlanId));
+        // Garde V1 : compilePlanTree est ancré bleu-premier (le panneau est
+        // masqué quand le First Selection est rouge — ceinture + bretelles).
+        if (firstPickSide !== 'blue') return;
         if (tree === null || seams === null || plan === undefined || teamB === null) return;
         recompiling = true;
         try {
@@ -626,8 +647,8 @@
         const slot = pickerSlot;
         if (slot === null) return null;
         if ('seq' in slot) {
-            const info = slotOf(slot.seq, draftFormat);
-            const board = boardSlotsFor(draftFormat).find((s) => s.seq === slot.seq);
+            const info = slotOf(slot.seq, draftFormat, firstPickSide);
+            const board = boardSlotsFor(draftFormat, firstPickSide).find((s) => s.seq === slot.seq);
             if (info === undefined || board === undefined) return null;
             return {
                 slot,
@@ -898,6 +919,21 @@
     });
 
     /**
+     * Intel SYMÉTRIQUE — les tendances de l'ÉQUIPE A (mêmes null-guards,
+     * corpus ligue A). Nécessaire en simulation deux camps : quand le coach
+     * conseille le camp B, sa « distribution adverse » est l'équipe A.
+     * $derived paresseux : jamais calculé tant que la simulation ne le lit pas.
+     */
+    const intelA = $derived.by(() => {
+        if (teamA === null) return null;
+        return buildOpponentIntel(teamA, {
+            now: new Date(nowTick).toISOString(),
+            ...(leagueRecordsA !== null ? { leagueRecords: leagueRecordsA } : {}),
+            ...(corpusTeamA.length > 0 ? { corpusTeamRecords: corpusTeamA } : {})
+        });
+    });
+
+    /**
      * Verdict B (gate ban-history du 2026-06-11, ROUGE : LPL sous la baseline) —
      * l'EV agrégée du régime répertoire est RETIRÉE de l'affichage par défaut :
      * tri par présence (le référentiel de la baseline du rapport), composants
@@ -1036,6 +1072,15 @@
             .map(([key]) => key);
     });
 
+    /** Le symétrique pour le camp B en simulation — présence de SA ligue (B). */
+    const coachFallbackB = $derived.by((): string[] => {
+        if (leagueRecordsB === null) return [];
+        return [...computePresence(leagueRecordsB).entries()]
+            .sort((a, b) => b[1].presence - a[1].presence || (a[0] < b[0] ? -1 : 1))
+            .slice(0, 15)
+            .map(([key]) => key);
+    });
+
     /** Enemy role read — team-first priors, league fallback (I2 hypotheses) — ligue ADVERSE (B). */
     const enemyRoleReads = $derived.by(() => {
         if (leagueRecordsB === null && corpusTeamB.length === 0) return null;
@@ -1054,9 +1099,51 @@
         );
     });
 
-    const coachAdvice = $derived.by(() => {
+    /**
+     * Le SYMÉTRIQUE pour le camp A (simulation deux camps) : quand le coach
+     * conseille le camp B, « ses adversaires » sont les picks de l'équipe A —
+     * lus avec les priors de rôle de LA ligue A + le corpus de l'équipe A.
+     * $derived paresseux : calculé seulement quand la simulation l'affiche.
+     */
+    const allyRoleReads = $derived.by(() => {
+        if (leagueRecordsA === null && corpusTeamA.length === 0) return null;
+        const league = fitRolePriors(leagueRecordsA ?? []);
+        const priors =
+            corpusTeamA.length > 0 ? layerRolePriors(fitRolePriors(corpusTeamA), league) : rolePriorsOf(league);
+        return readEnemyRoles(
+            {
+                allyPicks: enemyPicks,
+                enemyPicks: allyPicks, // « adverse » du point de vue du camp B = équipe A
+                allyBans: [null, null, null, null, null],
+                enemyBans: [null, null, null, null, null],
+                allySide: enemySide
+            },
+            priors
+        );
+    });
+
+    // ---- Simulation deux camps (directive d'Alain) : recommandations DES
+    // DEUX CÔTÉS pour simuler seul des drafts basées sur la data. ----
+    /** Conditions d'activation : séquence + tournoi + les deux équipes synchronisées. */
+    const simulationAvailable = $derived(
+        entryMode === 'sequence' && draftFormat === 'pro' && teamA !== null && teamB !== null
+    );
+    const simulationActive = $derived(simulationMode && simulationAvailable);
+
+    /**
+     * Coach en direct. Hors simulation : comportement historique STRICT — le
+     * coach ne parle que pour allySide (équipe A). En simulation : le coach
+     * parle À CHAQUE TOUR pour LE CAMP AU TRAIT ; mapping camp→équipe :
+     * camp === allySide ⇒ équipe A conseillée (distribution adverse =
+     * intel.table, tendances B ; pool = teamA.players ; repli = présence
+     * ligue A) ; sinon ⇒ équipe B conseillée (distribution adverse =
+     * intelA.table, tendances A ; pool = teamB.players ; repli = présence
+     * ligue B). pairFit/counterFit/dataset : partagés (cross-ligues). UN seul
+     * recommendNext par action — jamais les deux camps à la fois.
+     */
+    const coach = $derived.by((): { advice: ReturnType<typeof recommendNext> | null; side: DraftSide } => {
         const evaluate = coachEvaluate;
-        if (evaluate === null) return null;
+        if (evaluate === null) return { advice: null, side: allySide };
         // Sequence mode: the EXACT board — tournament bans are ordered
         // actions (the coach speaks on ban turns); SoloQ bans are
         // simultaneous, so they enter as EXCLUSIONS and the coach runs the
@@ -1064,10 +1151,12 @@
         // the exclusions in every mode.
         const state =
             entryMode === 'sequence'
-                ? draftStateFromActions(toDraftActions(draftSeq, draftFormat), [
-                      ...fearlessLocked,
-                      ...(draftFormat === 'soloq' ? bannedKeys(draftSeq, 'soloq') : [])
-                  ])
+                ? draftStateFromActions(
+                      toDraftActions(draftSeq, draftFormat, firstPickSide),
+                      [...fearlessLocked, ...(draftFormat === 'soloq' ? bannedKeys(draftSeq, 'soloq') : [])],
+                      undefined,
+                      firstPickSide
+                  )
                 : draftStateFromRoleEntry({
                       // Bans persist from a sequence session (null in pure role entry).
                       allyPicks,
@@ -1077,12 +1166,16 @@
                       allySide,
                       excludedKeys: fearlessLocked
                   });
-        return recommendNext(state, {
-            ourSide: allySide,
+        const coachSide: DraftSide = simulationActive ? (nextSlotOf(state)?.side ?? allySide) : allySide;
+        const forAlly = coachSide === allySide;
+        const table = forAlly ? intel?.table : intelA?.table;
+        const players = contextActive ? (forAlly ? teamA?.players : teamB?.players) : undefined;
+        const advice = recommendNext(state, {
+            ourSide: coachSide,
             evaluate,
-            ...(intel !== null ? { table: intel.table } : {}),
-            ...(contextActive && teamA !== null ? { allyPlayers: teamA.players } : {}),
-            fallbackCandidates: coachFallback,
+            ...(table !== undefined ? { table } : {}),
+            ...(players !== undefined ? { allyPlayers: players } : {}),
+            fallbackCandidates: forAlly ? coachFallback : coachFallbackB,
             ...(datasets !== null ? { dataset: datasets.fullDataset } : {}),
             ...(pairFit !== null ? { pairFit } : {}),
             ...(counterFit !== null ? { counterFit } : {}),
@@ -1091,6 +1184,7 @@
             topK: 4,
             candidateCount: 6
         });
+        return { advice, side: coachSide };
     });
 
     const intelTendencyBlocks = $derived(intel === null ? [] : tendencyBlocksOf(intel.table));
@@ -1364,6 +1458,7 @@
                     sequence={draftSeq}
                     {allySide}
                     format={draftFormat}
+                    {firstPickSide}
                     roleHint={boardRoleHint}
                     onRequestPick={() => {
                         const seq = nextOpenSeq(draftSeq, draftFormat);
@@ -1435,6 +1530,38 @@
                     allyStats={teamA?.sideStats ?? null}
                     enemyStats={teamB?.sideStats ?? null}
                 />
+
+                <!-- First Selection (règle 2026) : qui picke en premier, découplé du side.
+                     Visible UNIQUEMENT en saisie séquence + format tournoi. -->
+                {#if entryMode === 'sequence' && draftFormat === 'pro'}
+                    <div class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+                        <p class="pb-2 text-[11px] font-semibold tracking-widest text-slate-500 uppercase">
+                            First Selection — qui picke en premier
+                        </p>
+                        <div class="grid grid-cols-2 gap-2">
+                            {#each [['blue', 'Bleu picke en 1ᵉʳ'], ['red', 'Rouge picke en 1ᵉʳ']] as const as [side, label] (side)}
+                                <button
+                                    type="button"
+                                    onclick={() => (firstPickSide = side)}
+                                    aria-pressed={firstPickSide === side}
+                                    class="rounded-md border px-3 py-2 text-left text-sm font-semibold transition-colors {firstPickSide ===
+                                    side
+                                        ? side === 'blue'
+                                            ? 'border-blue-500/60 bg-blue-500/20 text-blue-300'
+                                            : 'border-red-500/60 bg-red-500/20 text-red-300'
+                                        : 'border-slate-700 bg-slate-800/60 text-slate-400 hover:text-slate-200'}"
+                                >
+                                    {label}
+                                </button>
+                            {/each}
+                        </div>
+                        <p class="pt-2 text-[11px] text-slate-600">
+                            Règle 2026 : le droit de picker en premier est découplé du choix de side — une équipe
+                            peut être côté rouge ET picker en premier. Changer en cours de saisie remappe les
+                            actions déjà posées (elles sont stockées par slot, le camp est dérivé).
+                        </p>
+                    </div>
+                {/if}
 
                 {#if pickerInfo !== null}
                     <div>
@@ -1618,6 +1745,11 @@
                     Script de prep indisponible en SoloQ : les bans y sont simultanés (pas d'ordre à suivre) —
                     l'arbre v1 couvre la draft tournoi uniquement.
                 </div>
+            {:else if firstPickSide !== 'blue'}
+                <div class="rounded-lg border border-dashed border-slate-800 bg-slate-900/40 p-3 text-xs text-slate-500">
+                    Script compilé en convention bleu-premier — indisponible quand le First Selection est rouge
+                    (V1). Repassez le First Selection sur Bleu pour suivre un script de prep.
+                </div>
             {:else}
                 <div class="flex flex-wrap items-center gap-2">
                     <span class="panel-title">Script de prep</span>
@@ -1661,20 +1793,49 @@
         {/if}
 
         <!-- Coach en direct — explorateur de lignes chiffré (gate A rouge du 2026-06-11 :
-             pas une recommandation validée), lignes expliquées sur la draft en cours -->
+             pas une recommandation validée), lignes expliquées sur la draft en cours.
+             Simulation deux camps : le coach parle à chaque tour, pour le camp au trait,
+             avec la data de l'équipe de ce camp (mapping documenté sur `coach`). -->
         <div class="animate-fade-up" style="animation-delay: 180ms">
+            <div class="mb-2 flex flex-wrap items-center gap-2">
+                <button
+                    type="button"
+                    onclick={() => (simulationMode = !simulationMode)}
+                    disabled={!simulationAvailable}
+                    aria-pressed={simulationActive}
+                    class="rounded-md px-3 py-1.5 text-xs font-semibold transition-colors {simulationActive
+                        ? 'bg-gold-500/15 text-gold-300 ring-1 ring-gold-600/50'
+                        : 'bg-slate-800/70 text-slate-400 hover:text-slate-200'} disabled:opacity-40"
+                >
+                    Simulation deux camps {simulationActive ? '· active' : ''}
+                </button>
+                {#if !simulationAvailable}
+                    <span class="text-[11px] text-slate-600">
+                        Pour simuler seul une draft : saisie « Séquence exacte », format Tournoi 2026, et les
+                        équipes A et B synchronisées (la data des deux côtés).
+                    </span>
+                {/if}
+            </div>
             <CoachPanel
-                advice={coachAdvice}
-                roleReads={enemyRoleReads}
+                advice={coach.advice}
+                roleReads={simulationActive && coach.side !== allySide ? allyRoleReads : enemyRoleReads}
                 calibration={defaultWinCalibrationConfig()}
                 {picksLocked}
-                ourSide={allySide}
+                ourSide={coach.side}
+                advisedCamp={simulationActive
+                    ? {
+                          side: coach.side,
+                          teamName: (coach.side === allySide ? teamA?.name : teamB?.name) ?? '?'
+                      }
+                    : null}
                 unavailableReason={datasetLoading
                     ? 'Le coach attend la fin du téléchargement du dataset…'
                     : (datasetError ?? 'Coach indisponible.')}
-                noteFr={entryMode === 'sequence'
-                    ? `Ordre EXACT saisi (bans compris) — le coach lit la vraie draft, tours de ban inclus.${teamB === null ? ' Synchronisez l’équipe adverse pour des ranges réelles.' : ''}`
-                    : `Phase de picks (cette vue ne saisit pas les bans) — ordre reconstruit sur le template, saisie par rôle.${teamB === null ? ' Synchronisez l’équipe adverse pour des ranges réelles.' : ''}`}
+                noteFr={simulationActive
+                    ? 'Simulation : l’outil joue les deux chaises avec la data de chaque équipe — conseils du camp au trait, tendances adverses = l’autre équipe.'
+                    : entryMode === 'sequence'
+                      ? `Ordre EXACT saisi (bans compris) — le coach lit la vraie draft, tours de ban inclus.${teamB === null ? ' Synchronisez l’équipe adverse pour des ranges réelles.' : ''}`
+                      : `Phase de picks (cette vue ne saisit pas les bans) — ordre reconstruit sur le template, saisie par rôle.${teamB === null ? ' Synchronisez l’équipe adverse pour des ranges réelles.' : ''}`}
             />
         </div>
 

@@ -77,17 +77,20 @@ export function draftStateFromRoleEntry(entry: RoleEntryDraft, tagsFile: Champio
 /**
  * Navigator state from EXACT ordered actions (the sequence entry mode) —
  * no template approximation, no forfeited-ban sentinels: the coach sees the
- * true board, ban turns included.
+ * true board, ban turns included. `firstPickSide` (First Selection 2026)
+ * must match the convention the actions were mapped with: the navigator
+ * derives the side of every FUTURE slot from it.
  */
 export function draftStateFromActions(
     actions: DraftAction[],
     excludedKeys: string[] = [],
-    tagsFile: ChampionTagsFile = loadDefaultTags()
+    tagsFile: ChampionTagsFile = loadDefaultTags(),
+    firstPickSide: DraftSide = 'blue'
 ): DraftState {
     const used = new Set<string>(actions.map((a) => a.championKey));
     for (const key of excludedKeys) used.add(key);
     const available = new Set<string>(Object.keys(tagsFile.champions).filter((key) => !used.has(key)));
-    return { actions: [...actions].sort((a, b) => a.seq - b.seq), firstPickSide: 'blue', available };
+    return { actions: [...actions].sort((a, b) => a.seq - b.seq), firstPickSide, available };
 }
 
 export interface CoachReason {

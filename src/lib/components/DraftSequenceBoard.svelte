@@ -16,15 +16,16 @@
 -->
 <script module lang="ts">
     import { slotsFor, type DraftFormat, type SequenceSlot } from '$lib/draft/sequence';
+    import type { DraftSide } from '$lib/data/types';
 
     export interface BoardSlotView extends SequenceSlot {
         /** Broadcast label: B1…B5 / R1…R5 picks, BB1…BB5 / RB1…RB5 bans. */
         label: string;
     }
 
-    function buildBoardSlots(format: DraftFormat): readonly BoardSlotView[] {
+    function buildBoardSlots(format: DraftFormat, firstPickSide: DraftSide): readonly BoardSlotView[] {
         const counters: Record<string, number> = {};
-        return slotsFor(format).map((slot) => {
+        return slotsFor(format, firstPickSide).map((slot) => {
             const group = `${slot.side}-${slot.type}`;
             counters[group] = (counters[group] ?? 0) + 1;
             const prefix = slot.side === 'blue' ? 'B' : 'R';
@@ -32,14 +33,20 @@
         });
     }
 
-    const BOARD_SLOTS_BY_FORMAT: Record<DraftFormat, readonly BoardSlotView[]> = {
-        pro: buildBoardSlots('pro'),
-        soloq: buildBoardSlots('soloq')
+    // SoloQ ignores the First Selection (simultaneous bans, fixed snake).
+    const BOARD_SLOTS_BY_KEY: Record<string, readonly BoardSlotView[]> = {
+        'pro:blue': buildBoardSlots('pro', 'blue'),
+        'pro:red': buildBoardSlots('pro', 'red'),
+        'soloq:blue': buildBoardSlots('soloq', 'blue'),
+        'soloq:red': buildBoardSlots('soloq', 'blue')
     };
 
-    /** The format's walk slots with broadcast labels. */
-    export function boardSlotsFor(format: DraftFormat): readonly BoardSlotView[] {
-        return BOARD_SLOTS_BY_FORMAT[format];
+    /** The format's walk slots with broadcast labels, First Selection applied. */
+    export function boardSlotsFor(
+        format: DraftFormat,
+        firstPickSide: DraftSide = 'blue'
+    ): readonly BoardSlotView[] {
+        return BOARD_SLOTS_BY_KEY[`${format}:${firstPickSide}`];
     }
 </script>
 
@@ -55,6 +62,8 @@
         sequence: DraftSequence;
         allySide: 'blue' | 'red';
         format?: DraftFormat;
+        /** First Selection (2026) : camp qui picke en premier — pro uniquement. */
+        firstPickSide?: DraftSide;
         /** Corpus role read for flex chips; null = no hint available. */
         roleHint?: ((championKey: string) => { role: Role; p: number } | null) | undefined;
         onRequestPick: () => void;
@@ -68,6 +77,7 @@
         sequence,
         allySide,
         format = 'pro',
+        firstPickSide = 'blue',
         roleHint,
         onRequestPick,
         onReplaceAt,
@@ -76,7 +86,7 @@
         onReset
     }: Props = $props();
 
-    const boardSlots = $derived(boardSlotsFor(format));
+    const boardSlots = $derived(boardSlotsFor(format, firstPickSide));
     const cursor = $derived(nextOpenSeq(sequence, format));
     const lastSeq = $derived(lastFilledSeq(sequence, format));
     const cursorSlot = $derived(cursor === null ? null : boardSlots.find((s) => s.seq === cursor)!);
@@ -96,6 +106,14 @@
         >
             {format === 'soloq' ? 'Draft SoloQ' : 'Draft tournoi'}
         </h2>
+        {#if format === 'pro' && firstPickSide === 'red'}
+            <span
+                class="rounded bg-red-500/15 px-1.5 py-0.5 text-[10px] font-semibold text-red-300"
+                title="Règle 2026 : le droit de picker en premier est découplé du choix de side."
+            >
+                First Selection : ROUGE
+            </span>
+        {/if}
         {#if cursorSlot !== null}
             <span class="text-sm text-slate-300">
                 Tour : <span class="font-semibold {cursorSlot.side === 'blue' ? 'text-blue-300' : 'text-red-300'}">

@@ -14,6 +14,8 @@ import {
     replaceAt,
     roleEntryView,
     SEQUENCE_SLOTS,
+    slotOf,
+    slotsFor,
     SOLOQ_SLOTS,
     toDraftActions,
     usedKeys
@@ -207,5 +209,72 @@ describe('projections', () => {
         // 18 must NOT evict 266: falls back to the first free role (Jungle).
         expect(view.allyPicks[Role.Top]).toBe('266');
         expect(view.allyPicks[Role.Jungle]).toBe('18');
+    });
+});
+
+describe('First Selection (2026) — rouge premier', () => {
+    it('slotsFor red-first: alternance complète des 20 slots, calculée à la main', () => {
+        const slots = slotsFor('pro', 'red');
+        expect(slots).toHaveLength(20);
+        expect(slots.map((s) => s.side)).toEqual([
+            // ban1 (F S F S F S), F = rouge
+            'red', 'blue', 'red', 'blue', 'red', 'blue',
+            // pick1 (F S S F F S)
+            'red', 'blue', 'blue', 'red', 'red', 'blue',
+            // ban2 (S F S F)
+            'blue', 'red', 'blue', 'red',
+            // pick2 (S F F S)
+            'blue', 'red', 'red', 'blue'
+        ]);
+        expect(slots[0]).toMatchObject({ seq: 1, type: 'ban', phase: 'ban1', side: 'red' }); // seq 1 = ban ROUGE
+        expect(slots[6]).toMatchObject({ seq: 7, type: 'pick', phase: 'pick1', side: 'red' }); // seq 7 = pick ROUGE
+        expect(slots[7]).toMatchObject({ seq: 8, side: 'blue' }); // seq 8-9 = double pick BLEU
+        expect(slots[8]).toMatchObject({ seq: 9, side: 'blue' });
+        // Seqs/types/phases identiques au défaut — seul le side change.
+        expect(slots.map((s) => s.seq)).toEqual(SEQUENCE_SLOTS.map((s) => s.seq));
+        expect(slots.map((s) => s.type)).toEqual(SEQUENCE_SLOTS.map((s) => s.type));
+    });
+
+    it('rétro-compat : sans paramètre, le défaut bleu-premier est inchangé', () => {
+        expect(slotsFor('pro')).toBe(SEQUENCE_SLOTS);
+        expect(SEQUENCE_SLOTS[0]).toMatchObject({ seq: 1, side: 'blue' });
+        expect(slotOf(7)).toMatchObject({ seq: 7, side: 'blue' });
+        expect(slotOf(7, 'pro', 'red')).toMatchObject({ seq: 7, side: 'red' });
+    });
+
+    it('toDraftActions remappe les actions déjà saisies (stockage par seq, side dérivé)', () => {
+        let s = afterBans(); // b1..b6 sur les seq 1..6
+        s = placeChampion(s, '266'); // seq 7
+        s = assignRole(s, 7, Role.Jungle);
+        const blue = toDraftActions(s); // défaut : mêmes assertions qu'avant
+        const red = toDraftActions(s, 'pro', 'red');
+        expect(blue[0]).toMatchObject({ seq: 1, type: 'ban', side: 'blue', championKey: 'b1' });
+        expect(red[0]).toMatchObject({ seq: 1, type: 'ban', side: 'red', championKey: 'b1' });
+        expect(blue[6]).toMatchObject({ seq: 7, type: 'pick', side: 'blue', championKey: '266', role: Role.Jungle });
+        expect(red[6]).toMatchObject({ seq: 7, type: 'pick', side: 'red', championKey: '266', role: Role.Jungle });
+        // Rien d'autre ne bouge : mêmes seqs, mêmes champions, mêmes rôles.
+        expect(red.map((a) => a.seq)).toEqual(blue.map((a) => a.seq));
+        expect(red.map((a) => a.championKey)).toEqual(blue.map((a) => a.championKey));
+    });
+
+    it('roleEntryView red-first : les bans bleus tombent sur les seq 2, 4, 6', () => {
+        const view = roleEntryView(afterBans(), 'blue', undefined, 'pro', 'red');
+        expect(view.allyBans).toEqual(['b2', 'b4', 'b6', null, null]); // bleu = second à agir
+        expect(view.enemyBans).toEqual(['b1', 'b3', 'b5', null, null]);
+    });
+
+    it('roleEntryView red-first : un pick seq 7 appartient au camp ROUGE', () => {
+        let s = afterBans();
+        s = placeChampion(s, '266'); // seq 7 — premier pick = rouge en red-first
+        s = assignRole(s, 7, Role.Top);
+        const view = roleEntryView(s, 'red', undefined, 'pro', 'red');
+        expect(view.allyPicks[Role.Top]).toBe('266');
+        const blueView = roleEntryView(s, 'blue', undefined, 'pro', 'red');
+        expect(blueView.enemyPicks[Role.Top]).toBe('266');
+    });
+
+    it('soloq : firstPickSide ignoré (bans simultanés, serpentin fixe du client)', () => {
+        expect(slotsFor('soloq', 'red')).toBe(SOLOQ_SLOTS);
+        expect(slotsFor('soloq')).toBe(SOLOQ_SLOTS);
     });
 });
