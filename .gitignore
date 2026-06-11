@@ -28,3 +28,4 @@ data/datasets/*.json
 /*-report.txt
 # Loose screenshots dropped at repo root (UUID-named).
 /[0-9a-f]*-[0-9a-f]*-[0-9a-f]*-[0-9a-f]*-[0-9a-f]*.png
+data/corpus-backup-20260611/

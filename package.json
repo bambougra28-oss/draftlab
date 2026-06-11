@@ -14,7 +14,15 @@
         "test:watch": "vitest",
         "coverage:tags": "node --experimental-strip-types --no-warnings scripts/checkTagCoverage.ts",
         "backtest": "node --experimental-transform-types --no-warnings scripts/backtest/runCorpus.ts",
+        "backtest:coach": "node --experimental-transform-types --no-warnings scripts/backtest/coachGate.ts",
+        "backtest:bans": "node --experimental-transform-types --no-warnings scripts/backtest/banHistory.ts",
+        "backtest:series": "node --experimental-transform-types --no-warnings scripts/backtest/seriesRetention.ts",
+        "backtest:plans": "node --experimental-transform-types --no-warnings scripts/backtest/planCoverage.ts",
+        "calibration:pull": "node --experimental-transform-types --no-warnings scripts/data/pullDataset.ts",
+        "calibration:win": "node --experimental-transform-types --no-warnings scripts/backtest/winCalibration.ts",
         "corpus": "node --experimental-transform-types --no-warnings scripts/data/pullCorpus.ts",
+        "corpus:validate": "node --experimental-transform-types --no-warnings scripts/data/validateCorpus.ts",
+        "corpus:diff": "node --experimental-transform-types --no-warnings scripts/data/diffCorpus.ts",
         "concordance": "node --experimental-transform-types --no-warnings scripts/data/concordance.ts"
     },
     "pnpm": {

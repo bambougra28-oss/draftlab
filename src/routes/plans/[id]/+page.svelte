@@ -26,6 +26,16 @@
     import ChampionIcon from '$lib/components/ChampionIcon.svelte';
     import ChampionPicker from '$lib/components/ChampionPicker.svelte';
     import { ROLE_LABELS } from '$lib/components/ChampionSlot.svelte';
+    import { fetchTeam, fetchTeamList } from '$lib/pro/golgg';
+    import type { ProTeam } from '$lib/pro/types';
+    import { buildOpponentIntel } from '$lib/intel/opponentIntel';
+    import { loadCorpusRecords } from '$lib/intel/corpusStore';
+    import { canonicalTeamName } from '$lib/data/normalize';
+    import { predict, slotGroupOf } from '$lib/aggregates/tendency';
+    import { banRotationOf, rotationOf } from '$lib/aggregates/rotations';
+    import { comparePatches } from '$lib/backtest/walkforward';
+    import { compilePlanTree, massByEnemyDepth, type CompileContext } from '$lib/strategic/planTree';
+    import { deletePlanTree, getPlanTree, savePlanTree, type StoredPlanTree } from '$lib/storage/planTrees';
 
     let plan = $state<DraftPlan | null>(null);
     let loading = $state(true);
@@ -71,8 +81,116 @@
     async function removePlan(): Promise<void> {
         if (plan === null) return;
         if (!confirm(`Supprimer le plan « ${plan.name} » ?`)) return;
+        await deletePlanTree(plan.id); // supprimer un plan supprime son arbre (§2.4)
         await deleteDraftPlan(plan.id);
         await goto(resolve('/plans'));
+    }
+
+    // ---- Arbre de prep (chantier D) : compile contre un adversaire synchronisé ----
+    let tree = $state<StoredPlanTree | null>(null);
+    let opponentLeague = $state('lfl');
+    let opponentList = $state<{ id: string; name: string }[]>([]);
+    let opponentId = $state<string | null>(null);
+    let opponent = $state<ProTeam | null>(null);
+    let syncingOpponent = $state(false);
+    let compiling = $state(false);
+
+    $effect(() => {
+        const id = planId;
+        if (id !== '')
+            void getPlanTree(id).then((t) => {
+                if (planId === id) tree = t ?? null;
+            });
+    });
+
+    async function loadOpponents(): Promise<void> {
+        const { teams } = await fetchTeamList({});
+        opponentList = teams
+            .map((t) => ({ id: t.id, name: t.name }))
+            .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+    }
+
+    async function syncOpponent(): Promise<void> {
+        if (opponentId === null) return;
+        syncingOpponent = true;
+        try {
+            opponent = await fetchTeam(opponentId, { league: opponentLeague });
+        } finally {
+            syncingOpponent = false;
+        }
+    }
+
+    async function compileAgainstOpponent(): Promise<void> {
+        if (plan === null || opponent === null) return;
+        compiling = true;
+        try {
+            const leagueRecords = (await loadCorpusRecords(opponentLeague)) ?? [];
+            const canonical = canonicalTeamName(opponent.name);
+            const corpusTeamRecords = leagueRecords.filter(
+                (r) => canonicalTeamName(r.blueTeam) === canonical || canonicalTeamName(r.redTeam) === canonical
+            );
+            const now = Date.now();
+            const intel = buildOpponentIntel(opponent, {
+                now: new Date(now).toISOString(),
+                ...(leagueRecords.length > 0 ? { leagueRecords } : {}),
+                ...(corpusTeamRecords.length > 0 ? { corpusTeamRecords } : {})
+            });
+            const table = intel.table;
+            const enemyDistribution: CompileContext['enemyDistribution'] = (state, slot) => {
+                const slotGroup = slot.type === 'pick' ? rotationOf(slot.seq) : banRotationOf(slot.seq);
+                if (slotGroup === undefined) return [];
+                const exclude = new Set(state.actions.map((a) => a.championKey).filter((k) => k !== ''));
+                return predict(table, { slotGroup, side: slot.side, exclude }).map((p) => ({
+                    championKey: p.championKey,
+                    p: p.p
+                }));
+            };
+            const evidenceOf: CompileContext['evidenceOf'] = (championKey, slot) => {
+                const slotGroup = slot.type === 'pick' ? rotationOf(slot.seq) : banRotationOf(slot.seq);
+                const entry =
+                    slotGroup === undefined
+                        ? undefined
+                        : predict(table, { slotGroup, side: slot.side }).find((p) => p.championKey === championKey);
+                const exampleGameIds = intel.records
+                    .filter((r) =>
+                        r.actions.some(
+                            (a) =>
+                                a.championKey === championKey && a.side === slot.side && slotGroupOf(a) === slotGroup
+                        )
+                    )
+                    .slice(0, 3)
+                    .map((r) => r.gameId);
+                return {
+                    rawCount: entry?.rawCount ?? 0,
+                    total: entry?.total ?? 0,
+                    ...(exampleGameIds.length > 0 ? { exampleGameIds } : {})
+                };
+            };
+            let latestPatch: string | undefined;
+            for (const r of intel.records) {
+                if (r.patch !== undefined && (latestPatch === undefined || comparePatches(r.patch, latestPatch) > 0))
+                    latestPatch = r.patch;
+            }
+            const compiled = compilePlanTree({
+                ourSide: plan.side ?? 'blue',
+                plan: $state.snapshot(plan) as DraftPlan,
+                enemyDistribution,
+                evidenceOf,
+                // Côté prep : pas de dataset M1 chargé → mapping statique du plan
+                // (la page draft recompile avec navigate si besoin).
+                ourReply: () => null,
+                now,
+                opponent: opponent.name,
+                modelProvenance: {
+                    records: intel.records.length,
+                    ...(latestPatch !== undefined ? { latestPatch } : {}),
+                    league: opponentLeague
+                }
+            });
+            tree = await savePlanTree(compiled);
+        } finally {
+            compiling = false;
+        }
     }
 
     /** Keys already used anywhere in the plan (bans + primaries + fallbacks). */
@@ -308,6 +426,72 @@
                 placeholder="Conditions de bascule vers le plan B/C, lectures adverses attendues…"
                 class="w-full rounded-md border border-slate-800 bg-slate-950/40 px-2 py-1.5 text-sm text-slate-300 placeholder:text-slate-700 focus:border-blue-500 focus:outline-none"
             ></textarea>
+        </section>
+
+        <!-- Arbre de prep (chantier D) : compile contre un adversaire synchronisé -->
+        <section class="rounded-lg border border-slate-800 bg-slate-900 p-3">
+            <h2 class="pb-2 text-[11px] font-semibold tracking-widest text-slate-500 uppercase">
+                Arbre de prep (script à branches)
+            </h2>
+            <div class="flex flex-wrap items-end gap-2">
+                <button
+                    type="button"
+                    onclick={() => void loadOpponents()}
+                    class="rounded-md bg-slate-800 px-2 py-1.5 text-xs text-slate-300 hover:bg-slate-700"
+                    >Charger les équipes</button
+                >
+                <select
+                    bind:value={opponentId}
+                    class="rounded-md border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-200"
+                >
+                    <option value={null}>Adversaire…</option>
+                    {#each opponentList as t (t.id)}<option value={t.id}>{t.name}</option>{/each}
+                </select>
+                <button
+                    type="button"
+                    onclick={() => void syncOpponent()}
+                    disabled={opponentId === null || syncingOpponent}
+                    class="rounded-md bg-slate-800 px-2 py-1.5 text-xs text-slate-300 hover:bg-slate-700 disabled:opacity-50"
+                >
+                    {syncingOpponent ? 'Sync…' : 'Synchroniser'}
+                </button>
+                <button
+                    type="button"
+                    onclick={() => void compileAgainstOpponent()}
+                    disabled={opponent === null || compiling}
+                    class="rounded-md bg-gold-500/15 px-3 py-1.5 text-xs font-semibold text-gold-300 ring-1 ring-gold-600/50 hover:bg-gold-500/25 disabled:opacity-50"
+                >
+                    {compiling ? 'Compilation…' : opponent === null ? 'Compiler (synchronisez un adversaire)' : `Compiler contre ${opponent.name}`}
+                </button>
+            </div>
+            {#if opponent === null}
+                <p class="pt-2 text-[11px] text-slate-600">
+                    Sans adversaire synchronisé (et idéalement un corpus de sa ligue), pas de branches : l'arbre EST
+                    le modèle de tendances de cette équipe.
+                </p>
+            {/if}
+            {#if tree !== null}
+                <div class="pt-2 text-xs text-slate-400">
+                    <p>
+                        {tree.nodeCount} nœuds · compilé le {new Date(tree.builtAt).toLocaleString('fr-FR')} · modèle :
+                        {tree.modelProvenance.records} games {tree.opponent}{tree.modelProvenance.latestPatch !== undefined
+                            ? `, patch ≤ ${tree.modelProvenance.latestPatch}`
+                            : ''}
+                    </p>
+                    <p class="pt-1">
+                        Masse couverte par CET arbre, par profondeur adverse (Σ pathMass — propriété du compile,
+                        jamais une « tenue moyenne ») :
+                        {#each massByEnemyDepth(tree.root) as m, d (d)}<span
+                                class="ml-1 rounded bg-slate-800/70 px-1.5 py-0.5 font-mono text-[10px]"
+                                >a{d + 1} : {Math.round(m * 100)} %</span
+                            >{/each}
+                    </p>
+                    <p class="pt-1 text-[10px] text-slate-600 italic">
+                        Caveat : couverture mesurée sous entrelacement supposé blue-first (ordre intra-équipe exact,
+                        alternance conventionnelle).
+                    </p>
+                </div>
+            {/if}
         </section>
 
         <!-- Champion picker overlay -->

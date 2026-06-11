@@ -8,7 +8,9 @@
     (DA-V2-11) until the engines pass their validation gates.
 -->
 <script lang="ts">
-    import type { CoachAdvice, EnemyRoleReport } from '$lib/intel/liveDraft';
+    import type { CoachAdvice, CoachCandidate, EnemyRoleReport } from '$lib/intel/liveDraft';
+    import type { DraftSide } from '$lib/data/types';
+    import { calibrateAllyWin, type WinCalibrationConfig } from '$lib/estimators/winCalibration';
     import { championNameByKey } from '$lib/dataDragon/version';
     import ChampionIcon from '$lib/components/ChampionIcon.svelte';
 
@@ -21,6 +23,12 @@
         /** Enemy role read (I2 hypotheses) — mismatch warnings + ambiguity. */
         roleReads?: EnemyRoleReport | null;
         title?: string;
+        /** Carte de calibration shippée (chantier E) — null = % bruts. */
+        calibration?: WinCalibrationConfig | null;
+        /** Picks verrouillés AVANT l'action conseillée (les deux sides). */
+        picksLocked?: number;
+        /** Side allié — perspective des winAfter (l'aller-retour espace bleu en dépend). */
+        ourSide?: DraftSide;
     }
 
     const {
@@ -28,12 +36,44 @@
         unavailableReason = null,
         noteFr = null,
         roleReads = null,
-        title = 'Coach — prochain coup'
+        title = 'Coach — prochain coup',
+        calibration = null,
+        picksLocked = 0,
+        ourSide = 'blue'
     }: Props = $props();
 
     const nameOf = (key: string): string => championNameByKey(key) ?? key;
     const pct = (p: number): string => `${(100 * p).toFixed(1).replace('.', ',')} %`;
     const pp = (v: number): string => `${v >= 0 ? '+' : ''}${v.toFixed(1).replace('.', ',')} pp`;
+
+    /**
+     * Calibration à l'AFFICHAGE seulement (le tri du navigator et liveDraft ne
+     * changent pas ; b > 0 garantit l'ordre à position égale). L'ancre d'un
+     * candidat est la position APRÈS son action : un pick verrouille un pick de
+     * plus, un ban aucun.
+     */
+    const winShown = (candidate: CoachCandidate): number =>
+        calibration === null
+            ? candidate.winAfter
+            : calibrateAllyWin(
+                  candidate.winAfter,
+                  ourSide,
+                  picksLocked + (candidate.actionType === 'pick' ? 1 : 0),
+                  calibration
+              ).pAlly;
+
+    /** Écart vs le suivant, en pp, recalculé sur les valeurs AFFICHÉES (ordre inchangé). */
+    const edgeShownPp = (index: number): number => {
+        if (advice === null || index + 1 >= advice.candidates.length) return 0;
+        return Math.max(0, (winShown(advice.candidates[index]) - winShown(advice.candidates[index + 1])) * 100);
+    };
+
+    /** DA-V2-12 : seul le STATUT DU % change — le moteur de recommandation reste expérimental. */
+    const pctCalibrated = $derived(
+        calibration !== null &&
+            ((calibration.positions.fullDraft?.validated ?? false) ||
+                (calibration.positions.after3Picks?.validated ?? false))
+    );
     const ROLE_FR = ['top', 'jungle', 'mid', 'bot', 'support'] as const;
     const mismatches = $derived(roleReads === null ? [] : roleReads.reads.filter((r) => r.mismatch));
 </script>
@@ -46,10 +86,14 @@
             {title}
         </h2>
         <span
-            class="cursor-help rounded bg-amber-900/60 px-1.5 py-0.5 text-[10px] font-medium text-amber-300"
-            title="Les briques du coach sont validées une à une (ranges, contre-profils, rôles), mais la qualité du classement final n'a pas encore passé sa porte de validation chiffrée — détail dans « Comment lire ? »."
+            class="cursor-help rounded px-1.5 py-0.5 text-[10px] font-medium {pctCalibrated
+                ? 'bg-emerald-900/60 text-emerald-300'
+                : 'bg-amber-900/60 text-amber-300'}"
+            title={pctCalibrated
+                ? 'Le moteur de RECOMMANDATION reste expérimental (classement non validé), mais les % affichés passent par la carte de calibration mesurée walk-forward sur corpus pro : quand le coach dit X %, la fréquence observée tombe dans le bac correspondant — détail dans « Comment lire ? ».'
+                : 'Les briques du coach sont validées une à une (ranges, contre-profils, rôles), mais la qualité du classement final n’a pas encore passé sa porte de validation chiffrée — détail dans « Comment lire ? ».'}
         >
-            Expérimental — non calibré
+            {pctCalibrated ? `Expérimental — % calibrés sur ${calibration?.nGames} games` : 'Expérimental — non calibré'}
         </span>
         {#if advice !== null && advice.evaluatedNodes > 0}
             <span
@@ -89,11 +133,11 @@
                                 <div class="flex flex-wrap items-baseline gap-2">
                                     <span class="font-semibold text-slate-100">{nameOf(candidate.championKey)}</span>
                                     <span class="text-xs text-slate-400">
-                                        win estimé après : <span class="font-medium text-slate-200">{pct(candidate.winAfter)}</span>
+                                        win estimé après : <span class="font-medium text-slate-200">{pct(winShown(candidate))}</span>
                                     </span>
-                                    {#if index === 0 && candidate.edgeVsNextPp >= 0.05}
+                                    {#if index === 0 && edgeShownPp(index) >= 0.05}
                                         <span class="rounded bg-blue-900/50 px-1.5 py-0.5 text-[10px] text-blue-300">
-                                            {pp(candidate.edgeVsNextPp)} vs le suivant
+                                            {pp(edgeShownPp(index))} vs le suivant
                                         </span>
                                     {/if}
                                     {#if candidate.pairWith !== undefined}
@@ -182,7 +226,8 @@
                 <p>
                     <strong class="text-slate-300">Win estimé après</strong> : la probabilité de victoire de
                     votre équipe si vous jouez ce champion puis que les deux camps jouent leurs meilleures
-                    suites (moteur statistique SoloQ + confort joueur — indicatif, non calibré sur le pro).
+                    suites (moteur statistique SoloQ + confort joueur — calibré sur corpus pro quand le
+                    bandeau l'indique, sinon indicatif non calibré).
                 </p>
                 <p>
                     <strong class="text-slate-300">Immédiat / Anticipation</strong> : la part du gain due au
