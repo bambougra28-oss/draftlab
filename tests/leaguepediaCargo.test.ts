@@ -131,6 +131,62 @@ describe('rowToDraftRecord', () => {
         const r = rowToDraftRecord(sampleRow({ winner: '', winteam: 'Gen.G' }), 'now');
         expect(r.winner).toBe('red');
     });
+
+    describe('PB match-order vs SG side-order realignment (First Selection era)', () => {
+        // Le cas finale LEC 2026 G5 vérifié live : PB.Team1 = Karmine Corp
+        // (équipe 1 du MATCH), SG.Team1 = G2 Esports (côté BLEU de la game),
+        // PB.Winner = 2 (= PB.Team2 = G2) = SG.WinTeam. Sans réalignement nous
+        // lisions « red (KC) gagne » et donnions les picks de KC à G2.
+        const finaleG5 = (over: CargoRow = {}): CargoRow =>
+            sampleRow({
+                pbt1: 'Karmine Corp',
+                pbt2: 'G2 Esports',
+                team1: 'G2 Esports',
+                team2: 'Karmine Corp',
+                winteam: 'G2 Esports',
+                winner: '2',
+                ...over
+            });
+
+        it('swaps PB columns and the winner index when PB.Team1 is the red side', () => {
+            const r = rowToDraftRecord(finaleG5(), 'now');
+            // winner index 2 → PB.Team2 = G2 = côté bleu après réalignement.
+            expect(r.winner).toBe('blue');
+            expect(r.blueTeam).toBe('G2 Esports');
+            // Les colonnes t1* (PB.Team1 = KC = red) vont au side rouge :
+            // t1p1 = Kai'Sa du sampleRow → désormais pick rouge seq 8.
+            const kaisa = r.actions.find((a) => a.championName === "Kai'Sa");
+            expect(kaisa?.side).toBe('red');
+            // Et t2b1 = Rumble (PB.Team2 = G2 = blue) ouvre les bans bleus.
+            const rumble = r.actions.find((a) => a.championName === 'Rumble');
+            expect(rumble?.side).toBe('blue');
+            expect(rumble?.seq).toBe(1);
+            expect(r.warnings.some((w) => w.includes('PB columns swapped'))).toBe(true);
+        });
+
+        it('keeps aligned games byte-identical (PB.Team1 = blue)', () => {
+            const aligned = rowToDraftRecord(
+                sampleRow({ pbt1: 'T1', pbt2: 'Gen.G' }),
+                '2026-06-10T12:00:00Z'
+            );
+            const legacy = rowToDraftRecord(sampleRow(), '2026-06-10T12:00:00Z');
+            expect(aligned.winner).toBe(legacy.winner);
+            expect(aligned.actions).toEqual(legacy.actions);
+            expect(aligned.warnings.some((w) => w.includes('swapped'))).toBe(false);
+        });
+
+        it('warns and leaves columns as-is when PB.Team1 matches neither side', () => {
+            const r = rowToDraftRecord(sampleRow({ pbt1: 'Autre Nom', pbt2: 'Gen.G' }), 'now');
+            expect(r.winner).toBe('blue'); // index 1 non inversé
+            expect(r.warnings.some((w) => w.includes('matches neither'))).toBe(true);
+        });
+
+        it('swapped game with winner index 1 credits the red side', () => {
+            // G1 de la finale : PB.Winner = 1 = PB.Team1 = KC, KC est red.
+            const r = rowToDraftRecord(finaleG5({ winner: '1', winteam: 'Karmine Corp' }), 'now');
+            expect(r.winner).toBe('red');
+        });
+    });
 });
 
 describe('fetchDraftRecords — pagination & errors', () => {

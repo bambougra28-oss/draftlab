@@ -61,7 +61,11 @@ const SG_FIELD_ALIASES: Record<string, string> = {
 const PB_FIELD_ALIASES: Record<string, string> = {
     'PB.MatchId': 'mid',
     'PB.N_GameInMatch': 'gn',
-    'PB.Winner': 'winner'
+    'PB.Winner': 'winner',
+    // PB rows are keyed by the MATCH's team order (constant across a series),
+    // SG rows by SIDE — the names let rowToDraftRecord realign (FS era, 2026).
+    'PB.Team1': 'pbt1',
+    'PB.Team2': 'pbt2'
 };
 for (let i = 1; i <= 5; i++) {
     PB_FIELD_ALIASES[`PB.Team1Ban${i}`] = `t1b${i}`;
@@ -149,9 +153,28 @@ function columnsFor(row: CargoRow, team: 1 | 2): TeamDraftColumns {
 export function rowToDraftRecord(row: CargoRow, fetchedAt: string): DraftRecord {
     const date = cargoDateTimeToIso(row.dt);
 
-    // Team1 = blue side (verified from the PicksAndBansS7 schema docs).
-    const blue = columnsFor(row, 1);
-    const red = columnsFor(row, 2);
+    // PB.Team1 is the MATCH's team 1 (constant across a series — verified live
+    // on the LEC 2026 finale, 2026-06-11), while SG.Team1 is the BLUE side of
+    // the game. Pre-2026 entries were side-keyed (always aligned); in the
+    // First-Selection era the two diverge whenever match-team-1 plays red —
+    // realign every PB column (picks/bans/roles AND the Winner index) onto
+    // sides by team NAME before mapping. Names match neither side ⇒ keep
+    // as-is and warn (counted, never guessed).
+    const pbSwapped =
+        row.pbt1 !== undefined &&
+        row.pbt1 !== '' &&
+        row.team1 !== undefined &&
+        row.pbt1 !== row.team1 &&
+        row.pbt1 === row.team2;
+    const pbUnmatched =
+        row.pbt1 !== undefined &&
+        row.pbt1 !== '' &&
+        row.team1 !== undefined &&
+        row.pbt1 !== row.team1 &&
+        row.pbt1 !== row.team2;
+
+    const blue = columnsFor(row, pbSwapped ? 2 : 1);
+    const red = columnsFor(row, pbSwapped ? 1 : 2);
 
     // Pre-First-Selection the blue side always picked first; in the FS era the
     // interleaving is an assumption until cross-checked (see draftRecord.ts).
@@ -163,9 +186,21 @@ export function rowToDraftRecord(row: CargoRow, fetchedAt: string): DraftRecord 
         resolveKey: resolveChampionKey
     });
 
+    if (pbSwapped) {
+        warnings.push(
+            'PB columns swapped onto scoreboard sides (match-order vs side-order, First Selection era)'
+        );
+    }
+    if (pbUnmatched) {
+        warnings.push(
+            `PB team '${row.pbt1}' matches neither scoreboard team — PB columns left as-is`
+        );
+    }
+
+    const winnerIndex = pbSwapped ? (row.winner === '1' ? '2' : row.winner === '2' ? '1' : row.winner) : row.winner;
     let winner: DraftSide | undefined;
-    if (row.winner === '1') winner = 'blue';
-    else if (row.winner === '2') winner = 'red';
+    if (winnerIndex === '1') winner = 'blue';
+    else if (winnerIndex === '2') winner = 'red';
     else if (row.winteam && row.team1 && row.winteam === row.team1) winner = 'blue';
     else if (row.winteam && row.team2 && row.winteam === row.team2) winner = 'red';
 
