@@ -1,11 +1,42 @@
 {
     "version": 1,
-    "generatedAt": "2026-06-11T00:00:00.000Z",
-    "corpora": [],
-    "nGames": 0,
+    "generatedAt": "2026-06-11T11:59:29.196Z",
+    "corpora": [
+        "static/corpus/lck-2026.json",
+        "static/corpus/lec-2026.json",
+        "static/corpus/lfl-2026.json",
+        "static/corpus/lpl-2026.json",
+        "data/corpus/lec-2025.json",
+        "data/corpus/lfl-2025.json",
+        "data/corpus/lpl-2025.json"
+    ],
+    "nGames": 2659,
+    "fittedThroughPatch": "26.11",
+    "dataset": {
+        "version": "16.12.1",
+        "date": "2026-06-10T15:27:33.873Z",
+        "sha256Current": "aca91656af68dff5016152e947aafbcebfb3dfe320cc2781f8fdbe8983fb8869",
+        "sha256Full": "6933c7c2d107afd465e7d8f0c44765305ff8747a187ed54c4c1f73e87651a4b1"
+    },
+    "seed": 42,
     "positions": {
-        "afterBans": null,
-        "after3Picks": null,
-        "fullDraft": null
+        "afterBans": {
+            "a": 0.15752689818073934,
+            "b": 1,
+            "nTrain": 2659,
+            "validated": false
+        },
+        "after3Picks": {
+            "a": 0.14640945075264306,
+            "b": 0.675449277412124,
+            "nTrain": 2659,
+            "validated": false
+        },
+        "fullDraft": {
+            "a": 0.15940763695297408,
+            "b": 0.5490092266165404,
+            "nTrain": 2659,
+            "validated": false
+        }
     }
 }
