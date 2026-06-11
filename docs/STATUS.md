@@ -1,6 +1,25 @@
 # DraftLab — Status
 
-Updated: 2026-06-10 (science de la draft intégrée aux moteurs)
+Updated: 2026-06-11 (run #2 EN PAUSE — vague 2 interrompue proprement)
+
+## ⏸ RUN #2 EN PAUSE (état exact et reprise)
+
+**Fait et committé sur main** : les 5 designs gelés post-revue adversariale
+(`docs/run2/`), le module statistique commun (`clusterBootstrap`),
+l'amendement de gouvernance G3→G3-demande, les snapshots DraftGap hashés
+(`data/datasets/SNAPSHOT.md`).
+
+**Interrompu en vol** : la vague 2 (implémentation, 5 agents) — l'état
+intermédiaire vit sur la branche **`run2-vague2-wip`** (poussée, NE PAS
+merger tel quel). Le workflow est resumable : runId `wf_f38f2531-86a`
+(les agents terminés reviennent du cache).
+
+**Reprise** : dire « reprends la run #2 » →
+1. repartir de la branche WIP (ou resume du workflow) pour finir la vague 2 ;
+2. vague 3 = gates complètes puis les RUNS de validation one-shot, dans
+   l'ordre A (gate coach), B, C, D, E — snapshots et gouvernance déjà prêts ;
+3. en heures creuses : pull `lck-2025` (commande au §reste) → réplication G1
+   → enrichissement joueurs (`enrichPlayers.ts`).
 
 ## State
 
