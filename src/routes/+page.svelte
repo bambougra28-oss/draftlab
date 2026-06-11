@@ -2,11 +2,18 @@
 /**
  * Route / — Team scout + Bayesian draft analyzer + Pool Tier (M1/M2 assembly).
  *
- * Wiring per M2_PING3: `contextActive` / `leagueId` / team state live here;
- * `playerContext` and `sideContext` are $derived and COLLAPSE to undefined when
- * the master toggle is off, so the engine call falls back to the pure M1 path.
- * `fetchTeam` runs on Sync, `fetchTeamList` lazily from the panel button, the
- * dataset pair loads on mount (skeleton — first load is ~50 MB).
+ * Wiring per M2_PING3: `contextActive` / per-side leagues / team state live
+ * here; `playerContext` and `sideContext` are $derived and COLLAPSE to
+ * undefined when the master toggle is off, so the engine call falls back to
+ * the pure M1 path. `fetchTeam` runs on Sync, `fetchTeamList` lazily from the
+ * panel buttons, the dataset pair loads on mount (first load is ~50 MB).
+ *
+ * Matchs inter-régions (directive 2026-06-11) : UNE LIGUE PAR CAMP.
+ * `leagueIdA` pilote tout ce qui décrit NOTRE équipe (corpusTeamA,
+ * publicModelA, coachFallback, priors de flex) ; `leagueIdB` tout ce qui
+ * décrit L'ADVERSAIRE (corpusTeamB, intel, enemyRoleReads, publicModelB,
+ * provenance des arbres). leagueIdB === leagueIdA au premier rendu ⇒
+ * comportement identique à avant (un seul corpus chargé, référence partagée).
  *
  * Comfort tags: stored overrides (localStorage via $lib/comfort) take priority
  * over the pool-size defaults computed by buildPlayerContext; the subscription
@@ -221,10 +228,16 @@
         activeSeries = null;
     }
 
-    /** League role priors — flex resolver + board hints (cached on records). */
+    /**
+     * League role priors — flex resolver + board hints (cached on records).
+     * Routage inter-régions : ligue de l'équipe A. Le résolveur sert la saisie
+     * séquence des DEUX camps mais son API (championKey + rôles libres) ne
+     * porte pas le side — choix documenté : NOTRE ligue (A), les priors de
+     * rôle adverses dédiés vivent dans enemyRoleReads (ligue B).
+     */
     const leaguePriorsFn = $derived.by(() => {
-        if (leagueRecords === null) return null;
-        return rolePriorsOf(fitRolePriors(leagueRecords));
+        if (leagueRecordsA === null) return null;
+        return rolePriorsOf(fitRolePriors(leagueRecordsA));
     });
 
     const seqRoleResolver = $derived.by(() => {
@@ -275,13 +288,20 @@
         enemyBans = [...view.enemyBans];
     });
 
-    // ---- team context state (M2_PING3) ----
+    // ---- team context state (M2_PING3 + inter-régions 2026-06-11) ----
     let contextActive = $state(false);
-    let leagueId = $state('lfl');
+    /** Ligue de l'équipe A (nous) — l'ancien `leagueId`, même défaut. */
+    let leagueIdA = $state('lfl');
+    /** Ligue de l'équipe B (eux) — défaut = celle de A ⇒ comportement historique. */
+    let leagueIdB = $state('lfl');
     let tournamentSlug = $state<string | null>(null);
-    let teamList = $state<{ id: string; name: string }[]>([]);
-    let teamListLoading = $state(false);
-    let teamListWarnings = $state<string[]>([]);
+    // Listes d'équipes séparées par camp : chacune est fetchée avec la région de SA ligue.
+    let teamListA = $state<{ id: string; name: string }[]>([]);
+    let teamListB = $state<{ id: string; name: string }[]>([]);
+    let teamListLoadingA = $state(false);
+    let teamListLoadingB = $state(false);
+    let teamListWarningsA = $state<string[]>([]);
+    let teamListWarningsB = $state<string[]>([]);
     let teamAId = $state<string | null>(null);
     let teamBId = $state<string | null>(null);
     let teamA = $state<ProTeam | null>(null);
@@ -422,7 +442,8 @@
             if (r.patch !== undefined && (latestPatch === undefined || comparePatches(r.patch, latestPatch) > 0))
                 latestPatch = r.patch;
         }
-        return { records: records.length, ...(latestPatch !== undefined ? { latestPatch } : {}), league: leagueId };
+        // Provenance du modèle ADVERSE (tendances/ranges de l'équipe B) ⇒ ligue B.
+        return { records: records.length, ...(latestPatch !== undefined ? { latestPatch } : {}), league: leagueIdB };
     }
 
     /** Recompile « d'ici » : budget réduit (< 2 s), horizon = actions adverses restantes. */
@@ -657,28 +678,52 @@
     }
 
     // ---- gol.gg wiring ----
-    function changeLeague(id: string): void {
-        leagueId = id;
+    /**
+     * Changer la ligue d'UN camp ne touche que ce camp (l'autre reste intact —
+     * c'est ce qui permet d'opposer deux régions, MSI/Worlds). Sa liste se
+     * recharge si elle était déjà affichée, son équipe se réinitialise.
+     */
+    function changeLeague(which: 'A' | 'B', id: string): void {
         tournamentSlug = null;
-        teamList = [];
-        teamListWarnings = [];
-        teamAId = null;
-        teamBId = null;
-        teamA = null;
-        teamB = null;
-        syncedAtA = null;
-        syncedAtB = null;
+        if (which === 'A') {
+            const hadList = teamListA.length > 0;
+            leagueIdA = id;
+            teamListA = [];
+            teamListWarningsA = [];
+            teamAId = null;
+            teamA = null;
+            syncedAtA = null;
+            if (hadList) void loadTeamList('A');
+        } else {
+            const hadList = teamListB.length > 0;
+            leagueIdB = id;
+            teamListB = [];
+            teamListWarningsB = [];
+            teamBId = null;
+            teamB = null;
+            syncedAtB = null;
+            if (hadList) void loadTeamList('B');
+        }
     }
 
-    async function loadTeamList(): Promise<void> {
-        teamListLoading = true;
-        const region = REGION_BY_LEAGUE[leagueId];
+    /** Liste d'équipes d'un camp — région de SA ligue (hors mapping ⇒ liste non filtrée). */
+    async function loadTeamList(which: 'A' | 'B'): Promise<void> {
+        if (which === 'A') teamListLoadingA = true;
+        else teamListLoadingB = true;
+        const region = REGION_BY_LEAGUE[which === 'A' ? leagueIdA : leagueIdB];
         const { teams, warnings } = await fetchTeamList(region !== undefined ? { region } : {});
-        teamList = teams
+        const list = teams
             .map((t) => ({ id: t.id, name: t.name }))
             .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
-        teamListWarnings = warnings;
-        teamListLoading = false;
+        if (which === 'A') {
+            teamListA = list;
+            teamListWarningsA = warnings;
+            teamListLoadingA = false;
+        } else {
+            teamListB = list;
+            teamListWarningsB = warnings;
+            teamListLoadingB = false;
+        }
     }
 
     async function syncTeam(which: 'A' | 'B'): Promise<void> {
@@ -688,7 +733,7 @@
         else syncingB = true;
         // fetchTeam is best-effort and never throws (warnings + `incomplete`).
         const team = await fetchTeam(id, {
-            league: leagueId,
+            league: which === 'A' ? leagueIdA : leagueIdB,
             ...(datasets !== null ? { dataset: datasets.fullDataset } : {})
         });
         if (which === 'A') {
@@ -709,7 +754,8 @@
     );
 
     const dataWarnings = $derived([
-        ...teamListWarnings,
+        ...teamListWarningsA.map((w) => `Liste équipes A — ${w}`),
+        ...teamListWarningsB.map((w) => `Liste équipes B — ${w}`),
         ...(teamA?.warnings ?? []).map((w) => `Équipe A — ${w}`),
         ...(teamB?.warnings ?? []).map((w) => `Équipe B — ${w}`)
     ]);
@@ -760,7 +806,13 @@
     let corpusStatuses = $state<CorpusLeagueStatus[]>([]);
     let corpusBusy = $state(false);
     let corpusWarnings = $state<string[]>([]);
-    let leagueRecords = $state<DraftRecord[] | null>(null);
+    /** Corpus de la ligue de l'équipe A (nous) — nos modèles, nos replis. */
+    let leagueRecordsA = $state<DraftRecord[] | null>(null);
+    /**
+     * Corpus de la ligue de l'équipe B (eux) — intel, priors adverses. Même
+     * ligue des deux côtés ⇒ MÊME référence que leagueRecordsA (un seul load).
+     */
+    let leagueRecordsB = $state<DraftRecord[] | null>(null);
     /** Tag-pair cells fitted on the FULL corpus (cross-league) — coach pair axis. */
     let pairFit = $state<TagPairFit | null>(null);
     /** Ordered counter cells (same corpus) — coach counter-the-comp axis. */
@@ -772,13 +824,25 @@
      */
     let playerFit = $state<PlayerHistoryFit | null>(null);
 
+    /**
+     * Charge les corpus des DEUX camps (a, b) puis publie si les sélecteurs
+     * n'ont pas bougé entre-temps. b === a ⇒ une seule lecture IndexedDB,
+     * référence partagée entre leagueRecordsA et leagueRecordsB.
+     */
+    async function loadLeaguePairRecords(a: string, b: string): Promise<void> {
+        const recordsA = await loadCorpusRecords(a);
+        const recordsB = b === a ? recordsA : await loadCorpusRecords(b);
+        if (leagueIdA === a) leagueRecordsA = recordsA;
+        if (leagueIdB === b) leagueRecordsB = recordsB;
+    }
+
     async function refreshCorpus(): Promise<void> {
         corpusBusy = true;
         try {
             const report = await importBundledCorpora();
             corpusWarnings = report.warnings;
             corpusStatuses = await corpusStatus();
-            leagueRecords = await loadCorpusRecords(leagueId);
+            await loadLeaguePairRecords(leagueIdA, leagueIdB);
             const allRecords = await loadAllCorpusRecords();
             pairFit = allRecords.length > 0 ? fitTagPairCells(allRecords) : null;
             counterFit = allRecords.length > 0 ? fitTagCounterCells(allRecords) : null;
@@ -794,39 +858,41 @@
         void refreshCorpus();
     });
 
-    // Follow the league selector: the intel prior/meta is league-scoped.
+    // Follow the league selectors: each side's prior/meta is league-scoped.
     $effect(() => {
-        const league = leagueId;
-        void loadCorpusRecords(league).then((records) => {
-            if (leagueId === league) leagueRecords = records;
-        });
+        const a = leagueIdA;
+        const b = leagueIdB;
+        void loadLeaguePairRecords(a, b);
     });
 
-    /** Team B's both-sided corpus games (canonical name match). */
+    /** Team B's both-sided corpus games (canonical name match) — filtré depuis SA ligue (B). */
     const corpusTeamB = $derived.by((): DraftRecord[] => {
-        if (teamB === null || leagueRecords === null) return [];
+        if (teamB === null || leagueRecordsB === null) return [];
         const canonical = canonicalTeamName(teamB.name);
-        return leagueRecords.filter(
+        return leagueRecordsB.filter(
             (r) => canonicalTeamName(r.blueTeam) === canonical || canonicalTeamName(r.redTeam) === canonical
         );
     });
 
-    /** Team A's both-sided corpus games (même mécanisme) — source du lineup corpus A. */
+    /** Team A's both-sided corpus games (même mécanisme, ligue A) — source du lineup corpus A. */
     const corpusTeamA = $derived.by((): DraftRecord[] => {
-        if (teamA === null || leagueRecords === null) return [];
+        if (teamA === null || leagueRecordsA === null) return [];
         const canonical = canonicalTeamName(teamA.name);
-        return leagueRecords.filter(
+        return leagueRecordsA.filter(
             (r) => canonicalTeamName(r.blueTeam) === canonical || canonicalTeamName(r.redTeam) === canonical
         );
     });
 
     // ---- C1: opponent intel (team B) ----
-    /** Recomputed on sync only (teamB / nowTick) — the clock is injected. */
+    /**
+     * Recomputed on sync only (teamB / nowTick) — the clock is injected.
+     * Tendances/ranges/pages de bans ADVERSES ⇒ corpus de la ligue B.
+     */
     const intel = $derived.by(() => {
         if (teamB === null) return null;
         return buildOpponentIntel(teamB, {
             now: new Date(nowTick).toISOString(),
-            ...(leagueRecords !== null ? { leagueRecords } : {}),
+            ...(leagueRecordsB !== null ? { leagueRecords: leagueRecordsB } : {}),
             ...(corpusTeamB.length > 0 ? { corpusTeamRecords: corpusTeamB } : {})
         });
     });
@@ -859,19 +925,20 @@
      * pas des picks en cours, donc plus AUCUN refit à la frappe.
      */
     const publicModelA = $derived.by((): PublicSelfModel | null => {
-        if (leagueRecords === null || teamA === null) return null;
+        // Réservoirs de NOS joueurs ⇒ corpus de NOTRE ligue (A).
+        if (leagueRecordsA === null || teamA === null) return null;
         return fitPublicSelfModel(
-            leagueRecords,
+            leagueRecordsA,
             { team: teamA.name, now: new Date(nowTick).toISOString() },
             new Set(fearlessLocked)
         );
     });
 
-    /** Le symétrique pour l'équipe B (anticipation adverse par joueur). */
+    /** Le symétrique pour l'équipe B (anticipation adverse par joueur) — ligue B. */
     const publicModelB = $derived.by((): PublicSelfModel | null => {
-        if (leagueRecords === null || teamB === null) return null;
+        if (leagueRecordsB === null || teamB === null) return null;
         return fitPublicSelfModel(
-            leagueRecords,
+            leagueRecordsB,
             { team: teamB.name, now: new Date(nowTick).toISOString() },
             new Set(fearlessLocked)
         );
@@ -960,19 +1027,19 @@
         );
     });
 
-    /** League-presence fallback candidates when no roster is synced. */
+    /** League-presence fallback candidates when no roster is synced — NOS repli ⇒ ligue A. */
     const coachFallback = $derived.by((): string[] => {
-        if (leagueRecords === null) return [];
-        return [...computePresence(leagueRecords).entries()]
+        if (leagueRecordsA === null) return [];
+        return [...computePresence(leagueRecordsA).entries()]
             .sort((a, b) => b[1].presence - a[1].presence || (a[0] < b[0] ? -1 : 1))
             .slice(0, 15)
             .map(([key]) => key);
     });
 
-    /** Enemy role read — team-first priors, league fallback (I2 hypotheses). */
+    /** Enemy role read — team-first priors, league fallback (I2 hypotheses) — ligue ADVERSE (B). */
     const enemyRoleReads = $derived.by(() => {
-        if (leagueRecords === null && corpusTeamB.length === 0) return null;
-        const league = fitRolePriors(leagueRecords ?? []);
+        if (leagueRecordsB === null && corpusTeamB.length === 0) return null;
+        const league = fitRolePriors(leagueRecordsB ?? []);
         const priors =
             corpusTeamB.length > 0 ? layerRolePriors(fitRolePriors(corpusTeamB), league) : rolePriorsOf(league);
         return readEnemyRoles(
@@ -1106,14 +1173,19 @@
 
 <div class="space-y-3">
     <TeamContextPanel
-        {leagueId}
-        onLeagueChange={changeLeague}
+        {leagueIdA}
+        {leagueIdB}
+        onLeagueChangeA={(id) => changeLeague('A', id)}
+        onLeagueChangeB={(id) => changeLeague('B', id)}
         {tournaments}
         {tournamentSlug}
         onTournamentChange={(slug) => (tournamentSlug = slug)}
-        {teamList}
-        {teamListLoading}
-        onLoadTeamList={() => void loadTeamList()}
+        {teamListA}
+        {teamListB}
+        {teamListLoadingA}
+        {teamListLoadingB}
+        onLoadTeamListA={() => void loadTeamList('A')}
+        onLoadTeamListB={() => void loadTeamList('B')}
         {teamAId}
         {teamBId}
         onTeamAChange={(id) => (teamAId = id)}

@@ -2,11 +2,12 @@
 /**
  * M2 Ping 3 — Team context configuration panel.
  *
- * League dropdown (disabled leagues stay visible with a hint), tournament
- * select, Team A / Team B selectors fed from the scraped tournament team list,
- * a per-team Sync button with a "Synchronisé il y a 3 h · rafraîchir"
- * relative-time label, and the "Appliquer le contexte équipe" master toggle
- * that collapses the engine back to the M1 path when off.
+ * Matchs inter-régions (2026-06-11) : UNE LIGUE PAR CAMP. Chaque colonne
+ * (Équipe A / Équipe B) porte son propre sélecteur de ligue, sa liste
+ * d'équipes (chargée paresseusement, région de SA ligue) et son bouton Sync
+ * avec label « Synchronisé il y a 3 h · rafraîchir ». Le master toggle
+ * « Appliquer le contexte équipe » replie le moteur sur le chemin M1 quand il
+ * est désactivé ; le select Tournoi reste informationnel (V1).
  *
  * Pure: every fetch lives in the route; this panel only renders state and
  * emits intents. The clock is injectable (`now`) so relative labels are
@@ -24,15 +25,22 @@
 
     interface Props {
         leagues?: readonly LeagueInfo[];
-        leagueId: string;
-        onLeagueChange: (id: string) => void;
+        /** Ligue de l'équipe A (alliée) — indépendante de celle de B. */
+        leagueIdA: string;
+        /** Ligue de l'équipe B (adverse) — indépendante de celle de A. */
+        leagueIdB: string;
+        onLeagueChangeA: (id: string) => void;
+        onLeagueChangeB: (id: string) => void;
         tournaments: string[];
         tournamentSlug: string | null;
         onTournamentChange: (slug: string) => void;
-        /** Teams of the selected tournament (loaded lazily by the route). */
-        teamList: TeamOption[];
-        teamListLoading?: boolean;
-        onLoadTeamList?: () => void;
+        /** Teams of each camp's league (loaded lazily by the route, per side). */
+        teamListA: TeamOption[];
+        teamListB: TeamOption[];
+        teamListLoadingA?: boolean;
+        teamListLoadingB?: boolean;
+        onLoadTeamListA?: () => void;
+        onLoadTeamListB?: () => void;
         teamAId: string | null;
         teamBId: string | null;
         onTeamAChange: (id: string | null) => void;
@@ -56,14 +64,19 @@
 
     let {
         leagues = LEAGUES,
-        leagueId,
-        onLeagueChange,
+        leagueIdA,
+        leagueIdB,
+        onLeagueChangeA,
+        onLeagueChangeB,
         tournaments,
         tournamentSlug,
         onTournamentChange,
-        teamList,
-        teamListLoading = false,
-        onLoadTeamList,
+        teamListA,
+        teamListB,
+        teamListLoadingA = false,
+        teamListLoadingB = false,
+        onLoadTeamListA,
+        onLoadTeamListB,
         teamAId,
         teamBId,
         onTeamAChange,
@@ -92,7 +105,7 @@
 </script>
 
 <section class="panel p-3">
-    <div class="flex items-center justify-between pb-3">
+    <div class="flex items-center justify-between pb-1">
         <h2 class="text-[11px] font-semibold tracking-widest text-slate-500 uppercase">Contexte équipe</h2>
         <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-300">
             <span>Appliquer le contexte équipe</span>
@@ -105,48 +118,39 @@
         </label>
     </div>
 
+    <p class="pb-2 text-[11px] text-slate-500">
+        Les deux camps peuvent venir de régions différentes (MSI, Worlds).
+    </p>
+
     <div class="grid grid-cols-2 gap-2">
-        <label class="block">
-            <span class="block pb-1 text-xs text-slate-500">Ligue</span>
-            <select class={selectClass} value={leagueId} onchange={(e) => onLeagueChange(e.currentTarget.value)}>
-                {#each leagues as league (league.id)}
-                    <option value={league.id} disabled={!league.enabled}>
-                        {league.label}{league.enabled ? '' : ' (indisponible)'}
-                    </option>
-                {/each}
-            </select>
-        </label>
-
-        <label class="block">
-            <span class="block pb-1 text-xs text-slate-500">Tournoi</span>
-            <select
-                class={selectClass}
-                value={tournamentSlug ?? ''}
-                disabled={tournaments.length === 0}
-                onchange={(e) => onTournamentChange(e.currentTarget.value)}
-            >
-                <option value="" disabled>Choisir…</option>
-                {#each tournaments as slug (slug)}
-                    <option value={slug}>{slug}</option>
-                {/each}
-            </select>
-        </label>
-    </div>
-
-    {#if teamList.length === 0}
-        <button
-            type="button"
-            onclick={() => onLoadTeamList?.()}
-            disabled={teamListLoading}
-            class="mt-2 w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-700 disabled:opacity-50"
-        >
-            {teamListLoading ? 'Chargement des équipes…' : 'Charger la liste des équipes'}
-        </button>
-    {:else}
-        <div class="mt-2 grid grid-cols-2 gap-2">
-            <!-- Team A (ally) column -->
-            <div class="rounded-md border border-blue-900/50 bg-slate-950/40 p-2">
-                <span class="block pb-1 text-xs font-semibold text-blue-400">Équipe A (alliée)</span>
+        <!-- Team A (ally) column -->
+        <div class="rounded-md border border-blue-900/50 bg-slate-950/40 p-2">
+            <span class="block pb-1 text-xs font-semibold text-blue-400">Équipe A (alliée)</span>
+            <label class="block pb-2">
+                <span class="block pb-1 text-xs text-slate-500">Ligue</span>
+                <select
+                    class={selectClass}
+                    value={leagueIdA}
+                    onchange={(e) => onLeagueChangeA(e.currentTarget.value)}
+                    aria-label="Ligue de l'équipe A"
+                >
+                    {#each leagues as league (league.id)}
+                        <option value={league.id} disabled={!league.enabled}>
+                            {league.label}{league.enabled ? '' : ' (indisponible)'}
+                        </option>
+                    {/each}
+                </select>
+            </label>
+            {#if teamListA.length === 0}
+                <button
+                    type="button"
+                    onclick={() => onLoadTeamListA?.()}
+                    disabled={teamListLoadingA}
+                    class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-700 disabled:opacity-50"
+                >
+                    {teamListLoadingA ? 'Chargement des équipes…' : 'Charger la liste des équipes'}
+                </button>
+            {:else}
                 <select
                     class={selectClass}
                     value={teamAId ?? ''}
@@ -154,7 +158,7 @@
                     aria-label="Équipe A"
                 >
                     <option value="">—</option>
-                    {#each teamList as team (team.id)}
+                    {#each teamListA as team (team.id)}
                         <option value={team.id}>{team.name}</option>
                     {/each}
                 </select>
@@ -170,11 +174,37 @@
                 {#if teamA?.incomplete}
                     <p class="pt-1 text-[11px] text-amber-400">Données partielles — voir avertissements.</p>
                 {/if}
-            </div>
+            {/if}
+        </div>
 
-            <!-- Team B (enemy) column -->
-            <div class="rounded-md border border-red-900/50 bg-slate-950/40 p-2">
-                <span class="block pb-1 text-xs font-semibold text-red-400">Équipe B (adverse)</span>
+        <!-- Team B (enemy) column -->
+        <div class="rounded-md border border-red-900/50 bg-slate-950/40 p-2">
+            <span class="block pb-1 text-xs font-semibold text-red-400">Équipe B (adverse)</span>
+            <label class="block pb-2">
+                <span class="block pb-1 text-xs text-slate-500">Ligue</span>
+                <select
+                    class={selectClass}
+                    value={leagueIdB}
+                    onchange={(e) => onLeagueChangeB(e.currentTarget.value)}
+                    aria-label="Ligue de l'équipe B"
+                >
+                    {#each leagues as league (league.id)}
+                        <option value={league.id} disabled={!league.enabled}>
+                            {league.label}{league.enabled ? '' : ' (indisponible)'}
+                        </option>
+                    {/each}
+                </select>
+            </label>
+            {#if teamListB.length === 0}
+                <button
+                    type="button"
+                    onclick={() => onLoadTeamListB?.()}
+                    disabled={teamListLoadingB}
+                    class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-300 hover:bg-slate-700 disabled:opacity-50"
+                >
+                    {teamListLoadingB ? 'Chargement des équipes…' : 'Charger la liste des équipes'}
+                </button>
+            {:else}
                 <select
                     class={selectClass}
                     value={teamBId ?? ''}
@@ -182,7 +212,7 @@
                     aria-label="Équipe B"
                 >
                     <option value="">—</option>
-                    {#each teamList as team (team.id)}
+                    {#each teamListB as team (team.id)}
                         <option value={team.id}>{team.name}</option>
                     {/each}
                 </select>
@@ -198,7 +228,22 @@
                 {#if teamB?.incomplete}
                     <p class="pt-1 text-[11px] text-amber-400">Données partielles — voir avertissements.</p>
                 {/if}
-            </div>
+            {/if}
         </div>
-    {/if}
+    </div>
+
+    <label class="mt-2 block">
+        <span class="block pb-1 text-xs text-slate-500">Tournoi</span>
+        <select
+            class={selectClass}
+            value={tournamentSlug ?? ''}
+            disabled={tournaments.length === 0}
+            onchange={(e) => onTournamentChange(e.currentTarget.value)}
+        >
+            <option value="" disabled>Choisir…</option>
+            {#each tournaments as slug (slug)}
+                <option value={slug}>{slug}</option>
+            {/each}
+        </select>
+    </label>
 </section>
