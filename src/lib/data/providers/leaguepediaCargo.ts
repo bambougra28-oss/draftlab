@@ -469,6 +469,42 @@ function unwrapExportResponse(payload: unknown): CargoRow[] {
     });
 }
 
+/**
+ * `fetchCargoRows` through Special:CargoExport — generic tables, same
+ * coercion as the draft path (string values, `__precision` dropped; the
+ * `patch` alias keeps its trailing-zero restore, a house convention).
+ */
+export async function fetchCargoRowsExport(
+    query: GenericCargoQuery,
+    options: FetchDraftsOptions = {}
+): Promise<CargoRow[]> {
+    const transport = options.transport ?? defaultTransport;
+    const sleep = options.sleep ?? defaultSleep;
+    const delay = options.pageDelayMs ?? 2000;
+    const maxPages = options.maxPages ?? 40;
+
+    const rows: CargoRow[] = [];
+    for (let page = 0; page < maxPages; page++) {
+        const params = new URLSearchParams({
+            tables: query.tables,
+            fields: query.fields,
+            where: query.where,
+            limit: String(CARGO_PAGE_LIMIT),
+            offset: String(page * CARGO_PAGE_LIMIT),
+            format: 'json'
+        });
+        if (query.joinOn) params.set('join on', query.joinOn);
+        if (query.orderBy) params.set('order by', query.orderBy);
+        const pageRows = unwrapExportResponse(
+            await transport(`${LEAGUEPEDIA_CARGO_EXPORT}?${params.toString()}`)
+        );
+        rows.push(...pageRows);
+        if (pageRows.length < CARGO_PAGE_LIMIT) break;
+        if (delay > 0) await sleep(delay);
+    }
+    return rows;
+}
+
 /** `fetchDraftRecords` through Special:CargoExport (same join, no API bucket). */
 export async function fetchDraftRecordsExport(
     query: Omit<CargoQueryOptions, 'offset' | 'limit'>,

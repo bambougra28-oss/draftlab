@@ -56,7 +56,7 @@ registerHooks({
 
 type CargoModule = typeof import('../../src/lib/data/providers/leaguepediaCargo');
 type DraftRecord = import('../../src/lib/data/types').DraftRecord;
-const { MwSession, fetchCargoRows, LEAGUEPEDIA_ATTRIBUTION } = (await import(
+const { MwSession, fetchCargoRowsExport, LEAGUEPEDIA_ATTRIBUTION } = (await import(
     `${libRootHref}/data/providers/leaguepediaCargo.ts`
 )) as CargoModule;
 
@@ -90,7 +90,8 @@ async function playersOfGameIds(gameIds: string[]): Promise<Map<string, Map<stri
     const inList = gameIds.map((id) => `'${id.replace(/'/g, "\\'")}'`).join(',');
     for (let attempt = 1; ; attempt++) {
         try {
-            const rows = await fetchCargoRows(
+            // Special:CargoExport : le chemin hors bucket API (leçon des pulls).
+            const rows = await fetchCargoRowsExport(
                 {
                     tables: 'ScoreboardPlayers=SP',
                     fields: 'SP.GameId=gid,SP.Link=link,SP.Champion=champ',
