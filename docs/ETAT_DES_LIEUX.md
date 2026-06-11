@@ -101,6 +101,14 @@ axes paire + contre-compo expliqués en français · prep pack/CSV exports.
 5. **Per-player ranges** (dès enrichissement) + piste harnais dédiée.
 6. **G3 Fearless** (rejeu Bo5 sur `series`/`gameNumber`) + valeur long-terme
    façon JueWuDraft (hard-fearless inédit — premier public).
+6 bis. **Pocket picks — maîtrise et au-delà** (directive d'Alain 2026-06-11,
+   design complet : `docs/run2/F-pocket-picks.md`) : réservoir de surprises
+   (modèle public retourné sur soi), conseiller GARDER/DÉPENSER branché sur
+   la valeur de série + le coût de révélation I2, défense anti-pocket
+   (dégrader les priors de rôle sur pick surprise — le trou Nasus), et
+   l'AU-DELÀ : le **solveur de fin de série Fearless** (recherche exhaustive
+   quand G4/G5 rétrécit l'espace — jamais publié). Gates F1/F2 mesurables
+   immédiatement. S'exécute après C (son substrat).
 7. **Calibration** : Platt par position + poids WC vs G1 + N₀ (R4 complet).
 8. **G4 fog** : valeur d'ambiguïté × counter-picks subis (I2 complet).
 9. Recherche ciblée si G1 réplique mal : où vit le signal de durée ?
