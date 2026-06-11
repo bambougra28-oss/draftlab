@@ -375,6 +375,81 @@ export async function fetchDraftRecordsSplit(
     return { records, missingDrafts };
 }
 
+// ---- Special:CargoExport — the no-API-bucket code path ----------------------
+
+/**
+ * CargoExport endpoint: same Cargo data, DIFFERENT server code path than
+ * `action=cargoquery` (a page view, not an API action — observed working,
+ * full join included, while the API bucket was rate-limited, 2026-06-11).
+ */
+export const LEAGUEPEDIA_CARGO_EXPORT = 'https://lol.fandom.com/wiki/Special:CargoExport';
+
+/** Build the CargoExport GET url for the joined PB ⋈ SG query. */
+export function buildCargoExportUrl(
+    options: CargoQueryOptions,
+    base: string = LEAGUEPEDIA_CARGO_EXPORT
+): string {
+    const params = new URLSearchParams({
+        tables: 'PicksAndBansS7=PB,ScoreboardGames=SG',
+        'join on': 'PB.GameId=SG.GameId',
+        fields: fieldsParamOf(FIELD_ALIASES),
+        where: options.where,
+        limit: String(options.limit ?? CARGO_PAGE_LIMIT),
+        offset: String(options.offset ?? 0),
+        format: 'json'
+    });
+    if (options.orderBy) params.set('order by', options.orderBy);
+    return `${base}?${params.toString()}`;
+}
+
+/**
+ * CargoExport rows are a plain JSON array keyed by our aliases; values may be
+ * numbers (PB.Winner comes as 1/2) and datetime columns gain a `__precision`
+ * twin — coerce everything back to the string-valued CargoRow shape.
+ */
+function unwrapExportResponse(payload: unknown): CargoRow[] {
+    if (!Array.isArray(payload)) {
+        const err = (payload as { error?: { code?: string; info?: string } }).error;
+        if (err?.code === 'ratelimited') throw new CargoRateLimitError();
+        throw new CargoError(err?.info ?? 'CargoExport: unexpected non-array payload', err?.code ?? 'export-shape');
+    }
+    return payload.map((raw) => {
+        const row: CargoRow = {};
+        for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
+            if (key.endsWith('__precision') || value === null || value === undefined) continue;
+            row[key] = String(value);
+        }
+        return row;
+    });
+}
+
+/** `fetchDraftRecords` through Special:CargoExport (same join, no API bucket). */
+export async function fetchDraftRecordsExport(
+    query: Omit<CargoQueryOptions, 'offset' | 'limit'>,
+    options: FetchDraftsOptions = {}
+): Promise<DraftRecord[]> {
+    const transport = options.transport ?? defaultTransport;
+    const sleep = options.sleep ?? defaultSleep;
+    const delay = options.pageDelayMs ?? 2000;
+    const maxPages = options.maxPages ?? 20;
+    const fetchedAt = options.now ? options.now() : new Date().toISOString();
+
+    const records: DraftRecord[] = [];
+    const seen = new Set<string>();
+    for (let page = 0; page < maxPages; page++) {
+        const url = buildCargoExportUrl({ ...query, limit: CARGO_PAGE_LIMIT, offset: page * CARGO_PAGE_LIMIT });
+        const rows = unwrapExportResponse(await transport(url));
+        for (const row of rows) {
+            if (row.gid && seen.has(row.gid)) continue; // paging-boundary dupes
+            if (row.gid) seen.add(row.gid);
+            records.push(rowToDraftRecord(row, fetchedAt));
+        }
+        if (rows.length < CARGO_PAGE_LIMIT) break;
+        if (delay > 0) await sleep(delay);
+    }
+    return records;
+}
+
 /** All drafts of a tournament (Leaguepedia OverviewPage, e.g. "LCK/2026 Season/Rounds 1-2"). */
 export function fetchTournamentDrafts(
     overviewPage: string,

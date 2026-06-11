@@ -1,7 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
     buildCargoUrl,
+    buildCargoExportUrl,
     fetchDraftRecords,
+    fetchDraftRecordsExport,
     fetchDraftRecordsSplit,
     fetchTournamentDrafts,
     fetchTeamDrafts,
@@ -249,6 +251,58 @@ describe('fetchDraftRecordsSplit — no-join fallback', () => {
         await expect(
             fetchDraftRecordsSplit({ where: 'x' }, { transport })
         ).rejects.toBeInstanceOf(CargoRateLimitError);
+    });
+});
+
+describe('fetchDraftRecordsExport — Special:CargoExport path', () => {
+    it('builds the export url with the joined tables and the space-separated params', () => {
+        const u = new URL(buildCargoExportUrl({ where: "SG.OverviewPage LIKE 'LCK/2025%'", orderBy: 'SG.DateTime_UTC ASC' }));
+        expect(u.pathname).toBe('/wiki/Special:CargoExport');
+        expect(u.searchParams.get('tables')).toBe('PicksAndBansS7=PB,ScoreboardGames=SG');
+        expect(u.searchParams.get('join on')).toBe('PB.GameId=SG.GameId');
+        expect(u.searchParams.get('order by')).toBe('SG.DateTime_UTC ASC');
+        expect(u.searchParams.get('format')).toBe('json');
+        expect(u.searchParams.get('fields')).toContain('PB.Team1Pick5=t1p5');
+        expect(u.searchParams.get('fields')).toContain('SG.DateTime_UTC=dt');
+    });
+
+    it('coerces array rows to string-valued CargoRow (numeric winner, __precision dropped)', async () => {
+        const raw = { ...sampleRow() } as Record<string, unknown>;
+        raw.winner = 1; // CargoExport renvoie un nombre
+        raw.dt__precision = 0; // jumeau parasite des datetimes
+        raw.glen = null; // champ nul → absent
+        const transport: CargoTransport = async () => [raw];
+        const records = await fetchDraftRecordsExport({ where: 'x' }, { transport, now: () => 'now' });
+        expect(records).toHaveLength(1);
+        expect(records[0].winner).toBe('blue'); // '1' après coercion
+        expect(records[0].gameLengthSeconds).toBeUndefined();
+        expect(records[0].actions).toHaveLength(20);
+    });
+
+    it('paginates until a short page and dedupes boundary rows', async () => {
+        const calls: string[] = [];
+        const fullPage = Array.from({ length: CARGO_PAGE_LIMIT }, (_, i) =>
+            ({ ...sampleRow({ gid: `g${i}` }) }) as Record<string, unknown>
+        );
+        const lastPage = [{ ...sampleRow({ gid: `g${CARGO_PAGE_LIMIT - 1}` }) }, { ...sampleRow({ gid: 'last' }) }];
+        const transport: CargoTransport = async (url) => {
+            calls.push(url);
+            return calls.length === 1 ? fullPage : lastPage;
+        };
+        const records = await fetchDraftRecordsExport(
+            { where: 'x' },
+            { transport, sleep: async () => {}, now: () => 'now' }
+        );
+        expect(calls).toHaveLength(2);
+        expect(new URL(calls[1]).searchParams.get('offset')).toBe(String(CARGO_PAGE_LIMIT));
+        expect(records).toHaveLength(CARGO_PAGE_LIMIT + 1); // boundary dupe écarté
+    });
+
+    it('maps a rate-limit error payload to the typed error', async () => {
+        const transport: CargoTransport = async () => ({ error: { code: 'ratelimited', info: 'slow' } });
+        await expect(fetchDraftRecordsExport({ where: 'x' }, { transport })).rejects.toBeInstanceOf(
+            CargoRateLimitError
+        );
     });
 });
 
