@@ -452,6 +452,17 @@ function unwrapExportResponse(payload: unknown): CargoRow[] {
         const row: CargoRow = {};
         for (const [key, value] of Object.entries(raw as Record<string, unknown>)) {
             if (key.endsWith('__precision') || value === null || value === undefined) continue;
+            // CargoExport types SG.Patch as a float: "26.10" arrives as 26.1 —
+            // a DIFFERENT patch for parsePatch ({26,1} sorts before {26,6}).
+            // Modern patch minors are two digits, so a single-decimal float is
+            // always a dropped trailing zero: restore it. Strings (25.S1.1)
+            // and two-decimal floats (26.01) pass through untouched.
+            if (key === 'patch' && typeof value === 'number') {
+                const s = String(value);
+                const single = /^(\d+)\.(\d)$/.exec(s);
+                row[key] = single ? `${single[1]}.${single[2]}0` : s;
+                continue;
+            }
             row[key] = String(value);
         }
         return row;

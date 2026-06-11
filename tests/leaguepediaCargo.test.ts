@@ -335,6 +335,22 @@ describe('fetchDraftRecordsExport — Special:CargoExport path', () => {
         expect(records[0].actions).toHaveLength(20);
     });
 
+    it('restores the dropped trailing zero of float-typed patches (26.10, not 26.1)', async () => {
+        const mk = (patch: unknown, gid: string) => {
+            const raw = { ...sampleRow({ gid }) } as Record<string, unknown>;
+            raw.patch = patch;
+            return raw;
+        };
+        const transport: CargoTransport = async () => [
+            mk(26.1, 'g1'), // float "26.10" → 26.1 → restauré "26.10"
+            mk(26.01, 'g2'), // deux décimales → inchangé
+            mk('25.S1.1', 'g3'), // chaîne → inchangée
+            mk(26, 'g4') // entier → "26" tel quel
+        ];
+        const records = await fetchDraftRecordsExport({ where: 'x' }, { transport, now: () => 'now' });
+        expect(records.map((r) => r.patch)).toEqual(['26.10', '26.01', '25.S1.1', '26']);
+    });
+
     it('paginates until a short page and dedupes boundary rows', async () => {
         const calls: string[] = [];
         const fullPage = Array.from({ length: CARGO_PAGE_LIMIT }, (_, i) =>
