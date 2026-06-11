@@ -2,9 +2,20 @@
 
 > Directive d'Alain (2026-06-11, pendant la pause) : « Il faut que DraftLab
 > maîtrise à la perfection, voire aille encore au-delà concernant cette
-> notion très utile en Fearless. » Cas fondateur vérifié au corpus :
-> **KC, finale LEC Spring 2026, game 5 — Nasus jungle seq 17, victoire.
-> 1 seul Nasus sur les 1 219 games 2026 des 4 ligues.**
+> notion très utile en Fearless. » Cas fondateur : **G2 Esports (Skewmond),
+> finale LEC Spring 2026, game 5 à 2-2 — Nasus JUNGLE seq 17, premier Nasus
+> jungle au plus haut niveau en 9 ans, sans mort, MVP de la finale, titre
+> back-to-back. 1 seul Nasus sur les 1 219 games 2026 des 4 ligues.**
+>
+> ⚠ Leçon de data forensics (2026-06-11) : notre pull du 10 juin portait des
+> ERREURS DE SAISIE fraîches du wiki sur cette finale (vainqueurs G1/G5 et
+> colonnes d'équipe G5 inversés — l'API live est depuis corrigée et donne la
+> vraie séquence KC-G2-KC-G2-G2). Détection : la séquence du corpus était
+> incompatible avec un Bo5 (série pliée 3-1 avant une game 5). → À la
+> reprise : re-pull des corpora récents + **validateur d'intégrité Bo dans
+> pullCorpus** (le vainqueur d'une G5 jouée DOIT être le vainqueur de série ;
+> aucune game après série pliée) + doctrine de quarantaine fraîcheur
+> (records < N jours re-pullés avant tout run de gate).
 >
 > Statut : DESIGN (la revue adversariale et le gel suivront à la reprise,
 > même protocole que A-E). Priorité de reprise : haute, juste derrière la
@@ -29,10 +40,19 @@ Quatre mécanismes, tous reliés à des moteurs existants :
    l'inférence de rôles — la nôtre (95 % de précision) aurait lu « top » avec
    confiance. Les réponses adverses visent la mauvaise géométrie (Poppy
    anti-dash contre un juggernaut sans dash).
-4. **Surprise × cohérence.** Sans le fit, c'est un coin flip cheese. Avec
-   (Anivia setup + Alistar peel + **Senna double-scaling infini** + Kled
-   strong-side autonome), c'est une finale. Le fit est VÉRIFIABLE par nos
-   cellules (pairPrior, counterThreat) et le winConditionGraph.
+4. **Surprise × cohérence.** Sans le fit, c'est un coin flip cheese. La
+   compo G2 autour du Nasus (Anivia setup mur + waveclear, Alistar peel,
+   **Senna double-scaling infini**, Kled strong-side autonome) est une
+   compo CONSTRUITE pour lui — et c'est une finale. Le fit est VÉRIFIABLE
+   par nos cellules (pairPrior, counterThreat) et le winConditionGraph.
+
+   **Le discours du plus haut niveau confirme le concept** (recherche
+   2026-06-11) : les analystes pro écrivent que des équipes ont « jeté des
+   séries entières pour n'avoir pas respecté un pocket pick » (iTero,
+   « How to Win Draft in Pro Play ») ; les guides Fearless décrivent
+   explicitement « garder un counter rare pour une éventuelle game 5,
+   sachant que l'adversaire ne peut plus le bloquer » — notre F-b formalise
+   et CHIFFRE exactement ce que les staffs font à l'instinct.
 
 ## 2. La maîtrise — quatre moteurs
 
