@@ -2,12 +2,24 @@
  * I1/§6.10 — Ban EV: best-response-to-a-field (ARCHITECTURE_V2 §6 point 10).
  *
  * The value of a ban is the expected damage against the enemy's tendency
- * DISTRIBUTION, not against a single guessed pick:
+ * DISTRIBUTION, not against a single guessed pick. Repertoire-regime demand
+ * has TWO channels estimating the same latent quantity — P(they would take c
+ * if available) — under mutually exclusive observation regimes (design run
+ * #2, docs/run2/B-ban-history.md §1.2): picks observe it when bans do not
+ * censor, suffered bans observe it when they do. max() takes the best
+ * available evidence and never double-counts (an additive blend would
+ * reconstruct presence, the baseline itself):
  *
- *   ev(c) = takeProbability(c) · (damage(c) + structuralPp·structural(c))
+ *   attraction = banAttraction(c | enemy team)        // 0 without a provider
+ *   demande    = max(takeProbability(c), γ·attraction) // γ = banAttractionGamma
+ *   ev(c)      = demande · (damage(c) + structuralPp·structural(c))
  *
  *   takeProbability = Σ over the upcoming enemy slot groups of P(they take c
  *                     there), P read from the injected I1 ranges;
+ *   attraction      = EB-shrunk suffered-ban rate of the ENEMY team (injected
+ *                     $lib/estimators/banAttraction provider) — the channel
+ *                     that repairs perma-ban censoring (a champion always
+ *                     banned has no pick tendency to read);
  *   damage          = equity drop (pp) from c to their replacement —
  *                     injected curve, or the config default;
  *   structural      = share of their prepared-pair weight (mineCombinations
@@ -44,11 +56,17 @@ export interface BanEvConfig {
     defaultReplacementDropPp: number;
     /** pp value of a FULL structural hit (structural = 1). */
     structuralPp: number;
+    /** γ — poids du plancher de demande révélée par les bans subis (régime répertoire). */
+    banAttractionGamma: number;
 }
 
 export const DEFAULT_BAN_EV_CONFIG: BanEvConfig = {
     defaultReplacementDropPp: 1.5,
-    structuralPp: 1
+    structuralPp: 1,
+    // γ = 1 pre-registered (B-ban-history §1.2): both terms live in the same
+    // unit (expected exits per game) — the damping knob is the estimator's
+    // shrinkage (priorN), never γ.
+    banAttractionGamma: 1
 };
 
 /** Plausibility floor of the composition regime (a zero-tendency champion
@@ -75,6 +93,15 @@ export interface BanEvContext {
      * revealed comp (e.g. counterThreat × 100 from $lib/estimators/tagPairs).
      */
     threatPp?: (championKey: string) => number;
+    /**
+     * Taux de ban subi EB-shrunk de l'équipe ADVERSE pour ce champion
+     * (banAttractionRate du fit train). En régime répertoire, la demande
+     * devient max(takeProbability, γ·banAttraction) — le canal qui répare la
+     * censure des perma-bans (un champion toujours banni n'a pas de tendance
+     * de pick) ; dans les deux régimes, components.banAttraction rapporte la
+     * valeur brute. Absent ⇒ comportement byte-identique à l'existant.
+     */
+    banAttraction?: (championKey: string) => number;
     config?: BanEvConfig;
 }
 
@@ -82,6 +109,8 @@ export interface BanEvContext {
 export interface BanEvComponents {
     /** Σ P(they take it) over the upcoming slots — expected exits, may exceed 1. */
     takeProbability: number;
+    /** Taux de ban subi (brut, non pondéré par γ), rapporté dans les DEUX régimes ; 0 sans provider. */
+    banAttraction: number;
     /** pp drop to their replacement if they would have taken it. */
     damage: number;
     /** Normalized structural damage in [0, 1] (share of asset weight touched). */
@@ -92,7 +121,7 @@ export interface BanEvComponents {
 
 export interface BanEvEntry {
     championKey: string;
-    /** takeProbability · (damage + structuralPp·structural); 0 if consumed. */
+    /** max(takeProbability, γ·attraction) · (damage + structuralPp·structural); 0 if consumed. */
     ev: number;
     components: BanEvComponents;
     rationaleFr: string[];
@@ -129,7 +158,7 @@ export function banEV(candidates: string[], ctx: BanEvContext): BanEvEntry[] {
             entries.push({
                 championKey,
                 ev: 0,
-                components: { takeProbability: 0, damage: 0, structural: 0, threat: 0 },
+                components: { takeProbability: 0, banAttraction: 0, damage: 0, structural: 0, threat: 0 },
                 rationaleFr: ['Déjà consommé en Fearless — un ban serait gaspillé']
             });
             continue;
@@ -137,6 +166,10 @@ export function banEV(candidates: string[], ctx: BanEvContext): BanEvEntry[] {
 
         let takeProbability = 0;
         for (const probs of slotProbs) takeProbability += probs.get(championKey) ?? 0;
+
+        // Read in BOTH regimes — the component is reported either way
+        // (DA-V2-12); only the repertoire EV consumes it.
+        const attraction = ctx.banAttraction?.(championKey) ?? 0;
 
         const rationaleFr: string[] = [];
         let ev: number;
@@ -162,12 +195,26 @@ export function banEV(candidates: string[], ctx: BanEvContext): BanEvEntry[] {
             damage = ctx.replacementDrop?.(championKey) ?? config.defaultReplacementDropPp;
             const report = structuralDamage(assets, championKey);
             structural = totalAssetWeight > 0 ? report.weight / totalAssetWeight : 0;
-            ev = takeProbability * (damage + config.structuralPp * structural);
+            // Demand floor (B-ban-history §1.2): the best evidence of « they
+            // would take it » — pick tendencies, or the suffered-ban rate when
+            // the bans themselves censored the picks.
+            const demand = Math.max(takeProbability, config.banAttractionGamma * attraction);
+            ev = demand * (damage + config.structuralPp * structural);
 
+            // Frozen display rule (B-ban-history §2.2): the revealed-demand
+            // line leads if and only if the floor binds.
+            if (attraction > 0 && config.banAttractionGamma * attraction > takeProbability) {
+                rationaleFr.push(
+                    `Demande révélée par les bans subis : banni contre eux ~${Math.round(attraction * 100)} % des games`
+                );
+            }
             if (takeProbability > 0) {
                 rationaleFr.push(
                     `Sortie attendue : ${Math.round(takeProbability * 100)} % cumulés sur les slots à venir`
                 );
+            }
+            if (demand > 0) {
+                // A demand carried by the floor alone has the same exit cost.
                 rationaleFr.push(`Si pris : −${damage.toFixed(1)} pp vers leur remplaçant`);
             } else {
                 rationaleFr.push('Aucune sortie attendue sur les slots à venir');
@@ -179,7 +226,12 @@ export function banEV(candidates: string[], ctx: BanEvContext): BanEvEntry[] {
             }
         }
 
-        entries.push({ championKey, ev, components: { takeProbability, damage, structural, threat }, rationaleFr });
+        entries.push({
+            championKey,
+            ev,
+            components: { takeProbability, banAttraction: attraction, damage, structural, threat },
+            rationaleFr
+        });
     }
 
     return entries.sort((a, b) => {
