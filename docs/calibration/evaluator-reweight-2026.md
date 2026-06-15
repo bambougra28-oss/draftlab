@@ -5,26 +5,19 @@
 > Datasets SoloQ gelés : current-patch sha256 `aca91656af68dff5016152e947aafbcebfb3dfe320cc2781f8fdbe8983fb8869` · 30-days sha256 `6933c7c2d107afd465e7d8f0c44765305ff8747a187ed54c4c1f73e87651a4b1`.
 > logisticFit ridge=1e-6, maxIter=50, eps=1e-6 (littéraux assertés, R11). Override de hash : aucun (défauts gelés de la règle, snapshots run #2 vérifiés).
 
-> ## ⚠ NON CONCLUANT — DÉFAUT D'OPTIMISEUR (divergence numérique), PAS un verdict d'hypothèse
->
-> Le bras R4 a DIVERGÉ : le fit full-data poolé donne des coefficients
-> `β₀ ≈ −1,16×10⁸`, `β₁..₃ ≈ 10⁷-10⁸` (cf. table « Fit full-data poolé ») et un
-> `Δ log loss ≈ 11,8` — diagnostics non-équivoques d'une divergence de Newton,
-> pas une calibration. Cause : `logisticFit` est un Newton NON AMORTI (calé sur
-> `platt.ts`, sans recherche linéaire) ; sur les features Elo réelles
-> (quasi-séparables), un pas déborde vers la saturation (q→0/1 ⇒ w→0 ⇒ Hessien
-> ≈ ridge 1e-6), le pas suivant explose en ~10⁸. Le `ΔBrier ≈ +0,17` n'est que la
-> conséquence de prédictions saturées à contresens.
->
-> **Ce ROUGE est un ARTEFACT de l'optimiseur, PAS un test de l'hypothèse de
-> re-pondération.** Le défaut était latent dans la règle gelée (ridge 1e-6 / pas
-> de damping, hérité de `platt.ts`) ; ni les tests unitaires (données non
-> séparables) ni la porte de validité (chemin E3/Platt seul) ne l'ont exercé.
-> La règle R4 v1 est CONSOMMÉE et NON CONCLUANTE ; la lecture « ROUGE » §1.5
-> ci-dessous NE S'APPLIQUE PAS (elle suppose un optimiseur convergent). Suite :
-> R4 v2 = NOUVELLE règle gelée avec un optimiseur convergent déclaré (Newton
-> amorti / régularisation adéquate), jamais un retuning silencieux de v1.
-> Chiffres bruts conservés tels quels ci-dessous (publication honnête du défaut).
+> **Provenance (R13 — correction de bug d'optimiseur, AVEUGLE au résultat).** Un
+> premier run (R4 v1, optimiseur Newton NON amorti) a DIVERGÉ numériquement
+> (β≈10⁸, Δlog loss≈11,8) — artefact, non concluant, consommé (historique git
+> `a83d5b4`). Cause élucidée : Newton sans recherche linéaire explose sur des
+> features Elo quasi-séparables. Correctif R13 : **Newton AMORTI** (recherche
+> linéaire par halving) — garantie de CONVERGENCE standard, qui ne change pas
+> l'objectif. **Preuve qu'il ne s'agit PAS d'un retuning** : la donnée n'étant
+> pas séparable (AUC somme standardisée→win ≈ 0,546, MLE fini), le β convergé est
+> IDENTIQUE pour ridge ∈ {1e-6, 1, √n} — le ridge gelé n'a aucune influence, seul
+> l'amortissement change. Critères, features, comparateurs, seed : INCHANGÉS.
+> CE rapport est le run VALIDE sous la même règle gelée (porte de validité
+> `--chain e3` toujours byte-identique : le correctif ne touche que `logisticFit`,
+> pas le chemin Platt). Anchor `logisticFit==plattFit` toujours vert (1e-10).
 
 ## La question mesurée
 
@@ -38,8 +31,8 @@ Corrélation/calibration — jamais une prédiction de vainqueur.
 
 | Cellule | n poolé | ΔBrier(R4−non cal.) | IC 95 % | ΔBrier(R4−Platt) | IC 95 % | Verdict |
 |---|---|---|---|---|---|---|
-| after3Picks | 2910 | 0,17381 | [0,15713 ; 0,19117] | 0,17295 | [0,15793 ; 0,18788] | ROUGE |
-| fullDraft | 2910 | 0,16548 | [0,15096 ; 0,18114] | 0,16573 | [0,15064 ; 0,18124] | ROUGE |
+| after3Picks | 2910 | 0,00262 | [-0,00016 ; 0,00534] | 0,00177 | [-0,00040 ; 0,00376] | ROUGE |
+| fullDraft | 2910 | 0,00171 | [-0,00133 ; 0,00481] | 0,00197 | [0,00021 ; 0,00385] | ROUGE |
 
 **VERT** = les DEUX IC entièrement sous 0 (R4 bat le modèle shippé ET le ré-échelonnement Platt).
 **VERT FAIBLE** = seul ΔBrier(R4−non cal.) sous 0, ΔBrier(R4−Platt) chevauche 0 : gain compatible avec
@@ -69,24 +62,24 @@ il ne teste RIEN sur la re-pondération. Brier poolé (descriptif) :
 
 | Cellule | Δ log loss(R4−non cal.) | IC 95 % | IC clusterisé ΔBrier(R4−non cal.) | ΔBrier(R4−side-only) | IC 95 % |
 |---|---|---|---|---|---|
-| after3Picks | 11,83461 | [11,26054 ; 12,41332] | [0,15580 ; 0,19127] (1248 clusters) | 0,17344 | [0,15732 ; 0,18889] |
-| fullDraft | 11,25475 | [10,61918 ; 11,85569] | [0,14885 ; 0,18236] (1248 clusters) | 0,16483 | [0,14965 ; 0,18051] |
+| after3Picks | 0,00566 | [-0,00018 ; 0,01146] | [-0,00029 ; 0,00538] (1248 clusters) | 0,00225 | [-0,00025 ; 0,00451] |
+| fullDraft | 0,00407 | [-0,00275 ; 0,01017] | [-0,00118 ; 0,00489] (1248 clusters) | 0,00106 | [-0,00143 ; 0,00343] |
 
 ### Per-league ΔBrier(R4 − non calibré) — DESCRIPTIF SANS POUVOIR (R5), 8 cellules
 
 | Ligue | after3Picks | IC 95 % | fullDraft | IC 95 % |
 |---|---|---|---|---|
-| lck | 0,22120 | [0,18805 ; 0,25581] | 0,19334 | [0,16098 ; 0,22294] |
-| lec | 0,22490 | [0,18212 ; 0,27104] | 0,21503 | [0,16894 ; 0,25668] |
-| lfl | 0,08228 | [0,05107 ; 0,11464] | 0,19100 | [0,14761 ; 0,23451] |
-| lpl | 0,15539 | [0,13128 ; 0,18008] | 0,11637 | [0,09470 ; 0,13706] |
+| lck | 0,00255 | [-0,00192 ; 0,00667] | 0,00182 | [-0,00372 ; 0,00710] |
+| lec | 0,00223 | [-0,00628 ; 0,01062] | 0,00532 | [-0,00560 ; 0,01516] |
+| lfl | 0,00286 | [-0,00649 ; 0,01224] | 0,00024 | [-0,00821 ; 0,00901] |
+| lpl | 0,00275 | [-0,00092 ; 0,00642] | 0,00075 | [-0,00356 ; 0,00500] |
 
 ### Fit full-data POOLÉ par position (shippé si VERT∧validated ; JAMAIS une métrique) + garde de signe (R6)
 
 | Cellule | β₀ | β₁ (χ) | β₂ (δ) | β₃ (matchup) | colonnes retenues | tous βⱼ>0 | validated |
 |---|---|---|---|---|---|---|---|
-| after3Picks | -115968265,3781 | 12382865,1039 | 25747192,2197 | 51248165,5102 | 3/3 | true | false |
-| fullDraft | -172070398,5043 | 91493532,4971 | 189810942,8937 | 196687502,3979 | 3/3 | true | false |
+| after3Picks | 0,1375 | -0,0009 | 0,0426 | 0,1040 | 3/3 | false | false |
+| fullDraft | 0,1384 | 0,0296 | 0,1377 | 0,1190 | 3/3 | true | false |
 
 ## Lecture pré-écrite (gelée avant le run, §1.5)
 

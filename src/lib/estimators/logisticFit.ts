@@ -38,6 +38,10 @@ export interface LogisticOptions {
 
 /** Arrêt quand le pas de Newton est numériquement immobile (= platt.ts). */
 const STEP_TOL = 1e-10;
+/** Clamp de probabilité pour une NLL finie (= platt.ts EPS_P). */
+const EPS_P = 1e-6;
+/** Budget de halving de la recherche linéaire (amendement R13). */
+const MAX_HALVING = 40;
 
 /** Logistique numériquement stable (identique platt.ts). */
 function sigmoid(x: number): number {
@@ -45,6 +49,8 @@ function sigmoid(x: number): number {
     const e = Math.exp(x);
     return e / (1 + e);
 }
+
+const clampP = (p: number): number => Math.min(1 - EPS_P, Math.max(EPS_P, p));
 
 /**
  * Résout A·u = g pour u (A symétrique (n×n) définie positive après ridge) par
@@ -106,6 +112,19 @@ export function logisticFit(rows: LogisticRow[], opts: LogisticOptions): Logisti
     const phi = rows.map((row) => [1, ...row.x]);
     const y = rows.map((row) => (row.y ? 1 : 0));
 
+    // Moyenne (sur n) de la log-vraisemblance négative — sert à la recherche
+    // linéaire (R13). Clamp identique platt.ts pour rester fini sous saturation.
+    const nll = (b: number[]): number => {
+        let total = 0;
+        for (let i = 0; i < phi.length; i++) {
+            let lin = 0;
+            for (let m = 0; m < dim; m++) lin += b[m] * phi[i][m];
+            const q = clampP(sigmoid(lin));
+            total += y[i] ? -Math.log(q) : -Math.log(1 - q);
+        }
+        return total;
+    };
+
     // Init identité : intercept 0, chaque feature 1 (= plattFit a=0, b=1 en k=1).
     const beta = new Array<number>(dim).fill(1);
     beta[0] = 0;
@@ -134,10 +153,32 @@ export function logisticFit(rows: LogisticRow[], opts: LogisticOptions): Logisti
         }
         const step = solve(H, g);
         if (step === null) break;
+        // R13 — NEWTON AMORTI (recherche linéaire par halving). Newton non amorti
+        // diverge sur données quasi-séparables : un pas déborde, q sature, w→0,
+        // le Hessien tombe au ridge, le pas suivant explose (β→10⁸). On n'accepte
+        // un pas que s'il ne fait pas REMONTER la NLL, sinon on le divise par 2.
+        // C'est une garantie de CONVERGENCE (aveugle au résultat), pas un
+        // changement de modèle : le pas plein t=1 est accepté quand Newton
+        // descend (cas non séparable) ⇒ l'équivalence avec plattFit (§2.3-4) est
+        // préservée. La donnée n'étant pas séparable (MLE fini), le ridge n'a
+        // aucune influence sur l'optimum (vérifié : β identique pour ridge ∈
+        // {1e-6, 1, √n}).
+        const f0 = nll(beta);
+        let t = 1;
+        let accepted = false;
+        for (let h = 0; h < MAX_HALVING; h++) {
+            const trial = beta.map((b, m) => b - t * step[m]);
+            if (nll(trial) <= f0 + 1e-12) {
+                for (let m = 0; m < dim; m++) beta[m] = trial[m];
+                accepted = true;
+                break;
+            }
+            t /= 2;
+        }
+        if (!accepted) break; // aucune direction de descente trouvée ⇒ convergé
         let maxStep = 0;
         for (let m = 0; m < dim; m++) {
-            beta[m] -= step[m];
-            if (Math.abs(step[m]) > maxStep) maxStep = Math.abs(step[m]);
+            if (Math.abs(t * step[m]) > maxStep) maxStep = Math.abs(t * step[m]);
         }
         if (maxStep < STEP_TOL) break;
     }

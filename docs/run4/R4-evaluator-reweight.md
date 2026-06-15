@@ -49,6 +49,18 @@
 > - **R12** : `--chain e3` n'écrit AUCUN artefact params (verrou) ; `--smoke` est
 >   un ajout R4 (absent du patron E3) ; imports `DraftRecord` depuis
 >   `src/lib/data/types`.
+> - **R13 (correctif de bug post-run-v1, AVEUGLE au résultat)** : le run v1 a
+>   DIVERGÉ (Newton non amorti, β≈10⁸ sur features Elo quasi-séparables) — non
+>   concluant, consommé. `logisticFit` reçoit une **recherche linéaire par
+>   halving** (Newton amorti) : garantie de convergence standard, ne change pas
+>   l'objectif ni l'équivalence `plattFit` (pas plein t=1 accepté quand Newton
+>   descend). NON un retuning : la donnée n'est pas séparable (AUC≈0,546, MLE
+>   fini), β convergé IDENTIQUE pour ridge ∈ {1e-6,1,√n} ⇒ le ridge gelé n'a
+>   aucune influence. Re-run sous la MÊME règle (critères/features/comparateurs/
+>   seed inchangés ; porte de validité `--chain e3` toujours byte-identique).
+>   **Verdict valide : ROUGE** (les 2 cellules) — re-pondérer n'améliore pas la
+>   calibration (ΔBrier ≈ +0,002, aucun IC sous 0). Le mur est les ENTRÉES, pas
+>   les poids (§5 ROUGE).
 
 > **Pourquoi cette gate, et pourquoi maintenant.** Run #3 a disculpé la chaîne
 > de candidats du coach et désigné l'ÉVALUATEUR. Les trois lectures pré-écrites
