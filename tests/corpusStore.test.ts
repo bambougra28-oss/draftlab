@@ -4,8 +4,10 @@ import {
     corpusStatus,
     fetchCorpusManifest,
     importBundledCorpora,
+    importOracleElixirCorpus,
     loadAllCorpusRecords,
-    loadCorpusRecords
+    loadCorpusRecords,
+    OE_SOURCE
 } from '$lib/intel/corpusStore';
 import { idbClear } from '$lib/storage/idb';
 import type { DraftRecord } from '$lib/data/types';
@@ -141,5 +143,37 @@ describe('loadAllCorpusRecords', () => {
         await importBundledCorpora({ fetchImpl });
         const all = await loadAllCorpusRecords();
         expect(all.map((r) => r.gameId).sort()).toEqual(['lck-1', 'lck-2', 'lfl-1']);
+    });
+});
+
+describe('importOracleElixirCorpus', () => {
+    // Minimal valid OE slice: 2 team rows for one LCK game (label → 'lck').
+    const OE_CSV = [
+        'gameid,league,date,side,position,champion,teamname,firstpick,pick1,pick2,pick3,pick4,pick5,ban1,ban2,ban3,ban4,ban5,result',
+        'OE1,LCK,2026-02-01 10:00:00,Blue,team,,T1,1,Ahri,Jinx,Leona,Gnar,Vi,,,,,,1',
+        'OE1,LCK,2026-02-01 10:00:00,Red,team,,GEN,0,Azir,Varus,Rakan,Rumble,Sejuani,,,,,,0'
+    ].join('\n');
+
+    it('imports OE games as snapshots labelled by lowercase league', async () => {
+        const report = await importOracleElixirCorpus(OE_CSV, { now: () => '2026-06-16T00:00:00Z' });
+        expect(report.imported.map((s) => [s.league, s.records, s.source])).toEqual([['lck', 1, OE_SOURCE]]);
+        const status = await corpusStatus();
+        expect(status.find((s) => s.league === 'lck')?.source).toBe(OE_SOURCE);
+    });
+
+    it('OE is PREFERRED over the bundled leaguepedia corpus for the same league', async () => {
+        const { fetchImpl } = stubFetch();
+        await importBundledCorpora({ fetchImpl }); // bundled lck = [lck-1, lck-2]
+        await importOracleElixirCorpus(OE_CSV, { now: () => '2026-06-16T00:00:00Z' }); // OE lck = [OE1]
+        const lck = await loadCorpusRecords('lck');
+        expect(lck?.map((r) => r.gameId)).toEqual(['OE1']); // OE wins
+        // a league only the bundle has still loads.
+        expect((await loadCorpusRecords('lfl'))?.map((r) => r.gameId)).toEqual(['lfl-1']);
+    });
+
+    it('reports a clear warning on a non-OE CSV', async () => {
+        const report = await importOracleElixirCorpus('foo,bar\n1,2', { now: () => 't' });
+        expect(report.imported).toEqual([]);
+        expect(report.warnings.length).toBeGreaterThan(0);
     });
 });

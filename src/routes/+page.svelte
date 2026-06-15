@@ -71,8 +71,10 @@
     import {
         corpusStatus,
         importBundledCorpora,
+        importOracleElixirCorpus,
         loadAllCorpusRecords,
         loadCorpusRecords,
+        OE_SOURCE,
         type CorpusLeagueStatus
     } from '$lib/intel/corpusStore';
     import { fitTagCounterCells, fitTagPairCells, type TagPairFit } from '$lib/estimators/tagPairs';
@@ -902,6 +904,38 @@
             corpusWarnings = [error instanceof Error ? error.message : String(error)];
         } finally {
             corpusBusy = false;
+        }
+    }
+
+    /** Import a user-supplied Oracle's Elixir CSV → pro corpus (preferred). */
+    async function importOeFile(event: Event): Promise<void> {
+        const input = event.currentTarget as HTMLInputElement;
+        const file = input.files?.[0];
+        if (!file) return;
+        corpusBusy = true;
+        try {
+            const report = await importOracleElixirCorpus(await file.text());
+            const n = report.imported.reduce((sum, l) => sum + l.records, 0);
+            corpusWarnings =
+                report.imported.length > 0
+                    ? [
+                          `Oracle's Elixir importé : ${n} drafts sur ${report.imported.length} ligues.`,
+                          ...report.warnings
+                      ]
+                    : report.warnings.length > 0
+                      ? report.warnings
+                      : ['Aucun game importé — vérifie que c’est bien le CSV Oracle’s Elixir.'];
+            corpusStatuses = await corpusStatus();
+            await loadLeaguePairRecords(leagueIdA, leagueIdB);
+            const allRecords = await loadAllCorpusRecords();
+            pairFit = allRecords.length > 0 ? fitTagPairCells(allRecords) : null;
+            counterFit = allRecords.length > 0 ? fitTagCounterCells(allRecords) : null;
+            playerFit = allRecords.length > 0 ? fitPlayerHistory(allRecords) : null;
+        } catch (error) {
+            corpusWarnings = [error instanceof Error ? error.message : String(error)];
+        } finally {
+            corpusBusy = false;
+            input.value = ''; // allow re-importing the same file
         }
     }
 
@@ -1979,7 +2013,14 @@
                 <span class="font-semibold uppercase tracking-wide text-slate-300">Corpus pro</span>
                 {#if corpusStatuses.length > 0}
                     {#each corpusStatuses as status (status.league)}
-                        <span class="rounded bg-slate-800 px-1.5 py-0.5">
+                        <span
+                            class="rounded px-1.5 py-0.5 {status.source === OE_SOURCE
+                                ? 'bg-gold-500/15 text-gold-200'
+                                : 'bg-slate-800'}"
+                            title={status.source === OE_SOURCE
+                                ? "Oracle's Elixir (importé)"
+                                : 'Leaguepedia (embarqué)'}
+                        >
                             {status.league.toUpperCase()} · {status.records} drafts
                         </span>
                     {/each}
@@ -1988,8 +2029,23 @@
                 {:else}
                     <span>Aucun corpus importé.</span>
                 {/if}
+                <label
+                    class="ml-auto cursor-pointer rounded border border-gold-700/50 px-2 py-1 text-gold-300 hover:bg-gold-500/10 {corpusBusy
+                        ? 'pointer-events-none opacity-50'
+                        : ''}"
+                    title="Importe ton CSV Oracle's Elixir (tout le pro mondial, à jour) — reste dans ton navigateur"
+                >
+                    Importer Oracle's Elixir
+                    <input
+                        type="file"
+                        accept=".csv,text/csv"
+                        class="hidden"
+                        onchange={(e) => void importOeFile(e)}
+                        disabled={corpusBusy}
+                    />
+                </label>
                 <button
-                    class="ml-auto rounded border border-slate-700 px-2 py-1 text-slate-300 hover:bg-slate-800 disabled:opacity-50"
+                    class="rounded border border-slate-700 px-2 py-1 text-slate-300 hover:bg-slate-800 disabled:opacity-50"
                     onclick={() => void refreshCorpus()}
                     disabled={corpusBusy}
                 >
@@ -1998,7 +2054,8 @@
             </div>
             <p class="mt-1 text-[10px] text-slate-600">
                 Les deux camps, ordre exact, rôles et patchs — alimente tendances, ranges et le coach.
-                Data from Leaguepedia (lol.fandom.com), CC BY-SA 3.0.
+                Importe le CSV Oracle's Elixir (oracleselixir.com) pour couvrir tout le pro mondial à
+                jour ; il reste dans ton navigateur. Sinon : Leaguepedia embarqué (CC BY-SA 3.0).
             </p>
             {#if corpusWarnings.length > 0}
                 <ul class="mt-1 space-y-0.5 text-[10px] text-amber-400/90">

@@ -89,4 +89,16 @@ describe('parseOraclesElixirCsv', () => {
         const res = parseOraclesElixirCsv(csv, 'now');
         expect(res.records[0].warnings.some((w) => w.includes('first-selection era'))).toBe(true);
     });
+
+    it('uses the real firstPick column → exact order, no assumption warning (even in 2026)', () => {
+        const header =
+            'gameid,league,date,side,position,champion,teamname,firstpick,' +
+            'pick1,pick2,pick3,pick4,pick5,ban1,ban2,ban3,ban4,ban5,result';
+        const blue = 'G,LCK,2026-02-01 10:00:00,Blue,team,,T1,0,Ahri,Jinx,Leona,Gnar,Vi,,,,,,1';
+        const red = 'G,LCK,2026-02-01 10:00:00,Red,team,,GEN,1,Azir,Varus,Rakan,Rumble,Sejuani,,,,,,0';
+        const { records } = parseOraclesElixirCsv([header, blue, red].join('\n'), 'now');
+        expect(records[0].firstPickSide).toBe('red'); // red carried firstPick=1
+        expect(records[0].orderConfidence).toBe('exact');
+        expect(records[0].warnings.some((w) => w.includes('first-selection'))).toBe(false);
+    });
 });
