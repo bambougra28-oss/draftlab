@@ -11,7 +11,7 @@
  * documented hazard) and tolerant of missing fields in old seasons.
  * Terms: free, attribute "Oracle's Elixir", non-commercial expectation.
  */
-import type { DraftRecord, DraftSide, TeamDraftColumns } from '../types';
+import type { DraftRecord, DraftSide, OrderConfidence, TeamDraftColumns } from '../types';
 import { buildDraftActions, inFirstSelectionEra } from '../draftRecord';
 import { parseRoleString, resolveChampionKey } from '../normalize';
 import type { Role } from '$lib/types';
@@ -163,10 +163,23 @@ export function oeRowsToDraftRecords(
         const redPlayers = gameRows.filter((r) => !isTeamRow(r) && sideOf(r) === 'red');
 
         const date = (blueTeam.row.date ?? '').trim() || undefined;
+        // OE carries the real `firstPick` flag (1 on every row of the side that
+        // picked first — official since Feb 2024). Use it for an EXACT global
+        // pick/ban interleave; fall back to the blue-first assumption only when
+        // the column is absent/ambiguous (old seasons).
+        const blueFirst = (blueTeam.row.firstpick ?? '').trim() === '1';
+        const redFirst = (redTeam.row.firstpick ?? '').trim() === '1';
+        let firstPickSide: DraftSide = 'blue';
+        let orderConfidence: OrderConfidence = 'assumed-blue-first';
+        if (blueFirst !== redFirst) {
+            firstPickSide = blueFirst ? 'blue' : 'red';
+            orderConfidence = 'exact';
+        }
+
         const { actions, warnings } = buildDraftActions({
             blue: columnsFromTeamRow(blueTeam.row, bluePlayers),
             red: columnsFromTeamRow(redTeam.row, redPlayers),
-            firstPickSide: 'blue',
+            firstPickSide,
             resolveKey: resolveChampionKey
         });
 
@@ -174,8 +187,8 @@ export function oeRowsToDraftRecords(
         if ((blueTeam.row.result ?? '') === '1') winner = 'blue';
         else if ((redTeam.row.result ?? '') === '1') winner = 'red';
 
-        if (inFirstSelectionEra(date)) {
-            warnings.push('first-selection era: pick order assumed blue-first, cross-check pending');
+        if (orderConfidence === 'assumed-blue-first' && inFirstSelectionEra(date)) {
+            warnings.push('first-selection era: firstPick flag absent — pick order assumed blue-first');
         }
 
         const gameNumber = Number.parseInt(blueTeam.row.game ?? '', 10);
@@ -190,8 +203,8 @@ export function oeRowsToDraftRecords(
             redTeam: redTeam.row.teamname ?? '',
             winner,
             series: Number.isFinite(gameNumber) ? { gameNumber } : undefined,
-            firstPickSide: 'blue',
-            orderConfidence: 'assumed-blue-first',
+            firstPickSide,
+            orderConfidence,
             actions,
             warnings,
             provenance: { source: 'oracles-elixir', fetchedAt }

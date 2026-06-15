@@ -15,9 +15,13 @@
  */
 import { latestSnapshotAsOf, listSnapshots, saveSnapshot } from '$lib/data/snapshots';
 import type { DraftRecord } from '$lib/data/types';
+import { parseOraclesElixirCsv } from '$lib/data/providers/oraclesElixir';
 
 export const CORPUS_MANIFEST_URL = '/corpus/index.json';
 export const CORPUS_SOURCE = 'leaguepedia';
+/** User-imported Oracle's Elixir corpus — PREFERRED over the bundled leaguepedia
+ *  corpus per league (cleaner, broader, current; the user supplies the CSV). */
+export const OE_SOURCE = 'oracles-elixir';
 export const CORPUS_KIND = 'draft-records' as const;
 
 export interface CorpusManifestEntry {
@@ -40,6 +44,8 @@ export interface CorpusLeagueStatus {
     /** Manifest pull timestamp carried by the snapshot (provenance). */
     pulledAt: string;
     snapshotId: string;
+    /** Which corpus won for this league: OE_SOURCE or CORPUS_SOURCE. */
+    source: string;
 }
 
 export interface ImportReport {
@@ -65,19 +71,26 @@ export async function fetchCorpusManifest(options: CorpusStoreOptions = {}): Pro
     return (await res.json()) as CorpusManifest;
 }
 
-/** Latest imported snapshot per league (newest fetchedAt wins). */
+/**
+ * Latest imported snapshot per league. Oracle's Elixir snapshots take
+ * precedence over bundled leaguepedia ones (imported first, "first wins"); a
+ * league only the bundle has still shows. `source` carries which won.
+ */
 export async function corpusStatus(): Promise<CorpusLeagueStatus[]> {
-    const metas = await listSnapshots({ source: CORPUS_SOURCE, kind: CORPUS_KIND });
     const byLeague = new Map<string, CorpusLeagueStatus>();
-    for (const meta of metas) {
-        const league = meta.label ?? '?';
-        if (!byLeague.has(league)) {
-            byLeague.set(league, {
-                league,
-                records: meta.count ?? 0,
-                pulledAt: meta.fetchedAt,
-                snapshotId: meta.id
-            });
+    for (const source of [OE_SOURCE, CORPUS_SOURCE]) {
+        const metas = await listSnapshots({ source, kind: CORPUS_KIND });
+        for (const meta of metas) {
+            const league = meta.label ?? '?';
+            if (!byLeague.has(league)) {
+                byLeague.set(league, {
+                    league,
+                    records: meta.count ?? 0,
+                    pulledAt: meta.fetchedAt,
+                    snapshotId: meta.id,
+                    source
+                });
+            }
         }
     }
     return [...byLeague.values()].sort((a, b) => a.league.localeCompare(b.league));
@@ -101,11 +114,17 @@ export async function importBundledCorpora(options: CorpusStoreOptions = {}): Pr
         return report;
     }
 
-    const existing = new Map((await corpusStatus()).map((s) => [s.league, s]));
+    // Idempotency keyed on the LEAGUEPEDIA snapshots only (decoupled from any
+    // imported OE snapshots, which must not force bundled re-imports).
+    const lpMetas = await listSnapshots({ source: CORPUS_SOURCE, kind: CORPUS_KIND });
+    const existing = new Map<string, string>();
+    for (const meta of lpMetas) {
+        const lg = meta.label ?? '?';
+        if (!existing.has(lg)) existing.set(lg, meta.fetchedAt);
+    }
     for (const entry of manifest.files) {
         const pulledAt = entry.pulledAt ?? nowIso();
-        const current = existing.get(entry.league);
-        if (current !== undefined && current.pulledAt === pulledAt) {
+        if (existing.get(entry.league) === pulledAt) {
             report.skipped.push(entry.league);
             continue;
         }
@@ -124,7 +143,8 @@ export async function importBundledCorpora(options: CorpusStoreOptions = {}): Pr
                 league: entry.league,
                 records: records.length,
                 pulledAt,
-                snapshotId: snapshot.id
+                snapshotId: snapshot.id,
+                source: CORPUS_SOURCE
             });
         } catch (error) {
             report.warnings.push(
@@ -135,14 +155,92 @@ export async function importBundledCorpora(options: CorpusStoreOptions = {}): Pr
     return report;
 }
 
-/** Records of the latest snapshot for a league, or null when not imported. */
+/**
+ * Records of the latest snapshot for a league, or null when not imported.
+ * Prefers the user-imported Oracle's Elixir corpus, falling back to the bundled
+ * leaguepedia one — so every intel read uses the best data the user has.
+ */
 export async function loadCorpusRecords(league: string): Promise<DraftRecord[] | null> {
-    const snapshot = await latestSnapshotAsOf<DraftRecord[]>({
+    const oe = await latestSnapshotAsOf<DraftRecord[]>({
+        source: OE_SOURCE,
+        kind: CORPUS_KIND,
+        label: league
+    });
+    if (oe) return oe.payload;
+    const lp = await latestSnapshotAsOf<DraftRecord[]>({
         source: CORPUS_SOURCE,
         kind: CORPUS_KIND,
         label: league
     });
-    return snapshot?.payload ?? null;
+    return lp?.payload ?? null;
+}
+
+/**
+ * Import a user-supplied Oracle's Elixir CSV (the yearly esports dump) as the
+ * pro corpus — one immutable snapshot per league, PREFERRED over the bundle.
+ * The raw CSV never leaves the browser (not redistributable; the user brings
+ * their own download from oracleselixir.com). Per-league failures degrade to
+ * warnings. Attribution: see ORACLES_ELIXIR_ATTRIBUTION.
+ */
+export async function importOracleElixirCorpus(
+    csvText: string,
+    options: { now?: () => string } = {}
+): Promise<ImportReport> {
+    const fetchedAt = (options.now ?? (() => new Date().toISOString()))();
+    const report: ImportReport = { imported: [], skipped: [], warnings: [] };
+
+    let records: DraftRecord[];
+    let skippedGames: string[];
+    try {
+        ({ records, skipped: skippedGames } = parseOraclesElixirCsv(csvText, fetchedAt));
+    } catch (error) {
+        report.warnings.push(
+            `CSV Oracle's Elixir illisible : ${error instanceof Error ? error.message : String(error)}`
+        );
+        return report;
+    }
+    if (records.length === 0) {
+        report.warnings.push('Aucun game lisible dans le CSV (en-tête Oracle’s Elixir attendu).');
+        return report;
+    }
+    if (skippedGames.length > 0) {
+        report.warnings.push(`${skippedGames.length} game(s) sans deux lignes d'équipe ignorée(s).`);
+    }
+
+    // Label by LOWERCASE league so OE's 'LCK' aligns with the bundle's 'lck'
+    // (and the app's league ids) — the majors then supersede transparently.
+    const byLeague = new Map<string, DraftRecord[]>();
+    for (const record of records) {
+        const league = (record.league ?? '?').toLowerCase();
+        const bucket = byLeague.get(league);
+        if (bucket) bucket.push(record);
+        else byLeague.set(league, [record]);
+    }
+
+    for (const [league, leagueRecords] of byLeague) {
+        try {
+            const snapshot = await saveSnapshot({
+                source: OE_SOURCE,
+                kind: CORPUS_KIND,
+                label: league,
+                payload: leagueRecords,
+                fetchedAt
+            });
+            report.imported.push({
+                league,
+                records: leagueRecords.length,
+                pulledAt: fetchedAt,
+                snapshotId: snapshot.id,
+                source: OE_SOURCE
+            });
+        } catch (error) {
+            report.warnings.push(
+                `Ligue ${league} : snapshot échoué (${error instanceof Error ? error.message : String(error)}).`
+            );
+        }
+    }
+    report.imported.sort((a, b) => a.league.localeCompare(b.league));
+    return report;
 }
 
 /**
