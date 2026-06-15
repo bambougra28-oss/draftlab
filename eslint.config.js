@@ -31,7 +31,10 @@ export default ts.config(
             'node_modules/',
             '.wrangler/',
             '.cloudflare/',
-            '.claude/'
+            '.claude/',
+            // CommonJS dev/fixture generators (the project is ESM "type":"module";
+            // any .cjs is a deliberate throwaway script, not product code).
+            '**/*.cjs'
         ]
     }
 );

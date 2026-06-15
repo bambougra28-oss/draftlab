@@ -1,6 +1,41 @@
 # DraftLab — Status
 
-Updated: 2026-06-11 (run #2 JOUÉE — verdicts publiés, état de corpus corrigé)
+Updated: 2026-06-15 (run #4 JOUÉE — gate évaluateur ROUGE : re-pondérer n'aide pas, le mur est les ENTRÉES)
+
+## ⚡ RUN #4 — RÉSULTAT (2026-06-15) — branche `run4`
+
+Périmètre tranché par Alain : attaquer l'**ÉVALUATEUR** (le seul levier que
+run #3 désigne — S6≈0 à couverture forte disculpe la chaîne de candidats). Gate
+R4 = re-pondérer les 3 composantes différentielles de `analyzeDraft`
+(régression logistique ajustée) vs le modèle Elo à poids unitaires figés + Platt.
+
+| Cellule poolée | ΔBrier(R4−non cal.) | ΔBrier(R4−Platt) | Verdict |
+|---|---|---|---|
+| after3Picks | +0,0026 [−0,0002 ; +0,0053] | +0,0018 [−0,0004 ; +0,0038] | **ROUGE** |
+| fullDraft | +0,0017 [−0,0013 ; +0,0048] | +0,0020 [+0,0002 ; +0,0039] | **ROUGE** |
+
+**ROUGE franc** : re-pondérer les composantes de l'évaluateur n'améliore PAS la
+calibration — ΔBrier légèrement POSITIF (R4 marginalement pire), aucun IC sous 0.
+β convergés minuscules (0,03-0,14) ; **AUC(somme→win) ≈ 0,546** (à peine au-dessus
+du hasard). Triangulation décisive avec E3 (le ré-échelonnement Platt n'aidait
+pas non plus, 0/12) et la gate coach (TD 51,7 %) : **le mur n'est PAS les poids,
+c'est les ENTRÉES** (transfert SoloQ→pro). Le prochain euro va aux features
+ancrées pro (projet de DONNÉES), pas à l'arithmétique de l'évaluateur (§5 ROUGE).
+
+Parcours (tout committé, branche `run4`) : design gelé + revue 3 agents (R1-R12) ·
+libs+17 tests (ancre `logisticFit==plattFit` 1e-10) · runner copié d'E3 + seam
+`--chain e3|r4`, **porte de validité `--chain e3` byte-identique** (44 699 o, 0
+divergent). **Incident élucidé** : le run v1 a divergé (Newton NON amorti, β≈10⁸
+sur features quasi-séparables) — artefact non concluant, consommé (`a83d5b4`) ;
+**correctif R13 = Newton amorti** (recherche linéaire), AVEUGLE au résultat
+(β identique pour ridge ∈ {1e-6,1,√n} car MLE fini, AUC 0,546), re-run sous la
+MÊME règle. Le run ci-dessus est le valide.
+
+File run #5 (candidat n°1) : **features ancrées PRO** pour l'évaluateur (winrates
+pro champion/rôle walk-forward, ou modèle entraîné sur le corpus pro) — NOUVELLE
+règle, chantier de sourcing/modélisation. Puis re-tenter la ligne coach dessus.
+
+
 
 
 ## ⚡ RUN #3 — RÉSULTAT (2026-06-11 soir)
