@@ -35,6 +35,15 @@ File run #5 (candidat n°1) : **features ancrées PRO** pour l'évaluateur (winr
 pro champion/rôle walk-forward, ou modèle entraîné sur le corpus pro) — NOUVELLE
 règle, chantier de sourcing/modélisation. Puis re-tenter la ligne coach dessus.
 
+### 🚀 EN LIGNE (2026-06-15) — https://bambougra28-oss.github.io/draftlab/
+
+Déployé sur GitHub Pages (repo passé public, source = Actions). Vérifié live :
+racine HTTP 200, assets `/draftlab/_app` base-aware OK, corpus `/draftlab/corpus/`
+200, deep-links bootent via le shell SPA (`404.html`). Workflow `pages.yml` :
+re-déploie à chaque push sur `main`. (Le statut 404 sur deep-link direct est
+cosmétique — GitHub Pages SPA ; l'app charge et route ; plans/séries sont en
+IndexedDB par appareil de toute façon.)
+
 ### ✅ DÉPLOYABLE SANS COMPTE TIERS (2026-06-15)
 
 **Pas besoin de Cloudflare.** L'app passe en **SPA 100 % statique**
