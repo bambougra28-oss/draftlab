@@ -1,55 +1,56 @@
-# DraftLab — Déploiement (Cloudflare Pages)
+# DraftLab — Déploiement (GitHub Pages, sans compte tiers)
 
-L'app est prête à déployer. Build vérifié (`vite build` exit 0, adapter
-Cloudflare). Client-only : **aucun secret n'est nécessaire à l'exécution** —
-les secrets ci-dessous servent uniquement à la CI pour pousser le build.
+L'app est un **SPA 100 % statique** (`adapter-static`, `ssr=false` partout) :
+aucun serveur, aucun compte Cloudflare/Netlify/Vercel, **aucun secret**. Le
+déploiement GitHub Pages utilise le `GITHUB_TOKEN` automatique.
 
-## Ce qui marche / dégrade en production
+> Pourquoi pas de serveur ? Le seul endpoint serveur était le proxy
+> `/api/golgg` (scouting), or gol.gg bloque les IP datacenter : il ne marchait
+> **déjà pas** en prod. On l'a donc retiré du build statique — le scouting
+> gol.gg reste dispo en local (`pnpm dev`), et en prod l'app affiche un message
+> honnête et s'appuie sur le **corpus pro bundlé** (entièrement hors-ligne).
 
-| Fonction | En prod | Note |
+## Ce qui marche en prod
+
+| Fonction | Prod | Note |
 |---|---|---|
-| Draft board, plans, séries, review, prototype, prep-trees, pockets | ✅ | Tout le cœur produit, 100 % client. |
-| **Corpus pro** (lck/lec/lfl/lpl 2026) | ✅ | Servi depuis `static/corpus/` (assets statiques). |
-| **Dataset DraftGap** (winrates SoloQ) | ✅ | Fetch runtime `bucket.draftgap.com` (~50 Mo, cache IndexedDB 24 h). |
-| **Scouting gol.gg** (sync Équipe A/B) | ⚠️ dégrade | gol.gg bloque les IP datacenter ⇒ le proxy `/api/golgg` reçoit 403. Message honnête affiché (« indisponible depuis ce serveur — utilise le corpus pro importé, ou synchronise en local »). Le reste du produit ne dépend pas de gol.gg. |
+| Draft board, plans, séries, review, prototype, prep-trees, pockets, live | ✅ | Tout le cœur produit, 100 % client (IndexedDB). |
+| Corpus pro (lck/lec/lfl/lpl 2026) | ✅ | Assets statiques `static/corpus/`, base-aware. |
+| Dataset DraftGap (winrates SoloQ) | ✅ | Fetch runtime `bucket.draftgap.com`, cache 24 h. |
+| Scouting gol.gg | ⚠️ local seulement | Pas de proxy serveur en statique → message « indisponible depuis ce serveur ». |
 
-## Setup une seule fois (Alain)
+## Déployer (≈ 1 minute, une seule fois)
 
-1. **Cloudflare → Pages → créer un projet** nommé `draftlab` (Direct
-   Upload / connect to Git, peu importe — le workflow pousse en Direct Upload).
-   Si tu choisis un autre nom, mets-le dans la variable repo
-   `CLOUDFLARE_PROJECT_NAME`.
-2. **Token API** : Cloudflare → My Profile → API Tokens → Create Token →
-   template « Edit Cloudflare Workers » (ou permission `Account · Cloudflare
-   Pages · Edit`). Copie le token.
-3. **Account ID** : visible dans l'URL du dashboard ou Workers & Pages →
-   Overview (colonne droite).
-4. **GitHub → repo `bambougra28-oss/draftlab` → Settings → Secrets and
-   variables → Actions → New repository secret** :
-   - `CLOUDFLARE_API_TOKEN` = le token de l'étape 2
-   - `CLOUDFLARE_ACCOUNT_ID` = l'account id de l'étape 3
-5. **Activer le workflow** si désactivé : GitHub → onglet Actions →
-   « Deploy (Cloudflare Pages) » → Enable. (Ou `gh workflow enable
-   deploy.yml`.)
+Le workflow `.github/workflows/pages.yml` build et déploie à chaque push sur
+`main`. Il faut juste **activer GitHub Pages en mode Actions** une fois :
 
-## Déployer
+- GitHub → repo `bambougra28-oss/draftlab` → **Settings → Pages** → *Build and
+  deployment* → **Source : GitHub Actions**.
+  (Ou en CLI : `gh api -X POST repos/bambougra28-oss/draftlab/pages -f build_type=workflow`.)
+
+Puis :
 
 ```bash
-git push origin main        # déclenche .github/workflows/deploy.yml
+git push origin main      # déclenche pages.yml → build statique → deploy-pages
 ```
 
-Ou manuellement : Actions → Deploy (Cloudflare Pages) → Run workflow.
+L'URL apparaît dans le résumé du job (environment `github-pages`). Pour ce repo :
+**https://bambougra28-oss.github.io/draftlab/**
 
-Le workflow (`.github/workflows/deploy.yml`) : `pnpm install --frozen-lockfile`
-→ `pnpm build` → `wrangler pages deploy .svelte-kit/cloudflare`. L'URL de
-déploiement apparaît dans le résumé du job (`environment: production`).
+## Détails techniques
 
-## Notes
+- `BASE_PATH=/draftlab` est injecté par le workflow (site projet servi sous
+  `/<repo>`). En local ou sur un host à la racine, `BASE_PATH` vide ⇒ racine.
+  Config portable : `svelte.config.js` lit `process.env.BASE_PATH`.
+- `adapter-static` écrit le shell SPA dans `404.html` ; le workflow le copie en
+  `index.html` pour que la racine réponde 200 et que les liens profonds
+  (`/draftlab/plans`) bootent via `404.html`.
+- Déploiement via `actions/deploy-pages` (pas de Jekyll → `_app/` servi tel
+  quel, pas besoin de `.nojekyll`).
+- Persistance 100 % IndexedDB côté client ; aucune base ni état serveur.
 
-- Le merge run #4 est sur `main` **en local** (8 commits d'avance sur
-  `origin/main`) — `git push origin main` les envoie ET déclenche le déploiement.
-- `adapter.emulate` désactivé sur win32 (workerd#4668) ne concerne QUE le
-  `vite preview` local sur cette machine Windows ; la CI Linux et le build
-  Cloudflare ne sont pas affectés.
-- Aucune base de données ni état serveur : persistance 100 % IndexedDB côté
-  client (plans, séries, cache dataset/corpus).
+## Portabilité
+
+La sortie `build/` est du statique pur : déployable aussi sur Cloudflare Pages,
+Netlify, S3, etc. (mettre `BASE_PATH` vide pour un host à la racine). GitHub
+Pages est juste le chemin sans compte ni secret.

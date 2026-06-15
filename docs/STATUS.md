@@ -35,18 +35,19 @@ File run #5 (candidat n°1) : **features ancrées PRO** pour l'évaluateur (winr
 pro champion/rôle walk-forward, ou modèle entraîné sur le corpus pro) — NOUVELLE
 règle, chantier de sourcing/modélisation. Puis re-tenter la ligne coach dessus.
 
-### ✅ PRÊT À DÉPLOYER (2026-06-15)
+### ✅ DÉPLOYABLE SANS COMPTE TIERS (2026-06-15)
 
-Run #4 mergé sur `main` (local, en avance sur origin). **4 portes vertes** :
-vitest **1264 passed / 5 skipped** · svelte-check **530 fichiers, 0/0** · eslint
-**0** (fix : `.cjs` ignorés + échappements) · **vite build exit 0**, sortie
-`.svelte-kit/cloudflare/` complète (`_worker.js`, corpus bundlé). Posture
-d'honnêteté intacte : aucune sur-promesse de prédiction (toutes les cellules
-calibration `validated:false`, badges « Non calibré »/« Expérimental », seul
-PlanTreePanel est vert). Scouting gol.gg dégrade proprement en prod (403 IP
-datacenter → message actionnable). **Une seule action restante = la tienne**
-(compte Cloudflare) : `docs/DEPLOY.md` (créer le projet Pages + 2 secrets repo +
-`git push origin main`).
+**Pas besoin de Cloudflare.** L'app passe en **SPA 100 % statique**
+(`adapter-static`, base-path portable via `BASE_PATH`) → déployable sur
+**GitHub Pages** avec le `GITHUB_TOKEN` automatique, zéro secret. Le seul
+endpoint serveur (`/api/golgg`) était déjà mort en prod (gol.gg bloque les IP
+datacenter) — retiré du build statique, scouting dispo en local, message honnête
+en prod. **4 portes vertes** : vitest **1264 / 5 skipped** · svelte-check
+**530, 0/0** · eslint **0** · **build exit 0** (root ET sous-chemin `/draftlab`
+vérifiés). Posture d'honnêteté intacte (toutes cellules calibration
+`validated:false`). Workflow `.github/workflows/pages.yml` (build + deploy à
+chaque push `main`). **Une seule action = la tienne** : Settings → Pages →
+Source « GitHub Actions » (1 clic). Détails `docs/DEPLOY.md`.
 
 
 

@@ -109,8 +109,10 @@ function describeError(error: unknown): string {
     // is then unavailable remotely and the user should fall back to the imported
     // pro corpus (fully offline) or sync from a local/residential run.
     if (error instanceof GolggHttpError) {
-        if (error.status === 403 || error.status === 451) {
-            return 'synchronisation gol.gg indisponible depuis ce serveur (gol.gg bloque les IP datacenter) — utilise le corpus pro importé, ou synchronise depuis une instance locale';
+        // 403/451 = datacenter-IP block; 404 = no proxy at all (static host,
+        // e.g. GitHub Pages — the /api/golgg endpoint does not exist there).
+        if (error.status === 403 || error.status === 451 || error.status === 404) {
+            return 'synchronisation gol.gg indisponible depuis ce serveur — utilise le corpus pro importé, ou synchronise depuis une instance locale';
         }
         if (error.status === 429) {
             return 'gol.gg a limité le débit (réessaie dans un instant)';

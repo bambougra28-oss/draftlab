@@ -35,6 +35,7 @@
 -->
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { base } from '$app/paths';
     import {
         ROLES,
         Role,
@@ -889,7 +890,7 @@
     async function refreshCorpus(): Promise<void> {
         corpusBusy = true;
         try {
-            const report = await importBundledCorpora();
+            const report = await importBundledCorpora({ basePath: base });
             corpusWarnings = report.warnings;
             corpusStatuses = await corpusStatus();
             await loadLeaguePairRecords(leagueIdA, leagueIdB);

@@ -1,24 +1,24 @@
-import adapter from '@sveltejs/adapter-cloudflare';
+import staticAdapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
-const cloudflare = adapter();
-
-// workerd.exe crashes at startup (0xc0000005 in ntdll) on this Windows 11
-// Home machine — upstream cloudflare/workerd#4668 — which kills both
-// `vite dev` and the post-build prerender step through `adapter.emulate()`.
-// The app is fully client-only (ssr=false everywhere) and /api/golgg uses
-// only standard Request/Response, never `platform.env`, so the emulation
-// layer adds nothing here. Linux CI is unaffected; keep the guard
-// Windows-scoped so other platforms keep the full adapter behavior.
-if (process.platform === 'win32') {
-    delete cloudflare.emulate;
-}
+// The app is a pure client SPA (ssr=false, prerender=false everywhere), so it
+// ships as plain static files deployable to ANY host — GitHub Pages, Cloudflare
+// Pages, Netlify, S3… No server is needed: /api/golgg was only a dev-time
+// scouting proxy and is blocked from datacenter IPs in production anyway.
+//
+// BASE_PATH lets a project-subpath host work: GitHub Pages project sites serve
+// at /<repo> (e.g. /draftlab). Empty (the default) serves at the domain root
+// (Cloudflare Pages, a custom domain, local preview). `strict: false` tolerates
+// the non-prerenderable /api/golgg endpoint (simply absent from the static
+// output — the gol.gg transport then surfaces an honest "unavailable" message).
+const base = process.env.BASE_PATH ?? '';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
     preprocess: vitePreprocess(),
     kit: {
-        adapter: cloudflare
+        adapter: staticAdapter({ fallback: '404.html', strict: false }),
+        paths: { base }
     }
 };
 

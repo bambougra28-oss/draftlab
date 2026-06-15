@@ -53,11 +53,14 @@ export interface CorpusStoreOptions {
     /** Injected clock for snapshot timestamps when the manifest has none. */
     now?: () => string;
     baseUrl?: string;
+    /** SvelteKit `paths.base` (''=root). Prefixes the bundled `/corpus/*` URLs
+     *  so the store works under a project subpath (GitHub Pages /draftlab). */
+    basePath?: string;
 }
 
 export async function fetchCorpusManifest(options: CorpusStoreOptions = {}): Promise<CorpusManifest> {
     const fetchImpl = options.fetchImpl ?? fetch;
-    const res = await fetchImpl(options.baseUrl ?? CORPUS_MANIFEST_URL);
+    const res = await fetchImpl(options.baseUrl ?? `${options.basePath ?? ''}${CORPUS_MANIFEST_URL}`);
     if (!res.ok) throw new Error(`corpus manifest: HTTP ${res.status}`);
     return (await res.json()) as CorpusManifest;
 }
@@ -107,7 +110,7 @@ export async function importBundledCorpora(options: CorpusStoreOptions = {}): Pr
             continue;
         }
         try {
-            const res = await fetchImpl(`/corpus/${entry.file}`);
+            const res = await fetchImpl(`${options.basePath ?? ''}/corpus/${entry.file}`);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const records = (await res.json()) as DraftRecord[];
             const snapshot = await saveSnapshot({

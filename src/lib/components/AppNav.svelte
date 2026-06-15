@@ -5,16 +5,18 @@
  * Five typed routes; the Live (match-day) link is highlighted in amber to make
  * the mode switch obvious at a glance, plus a discreet help link on the right.
  * Pure: the active path comes in by prop (the layout passes
- * `page.url.pathname`), so the component stays testable and SSR-agnostic.
+ * `page.url.pathname`, which INCLUDES `paths.base`), so the component stays
+ * testable and SSR-agnostic.
  *
- * Plain hrefs (not `resolve()`): the app deploys at the domain root (no
- * `paths.base`), and `resolve()`'s generated Pathname type would not compile
- * until the target routes exist — revisit once the routes land.
+ * Base-aware: hrefs are prefixed with `$app/paths` `base` so the app works both
+ * at the domain root (base = '') and under a project subpath (GitHub Pages
+ * /draftlab). `isActive` strips the base back off before comparing.
  */
 -->
 <script lang="ts">
+    import { base } from '$app/paths';
     /* eslint-disable svelte/no-navigation-without-resolve -- static internal
-       routes at domain root; see module comment. */
+       routes, base-prefixed manually (see module comment). */
     interface NavRoute {
         href: string;
         label: string;
@@ -38,10 +40,18 @@
         { href: '/live', label: 'Live', live: true }
     ];
 
+    /** Full href = base + route ("/" stays "/" so base + "" is the root). */
+    const hrefOf = (href: string): string => `${base}${href === '/' ? '/' : href}`;
+
+    /** currentPath includes the base; strip it back to a base-less route. */
+    const path = $derived(
+        base && currentPath.startsWith(base) ? currentPath.slice(base.length) || '/' : currentPath
+    );
+
     /** Exact match for the root, prefix match for section routes (/plans/[id]…). */
     function isActive(route: NavRoute): boolean {
-        if (route.href === '/') return currentPath === '/';
-        return currentPath === route.href || currentPath.startsWith(`${route.href}/`);
+        if (route.href === '/') return path === '/';
+        return path === route.href || path.startsWith(`${route.href}/`);
     }
 
     function linkClass(route: NavRoute): string {
@@ -60,7 +70,7 @@
 <nav
     class="sticky top-0 z-40 flex items-center gap-1 border-b border-gold-700/25 bg-abyss-950/85 px-4 py-2 backdrop-blur-md"
 >
-    <a href="/" class="group mr-5 flex items-baseline gap-0.5 select-none">
+    <a href={hrefOf('/')} class="group mr-5 flex items-baseline gap-0.5 select-none">
         <span class="font-display text-base tracking-[0.22em] text-slate-100 uppercase">Draft</span>
         <span
             class="font-display bg-gradient-to-b from-gold-200 to-gold-500 bg-clip-text text-base tracking-[0.22em] text-transparent uppercase"
@@ -71,7 +81,7 @@
 
     {#each ROUTES as route (route.href)}
         <a
-            href={route.href}
+            href={hrefOf(route.href)}
             class="rounded-md border-b-2 px-3 py-1.5 text-sm font-medium transition-colors {linkClass(route)}"
             aria-current={isActive(route) ? 'page' : undefined}
         >
@@ -80,11 +90,11 @@
     {/each}
 
     <a
-        href="/help"
-        class="ml-auto rounded-md px-3 py-1.5 text-sm {currentPath === '/help'
+        href={hrefOf('/help')}
+        class="ml-auto rounded-md px-3 py-1.5 text-sm {path === '/help'
             ? 'bg-slate-800 text-white'
             : 'text-slate-500 hover:text-slate-300'}"
-        aria-current={currentPath === '/help' ? 'page' : undefined}
+        aria-current={path === '/help' ? 'page' : undefined}
     >
         Aide
     </a>
