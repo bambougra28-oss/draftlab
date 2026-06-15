@@ -1,6 +1,33 @@
 # DraftLab — Status
 
-Updated: 2026-06-15 (run #4 JOUÉE — gate évaluateur ROUGE : re-pondérer n'aide pas, le mur est les ENTRÉES)
+Updated: 2026-06-16 (run #5 — audit pro OE 2026 : le draft ne prédit pas le vainqueur ; pivot prep, import OE shippé)
+
+## ⚡ RUN #5 — AUDIT + PIVOT PREP (2026-06-16) — branche `run5`
+
+Alain a fourni **Oracle's Elixir 2026** (dump complet). Ingéré propre par le
+provider existant : **5 789 games éligibles, 0 champion non résolu**, 11 patches,
+~37 ligues. Audit data-first (`docs/run5/R5-audit.md`,
+`scripts/backtest/r5Audit.ts`) :
+
+**Le contenu du draft ne prédit le vainqueur pro que ~0,52-0,54 AUC** (évaluateur
+SoloQ, sous-composantes, archétypes, matrice de matchup in-sample) — et l'état de
+jeu (gold@15, durée) aussi faiblement. Le **side** (blue 52,9 %) pèse plus que
+toute feature de draft. Conclusion : au top niveau tout le monde drafte bien,
+l'exécution décide ; **l'oracle de win% est un mirage**, et la valeur du draft
+vit dans la **PRÉPARATION** (ce que DraftLab valide déjà).
+
+**Décision Alain : option 2** — acter le plafond, réinvestir dans la prep.
+**Shippé** : import du CSV Oracle's Elixir dans le produit (`importOracleElixirCorpus`,
+bouton « Importer Oracle's Elixir » sur la page Draft) → corpus de scouting
+propre, tout le pro mondial à jour, préféré au Leaguepedia embarqué ; le CSV
+reste dans le navigateur (non redistribué). Provider amélioré : ordre de draft
+EXACT via la vraie colonne `firstPick`. 4 portes vertes (vitest 1268,
+svelte-check 0/0, eslint 0, build exit 0).
+
+Pistes prep suivantes : annoter des drafts (vérité terrain), étendre les arbres,
+le war-room, l'intel adverse nourrie par OE.
+
+
 
 ## ⚡ RUN #4 — RÉSULTAT (2026-06-15) — branche `run4`
 
