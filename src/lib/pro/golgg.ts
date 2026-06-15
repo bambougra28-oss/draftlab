@@ -103,6 +103,22 @@ function iconChampionName(cell: string): string | null {
 }
 
 function describeError(error: unknown): string {
+    // Translate the proxy/transport failures users actually hit in production
+    // into one clear, actionable line. gol.gg blocks datacenter IPs, so a
+    // deployed instance's same-origin proxy gets 403/451 — the scouting feature
+    // is then unavailable remotely and the user should fall back to the imported
+    // pro corpus (fully offline) or sync from a local/residential run.
+    if (error instanceof GolggHttpError) {
+        if (error.status === 403 || error.status === 451) {
+            return 'synchronisation gol.gg indisponible depuis ce serveur (gol.gg bloque les IP datacenter) — utilise le corpus pro importé, ou synchronise depuis une instance locale';
+        }
+        if (error.status === 429) {
+            return 'gol.gg a limité le débit (réessaie dans un instant)';
+        }
+        if (error.status >= 500) {
+            return `gol.gg momentanément indisponible (${error.status}) — réessaie, ou utilise le corpus pro importé`;
+        }
+    }
     return error instanceof Error ? error.message : String(error);
 }
 

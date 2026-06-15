@@ -1631,7 +1631,7 @@ rows.push(
     'il ne teste RIEN sur la re-pondération. Brier poolé (descriptif) :',
     '',
     `- R4 (≈ side-only) : ${fr(ab.r4, 5)} · side-only : ${fr(ab.side, 5)} · non calibré (p_raw≡0,5) : ${fr(ab.nonCal, 5)} · pièce : ${fr(ab.coin, 5)}`,
-    `- ΔBrier(R4 − non calibré) à afterBans = ${fr(ab.r4 - ab.nonCal, 5)} : c\'est l\'effet side-only vs pièce déjà connu de E3/run #2, PAS un test de re-pondération.`,
+    `- ΔBrier(R4 − non calibré) à afterBans = ${fr(ab.r4 - ab.nonCal, 5)} : c'est l'effet side-only vs pièce déjà connu de E3/run #2, PAS un test de re-pondération.`,
     '',
     '## Secondaires descriptives (AUCUN pouvoir de verdict, §1.6)',
     '',
