@@ -35,6 +35,19 @@ File run #5 (candidat n°1) : **features ancrées PRO** pour l'évaluateur (winr
 pro champion/rôle walk-forward, ou modèle entraîné sur le corpus pro) — NOUVELLE
 règle, chantier de sourcing/modélisation. Puis re-tenter la ligne coach dessus.
 
+### ✅ PRÊT À DÉPLOYER (2026-06-15)
+
+Run #4 mergé sur `main` (local, en avance sur origin). **4 portes vertes** :
+vitest **1264 passed / 5 skipped** · svelte-check **530 fichiers, 0/0** · eslint
+**0** (fix : `.cjs` ignorés + échappements) · **vite build exit 0**, sortie
+`.svelte-kit/cloudflare/` complète (`_worker.js`, corpus bundlé). Posture
+d'honnêteté intacte : aucune sur-promesse de prédiction (toutes les cellules
+calibration `validated:false`, badges « Non calibré »/« Expérimental », seul
+PlanTreePanel est vert). Scouting gol.gg dégrade proprement en prod (403 IP
+datacenter → message actionnable). **Une seule action restante = la tienne**
+(compte Cloudflare) : `docs/DEPLOY.md` (créer le projet Pages + 2 secrets repo +
+`git push origin main`).
+
 
 
 
