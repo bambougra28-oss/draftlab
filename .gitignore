@@ -29,3 +29,6 @@ data/datasets/*.json
 # Loose screenshots dropped at repo root (UUID-named).
 /[0-9a-f]*-[0-9a-f]*-[0-9a-f]*-[0-9a-f]*-[0-9a-f]*.png
 data/corpus-backup-20260611/
+
+# Oracle's Elixir raw dumps (not redistributable — download from the shared Drive)
+/data/oracle/
