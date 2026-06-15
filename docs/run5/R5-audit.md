@@ -56,28 +56,48 @@ La vraie question devient : **le draft prédit-il l'ÉTAT DE JEU** (tempo, courb
 d'or, contrôle d'objectif, durée) — là où vit la valeur de prep *déjà validée*
 (arbres de prep VERTS, power curves) — **mieux qu'il ne prédit le win/loss ?**
 
-## Honnêteté — ce qui reste OUVERT (non conclu)
+## L'état de jeu : testé aussi (features propres, tags `scalingWindow` 100 %)
 
-- **L'angle état-de-jeu n'est PAS encore testé proprement.** Un test rapide a
-  cassé (le `calculatePowerCurve` a renvoyé NaN — plomberie/dataset à régler ;
-  proxy de scaling trop grossier). Le SoloQ→gold@15 propre, lui, donnait AUC
-  0,508 / r≈0 : l'évaluateur win-prob ne porte aucun signal d'état précoce
-  (attendu — c'est un modèle de win-prob full-game, pas d'early-state).
-- **Features non testées** : joueur/confort (pools A3, les playerid sont dans
-  OE), flex/information, méta par patch. Probablement de 2ᵉ ordre, mais non
-  écartées.
-- L'angle état-de-jeu demande de **vraies features d'état** (régler la power
-  curve, un axe scaling propre) — c'est un chantier, pas un hack.
+| Cible | Predicteur (draft) | Signal |
+|---|---|---|
+| durée de game | scaling tilt (late−early champs) | **r = −0,003** (nul) |
+| blue en avance @15 | edge early-game blue (tags) | AUC 0,536 |
+| gold diff @15 | edge early-game blue | r = 0,092 (petit) |
 
-## Le carrefour (décision produit)
+**Le draft prédit l'état de jeu aussi faiblement que le win/loss** (~0,54 AUC,
+r ≈ 0,09 ; la durée n'est PAS prédite — les pros ferment les games sur leads,
+indépendamment du scaling). Les DEUX cibles ont un plafond bas.
 
-1. **Réorienter run #5 vers la prédiction d'ÉTAT DE JEU** : le draft prédit-il
-   gold@15 / objectifs / durée ? Si oui, c'est la fonction de valeur ancrée pro
-   qu'on cherchait (et elle nourrit la prep, le levier validé). Demande de
-   construire/valider les features d'état d'abord.
-2. **Acter le plafond win/loss** : le draft→vainqueur est intrinsèquement faible
-   en pro ; le produit de **prep validé** (arbres, role inference, surprise,
-   ranges, bans contre-compo) EST le bon niveau, et on l'assume sans illusion
-   d'oracle.
+Caveat honnête : un modèle multi-feature ajusté pourrait monter à ~0,55-0,57 ;
+les features joueur/confort (les `playerid` sont dans OE) et flex/information ne
+sont pas testées (probablement 2ᵉ ordre). Mais aucun signal ne suggère un
+prédicteur fort (0,65+). Le plafond est réel.
+
+## Conclusion de l'audit
+
+**Sur la meilleure donnée mondiale, le contenu du draft explique très peu de
+l'issue ET de l'état de jeu en pro (~0,54 AUC).** Ce n'est pas un échec de
+méthode ni de data — c'est un fait : **au plus haut niveau, tout le monde drafte
+bien, donc l'avantage de contenu de draft est petit ; la variance est dans
+l'exécution.** La « prédiction du vainqueur depuis le draft » est un mirage —
+les 5 runs l'ont prouvé rigoureusement, et l'OE 2026 le confirme à l'échelle.
+
+**Où vit donc la valeur du draft au top niveau ?** Pas dans un score qui prédit
+le gagnant, mais dans la **PRÉPARATION** : connaître l'adversaire, avoir des
+plans à branches, gagner le jeu d'information (flex/contre-pick), dénier le
+confort, éviter les pièges. C'est EXACTEMENT ce que DraftLab valide et ship déjà
+(arbres de prep VERTS, défense anti-surprise, ranges, bans contre-compo,
+inférence de rôles 95,3 %). **L'audit confirme que les forces validées de
+DraftLab SONT la vraie valeur — et que l'oracle de win% était un mirage,
+honnêtement écarté plutôt que bluffé.**
+
+## Décision produit (carrefour, à Alain)
+
+1. **Tenter quand même un modèle multi-feature pro** (joueur/flex inclus) pour
+   gratter le plafond 0,54→~0,57, gate gelée — faible valeur attendue, mais
+   chiffrable proprement.
+2. **Acter le plafond** : assumer le produit de prep validé comme LE niveau ;
+   réinvestir l'effort dans la prep (annoter, étendre les arbres, le war-room),
+   pas dans un oracle qui n'existe pas. *(Recommandé par l'audit.)*
 
 *Audit du 2026-06-16. Données lues avant toute conception, jamais supposées.*
