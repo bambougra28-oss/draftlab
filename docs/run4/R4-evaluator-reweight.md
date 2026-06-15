@@ -35,8 +35,12 @@
 >   une hypothèse non testée renvoyée au futur, jamais une conclusion de R4.
 > - **R8** : standardisation — seuil `σⱼ ≤ 1e-9 ⇒ colonne EXCLUE` (un seul
 >   mécanisme, jamais un zéro-remplissage).
-> - **R9** : afterBans exclu du verdict comme dégénérescence STRUCTURELLE
->   (`ΔBrier ≡ 0` par construction), écart pré-déclaré vs E3.
+> - **R9** : afterBans exclu du verdict comme dégénérescence STRUCTURELLE —
+>   sans feature (x₁=x₂=x₃=0, colonnes exclues), R4 n'a RIEN à re-pondérer et
+>   dégénère en intercept-only = side-only. ΔBrier(R4−non calibré) y mesure
+>   side-only vs pièce (l'effet E3 déjà connu), publié DESCRIPTIF, hors verdict
+>   (corrigé en implémentation : ce n'est PAS « ΔBrier ≡ 0 » — le non-calibré
+>   vaut 0,5, R4 vaut le base-rate du train).
 > - **R10** : multiplicité — borne `1−(1−0,025)² ≈ 4,9 %` déclarée (pas l'égalité
 >   « 2×2,5 % », qui supposerait l'indépendance, fausse), recalculée sous le
 >   critère à deux IC.
@@ -113,6 +117,16 @@ texte E3 fait foi :
   `lfl` = `static/corpus/lfl-2026.json` + `data/corpus/lfl-2025.json` ·
   `lpl` = `static/corpus/lpl-2026.json` + `data/corpus/lpl-2025.json`.
   Unicité des `gameId` assertée sur l'UNION des 8 corpus (abort si collision).
+  **Argv gelée (R1/R2 — vérifiée par la porte de validité)** : l'ORDRE des 8
+  fichiers est celui du run E3 publié — **tous les 2026 PUIS tous les 2025**
+  (l'ordre conditionne les sommes flottantes des fits poolés ET la consommation
+  du rng) : `static/corpus/lck-2026.json static/corpus/lec-2026.json
+  static/corpus/lfl-2026.json static/corpus/lpl-2026.json
+  data/corpus/lck-2025.json data/corpus/lec-2025.json data/corpus/lfl-2025.json
+  data/corpus/lpl-2025.json`. **Porte de validité PASSÉE le 2026-06-15** :
+  `--chain e3` régénère `win-calibration-by-league.md` byte-identique
+  (44 699 octets, 0 octet divergent) ; smoke R4 confirme la couverture
+  818/470/450/1172 = 2 910 paires/position.
 - **Éligibilité (`isCalibrationEligible`, `src/lib/backtest/sequencePositions.ts:59-64`)** :
   (a) `winner` défini, (b) 10 picks rôle-complets (règle `compOf` de
   postdiction G1 — clé résolue + rôle présent + aucun rôle dupliqué par side,
@@ -297,11 +311,13 @@ Rien n'est mesuré avant le run. À déclarer/publier :
   la changer.
 - **R9 — `afterBans` exclu du verdict (dégénérescence STRUCTURELLE, écart
   pré-déclaré vs E3 qui le verdictait)** : à afterBans, `x₁=x₂=x₃=0` pour toutes
-  les games (identité `analyzer.ts:272-278`) ⇒ les 3 colonnes exclues ⇒ le bras
-  R4 EST l'intercept-only = side-only, IDENTIQUE au comparateur non-calibré (qui
-  vaut aussi 0,5 partout) ⇒ **`ΔBrier ≡ 0` par construction** — un verdict y
-  serait vide de sens. afterBans est publié, `ΔBrier` attendu ≡ 0 ; toute valeur
-  non nulle = bug du runner et déclenche enquête, jamais un verdict.
+  les games (identité `analyzer.ts:272-278`) ⇒ les 3 colonnes sont exclues ⇒ le
+  bras R4 n'a **aucune feature à re-pondérer** et dégénère en intercept-only =
+  **side-only** (= base-rate du train). Il ne teste donc RIEN sur la
+  re-pondération → hors verdict. NB (corrigé en implémentation) : R4 n'y est PAS
+  égal au non-calibré — le non-calibré vaut `p_raw ≡ 0,5`, R4 vaut le base-rate ;
+  `ΔBrier(R4−non calibré)` à afterBans = l'effet **side-only vs pièce** déjà
+  connu de E3/run #2, publié DESCRIPTIF (point, sans IC ni verdict).
 - **Ordre GELÉ des IC (un seul flux `mulberry32(seed 42)`)** : (primaires)
   poolé `after3Picks` ΔBrier(R4−non calibré) → poolé `fullDraft` ΔBrier(R4−non
   calibré) → poolé `after3Picks` ΔBrier(R4−Platt) → poolé `fullDraft`
@@ -362,10 +378,10 @@ Aucun ajustement formel (décision produit locale, réversible au re-run).
 
 ### 1.5 Attendus déclarés d'avance (les DEUX lectures, écrites avant le run)
 
-- **afterBans dégénère** en side-only (p_raw ≡ 0,5 ⇒ features nulles ⇒
-  intercept-only ≡ comparateur) — `ΔBrier ≡ 0` par construction. C'est une
-  vérification de NON-RÉGRESSION du runner (un ΔBrier non nul = bug), AUCUNE
-  information sur l'hypothèse testée.
+- **afterBans dégénère** : features nulles ⇒ R4 intercept-only = side-only
+  (base-rate), aucune re-pondération à tester ⇒ hors verdict. Descriptif
+  uniquement (R4 ≈ side-only ; `ΔBrier(R4−non calibré)` = side-only vs pièce,
+  effet E3 connu) — AUCUNE information sur l'hypothèse testée.
 - **Si VERT** (R4 bat le modèle shippé ET le ré-échelonnement Platt) :
   l'évaluateur PORTE du signal de win que ses poids unitaires figés gaspillent —
   la re-pondération le récupère. Voir §5.
