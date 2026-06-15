@@ -1,6 +1,35 @@
 # DraftLab — Status
 
-Updated: 2026-06-11 (run #2 JOUÉE — verdicts publiés, état de corpus corrigé)
+Updated: 2026-06-15 (run #4 LANCÉE — gate évaluateur jouée, NON CONCLUANTE par défaut d'optimiseur)
+
+## ⚡ RUN #4 — RÉSULTAT (2026-06-15) — branche `run4`
+
+Périmètre tranché par Alain : attaquer l'**ÉVALUATEUR** (le seul levier que
+run #3 désigne — S6≈0 à couverture forte disculpe la chaîne de candidats). Gate
+R4 = re-pondérer les 3 composantes différentielles de `analyzeDraft`
+(régression logistique ajustée) vs le modèle Elo à poids unitaires figés + Platt.
+
+| Étape | Résultat |
+|---|---|
+| Design gelé + revue adversariale (3 agents, **R1-R12**) | ✅ `docs/run4/R4-evaluator-reweight.md` |
+| Libs `logisticFit`/`evaluatorFeatures` + 17 tests | ✅ ancre `logisticFit==plattFit` 1e-10 |
+| Porte de validité `--chain e3` byte-identique | ✅ **44 699 o, 0 divergent** ; smoke 2910/pos |
+| **LE run `--chain r4`** | ⚠ **NON CONCLUANT** |
+
+**Le run a divergé numériquement** : `logisticFit` (Newton NON amorti, calé sur
+`platt.ts`) explose sur les features Elo réelles quasi-séparables (β≈10⁸,
+Δlog loss≈11,8). Le « ROUGE » (ΔBrier≈+0,17) est un ARTEFACT de l'optimiseur,
+PAS un test de l'hypothèse. Défaut latent de la règle gelée (ridge 1e-6 / pas de
+damping), non exercé par les tests (données non séparables) ni la porte de
+validité (chemin E3/Platt seul). R4 v1 CONSOMMÉE et non concluante.
+
+**Suite (décision Alain en attente)** : R4 v2 = NOUVELLE règle gelée avec un
+optimiseur convergent et adéquatement régularisé (Newton amorti + ridge
+principiel, déclarés AVANT le run v2) — jamais un retuning silencieux de v1.
+Tout le harnais (porte de validité, libs, runner, writer) est déjà en place ;
+v2 ne change que l'optimiseur.
+
+
 
 
 ## ⚡ RUN #3 — RÉSULTAT (2026-06-11 soir)
